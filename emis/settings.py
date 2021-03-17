@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms'
 ]
 
 MIDDLEWARE = [
@@ -125,7 +126,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = 'web_app/static/'
 
 
 """
@@ -134,3 +135,8 @@ https://django-cryptography.readthedocs.io/en/latest/settings.html
 """
 CRYPTOGRAPHY_KEY = 'donotsteal$$$$$$'
 CRYPTOGRAPHY_SALT = 'emis-pas'
+
+"""
+Crispy forms
+"""
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

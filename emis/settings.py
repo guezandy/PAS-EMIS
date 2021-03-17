@@ -16,6 +16,8 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+# APPEND_SLASH = False
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
@@ -31,6 +33,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'web_app.apps.WebAppConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -75,8 +78,13 @@ WSGI_APPLICATION = 'emis.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        # TODO Move to .env file
+        'NAME': 'lucia_education',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': '127.0.0.1',
+        'PORT': '8889',
     }
 }
 
@@ -118,3 +126,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+"""
+Django Crpytography settings
+https://django-cryptography.readthedocs.io/en/latest/settings.html
+"""
+CRYPTOGRAPHY_KEY = 'donotsteal$$$$$$'
+CRYPTOGRAPHY_SALT = 'emis-pas'

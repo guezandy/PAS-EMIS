@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader
-from .models import TestScore
 from django.http import JsonResponse
-from .forms import TestScoreForm
+
+from web_app.models.main import TestScore
+from web_app.forms.main import TestScoreForm
 
 def index(request):
     template = loader.get_template('web_app/index.html')

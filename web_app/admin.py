@@ -1,5 +1,5 @@
 from django.contrib import admin
-from web_app.models import TestScore
+from web_app.models.main import TestScore
 
 class TestScoreAdmin(admin.ModelAdmin):
     pass

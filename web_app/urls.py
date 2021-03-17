@@ -1,10 +1,16 @@
 from django.urls import path
 
-from . import views
+from .views import auth, main
 
 urlpatterns = [
-    path('foo', views.foo, name='foo'),
-    path('rest', views.json_endpoint, name='rest'),
-    path('testscore/', views.test_score_form, name='testscore'),
-    path('', views.index, name='index'),
+    # Authentication related views
+    path('login', auth.login_view, name='login'),
+    path('register', auth.register_view, name='register'),
+    path('logout', auth.logout_view, name='logout'),
+    
+    # Main views
+    path('foo', main.foo, name='foo'),
+    path('rest', main.json_endpoint, name='rest'),
+    path('testscore/', main.test_score_form, name='testscore'),
+    path('', main.index, name='index'),
 ]

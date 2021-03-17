@@ -1,6 +1,6 @@
 from django import forms 
   
-from .models import TestScore 
+from web_app.models.main import TestScore 
   
 class TestScoreForm(forms.ModelForm): 
     class Meta: 

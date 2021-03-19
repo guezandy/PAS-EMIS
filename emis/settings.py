@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'sysadmin.apps.SysadminConfig',
     'web_app.apps.WebAppConfig',
     'django.contrib.admin',
     'django.contrib.auth',

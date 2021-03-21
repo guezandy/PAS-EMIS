@@ -4,5 +4,5 @@ from .views import main
 
 urlpatterns = [
     # system admin views
-    path('user-directory', main.user_directory, name='user-directory')
+    path('users', main.IndexView.as_view(), name='user-directory')
 ]

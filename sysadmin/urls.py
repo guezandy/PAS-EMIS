@@ -2,7 +2,9 @@ from django.urls import path
 
 from .views import main
 
+app_name = "sysadmin"
 urlpatterns = [
     # system admin views
-    path('users', main.IndexView.as_view(), name='user-directory')
+    path('users/create',main.create_user, name='create-user'),
+    path('users', main.user_list, name='user-directory')
 ]

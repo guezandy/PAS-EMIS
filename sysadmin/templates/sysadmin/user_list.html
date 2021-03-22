@@ -2,19 +2,19 @@
 <div class="container-fluid">
   <h1>User Directory</h1>
 
-  <form class="mt-5">
+  <form class="mt-5 mb-4" id="search-user-form">
     <div class="form-group">
       <div class="input-group mb-3">
-        
-        <input type="text" class="form-control" id="user-search-term" placeholder="search for username, email, first name etc...">
+        <input type="text" class="form-control" id="user-search-term" placeholder="search for username, email, first name, or last name" value="{{ search_term }}">
         <div class="input-group-append">
-          <button class="btn btn-primary" type="button">Search</button>
+          <button class="btn btn-primary" type="submit" id="search">Search</button>
         </div>
       </div>
     </div>
   </form>
 
-<table class="table mt-5">
+<button type="button" class="btn btn-success mb-2">Create User</button>
+<table class="table table-striped" >
   <thead>
     <tr>
       <th scope="col">Id</th>
@@ -42,4 +42,30 @@
   <table>
 
 </div>
+<script type='text/javascript' defer='defer'>
+
+$(document).ready(function() {
+    $('#search-user-form').submit(function(event){
+      event.preventDefault();
+      if($('#user-search-term').prop("value")){
+        window.location = '{{ request.path }}' + '?search_term=' + $('#user-search-term').prop("value");
+      }
+      else{
+         window.location = '{{ request.path }}';
+      }
+    });
+}); 
+
+</script>
+<style>
+tbody tr{
+  cursor:pointer;
+}
+
+tbody tr:hover{
+  background-color:rgb(0, 123, 255) !important;
+}
+</style>
+
+
 {% endblock body %}

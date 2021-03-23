@@ -2,44 +2,51 @@
 <div class="container-fluid">
   <h1>User Directory</h1>
 
-  <form class="mt-5 mb-4" id="search-user-form">
-    <div class="form-group">
-      <div class="input-group mb-3">
-        <input type="text" class="form-control" id="user-search-term" placeholder="search for username, email, first name, or last name" value="{{ search_term }}">
-        <div class="input-group-append">
-          <button class="btn btn-primary" type="submit" id="search">Search</button>
+  <div class="row">
+    <form class="col-12 mt-5 mb-4" id="search-user-form">
+      <div class="form-group">
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" id="user-search-term" placeholder="search for username, email, first name, or last name" value="{{ search_term }}">
+          <div class="input-group-append">
+            <button class="btn btn-primary" type="submit" id="search">Search</button>
+          </div>
         </div>
       </div>
-    </div>
-  </form>
+    </form>
+  </div>
 
-<button type="button" class="btn btn-success mb-2">Create User</button>
-<table class="table table-striped" >
-  <thead>
-    <tr>
-      <th scope="col">Id</th>
-      <th scope="col">Username</th>
-      <th scope="col">Email</th>
-      <th scope="col">First Name</th>
-      <th scope="col">Last Name</th>
-      <th scope="col">Is Super User</th>
-     <th scope="col">Is Active</th>
-    </tr>
-  </thead>
-  <tbody>
-  {% for user in user_list %}
-    <tr>
-        <td> {{ user.id }}</td>
-        <td> {{ user.username }}</td>
-        <td> {{ user.email }}</td>
-        <td> {{ user.first_name }}</td>
-        <td> {{ user.last_name }}</td>
-        <td> {{ user.is_superuser }}</td>
-        <td> {{ user.is_active }}</td>
-    </tr>
-  {% endfor %}
-  </tbody>
-  <table>
+<a href="{% url 'sysadmin:create-user' %}" ><button type="button" class="btn btn-success mb-2">Create User</button></a>
+ <div class="row">
+  <div class="col-12">
+  <table class="table table-striped" >
+    <thead>
+      <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Username</th>
+        <th scope="col">Email</th>
+        <th scope="col">First Name</th>
+        <th scope="col">Last Name</th>
+        <th scope="col">Is Super User</th>
+        <th scope="col">Is Active</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for user in user_list %}
+        <tr class="user-row" data-url="{% url 'sysadmin:user-detail' user.id %}">
+            <td> {{ user.id }}</td>
+            <td> {{ user.username }}</td>
+            <td> {{ user.email }}</td>
+            <td> {{ user.first_name }}</td>
+            <td> {{ user.last_name }}</td>
+            <td> {{ user.is_superuser }}</td>
+            <td> {{ user.is_active }}</td>   
+        </tr>
+    {% endfor %}
+    </tbody>
+    <table>
+
+  </div>
+</div>
 
 </div>
 <script type='text/javascript' defer='defer'>
@@ -53,6 +60,10 @@ $(document).ready(function() {
       else{
          window.location = '{{ request.path }}';
       }
+    });
+
+    $('.user-row').on('click',function(event){
+       window.location = $(this).attr('data-url');
     });
 }); 
 

@@ -11,26 +11,32 @@ for the application; in others, model development may still be in progress.
 The models within this file provide a foundation for permissions management
 and auto-populated group definitions.  As other (managed) models are written,
 they may replace some model/permission definitions within this file.
+
+NOTE: permissions within this file are currently constructed using a simplified
+read/edit model (vs. view/add/change/delete).
 """
 
-def get_permission_tuple(base_perm_code: str, edit: bool) -> str:
+EDIT_PREFIX = 'edit_'
+READ_PREFIX = 'read_'
+
+def get_tuple(base_perm_code: str, edit: bool) -> str:
     """
     Given a permission code *without* an action-specific prefix (e.g. "edit",
     "read"), return a tuple of the action-complete prefix and description
-    text for use in Permission construction.  The selected prefix will
-    be "edit" if edit, "read" if not.
+    text for use in Permission construction.  The selected prefix is based
+    on the supplied edit argument, where False ~ read-only.
     """
     if not base_perm_code:
         return ''
     
-    full_perm_code = ('edit_' if edit else 'read_') + base_perm_code
+    full_perm_code = (EDIT_PREFIX if edit else READ_PREFIX) + base_perm_code
     perm_desc = (('Can edit ' if edit else 'Can read ')
                     + base_perm_code.replace('_', ' ').lower())
     
     return (full_perm_code, perm_desc)
 
 
-def get_permission_tuple_list(base_perm_codes: list, read_only: bool) -> list:
+def get_tuple_list(base_perm_codes: list, read_only: bool) -> list:
     """
     Given a list of permission codes *without* action-specific prefixes ("edit",
     "read"), returns a list of tuples of action-complete permission codes and
@@ -48,9 +54,22 @@ def get_permission_tuple_list(base_perm_codes: list, read_only: bool) -> list:
         for base_perm_code in base_perm_codes:
             if not base_perm_code:
                 continue
-            next_tuple = get_permission_tuple(base_perm_code, edit_arg)
+            next_tuple = get_tuple(base_perm_code, edit_arg)
             results.append(next_tuple)
     return results
+
+
+def get_codenames(base_perm_codes: list, read_only: bool) -> list:
+    """
+    Given a list of permission codes *without* action-specific prefixes ("edit",
+    "read"), returns a list of action-complete permission code names.  If
+    read_only is specified, only code names with the "read" prefix shall be
+    constructed; otherwise, the list shall additionally include items with the
+    "edit" prefix.
+    """
+    if not base_perm_codes:
+        return []
+    return [ x[0] for x in get_tuple_list(base_perm_codes, read_only) ]
 
 
 """
@@ -64,9 +83,15 @@ TEACHER_APPRAISAL = 'teacher_appraisal'
 TEACHER_ENROLL = 'teacher_enrollment'
 TRANSFER_STUDENT = 'student_transfer'
 VICE_PRINCIPAL_APPRAISAL = 'vice_principal_appraisal'
-SCHOOL_ADMIN_LIST = [ SCHOOL_ACCOUNTING, SCHOOL_ACTIVITY_CONFIG, STUDENT_ENROLL,
-                      TEACHER_APPRAISAL, TEACHER_ENROLL, TRANSFER_STUDENT,
-                      VICE_PRINCIPAL_APPRAISAL ]
+SCHOOL_ADMIN_LIST_BASIC = [ SCHOOL_ACCOUNTING, SCHOOL_ACTIVITY_CONFIG,
+                            STUDENT_ENROLL, TEACHER_ENROLL ]
+
+# School administration - early childhood
+SCHOOL_ADMIN_LIST_EC = SCHOOL_ADMIN_LIST_BASIC + [ TRANSFER_STUDENT ]
+
+# School administration - principals(+)
+SCHOOL_ADMIN_LIST_FULL = SCHOOL_ADMIN_LIST_EC + [ TEACHER_APPRAISAL,
+                                                    VICE_PRINCIPAL_APPRAISAL ]
 
 # Teaching
 STUDENT_ATTENDANCE = 'student_attendance'
@@ -96,6 +121,15 @@ STUDENT_SUPPORT_FORM = 'student_support_form'
 STUDENT_RESOURCE_ALLOC = 'student_resource_allocation'
 STUDENT_COUNSEL = 'student_counseling'
 SUPPORT_LIST = [ STUDENT_SUPPORT_FORM, STUDENT_RESOURCE_ALLOC, STUDENT_COUNSEL ]
+
+# External assessment
+ASSESSMENT_REPORT = 'assessment_report'
+ASSESS_LIST = [ ASSESSMENT_REPORT ]
+
+# All
+FULL_LIST = (SCHOOL_ADMIN_LIST_FULL + TEACHING_LIST + DISTRICT_LIST
+                + SUPERVISION_LIST + STATS_LIST + EVAL_LIST + SUPPORT_LIST
+                + ASSESS_LIST)
 
 
 """
@@ -148,34 +182,38 @@ for general model build.
 """
 class UnmanagedSchoolAdminModel(UnmanagedCustomPermissionModel):
     class Meta(UnmanagedCustomPermissionModel.Meta):
-        permissions = get_permission_tuple_list(SCHOOL_ADMIN_LIST, False)
+        permissions = get_tuple_list(SCHOOL_ADMIN_LIST_FULL, False)
 
 
 class UnmanagedTeachingModel(UnmanagedCustomPermissionModel):
     class Meta(UnmanagedCustomPermissionModel.Meta):
-        permissions = get_permission_tuple_list(TEACHING_LIST, False)
+        permissions = get_tuple_list(TEACHING_LIST, False)
 
 
 class UnmanagedDistrictAdminModel(UnmanagedCustomPermissionModel):
     class Meta(UnmanagedCustomPermissionModel.Meta):
-        permissions = get_permission_tuple_list(DISTRICT_LIST, False)
+        permissions = get_tuple_list(DISTRICT_LIST, False)
 
 
 class UnmanagedSchoolSupervisionModel(UnmanagedCustomPermissionModel):
     class Meta(UnmanagedCustomPermissionModel.Meta):
-        permissions = get_permission_tuple_list(SUPERVISION_LIST, False)
+        permissions = get_tuple_list(SUPERVISION_LIST, False)
 
 
 class UnmanagedStatisticsModel(UnmanagedCustomPermissionModel):
     class Meta(UnmanagedCustomPermissionModel.Meta):
-        permissions = get_permission_tuple_list(STATS_LIST, False)
+        permissions = get_tuple_list(STATS_LIST, False)
 
 
 class UnmanagedEvaluationModel(UnmanagedCustomPermissionModel):
     class Meta(UnmanagedCustomPermissionModel.Meta):
-        permissions = get_permission_tuple_list(EVAL_LIST, False)
+        permissions = get_tuple_list(EVAL_LIST, False)
 
 
 class UnmanagedSupportServicesModel(UnmanagedCustomPermissionModel):
     class Meta(UnmanagedCustomPermissionModel.Meta):
-        permissions = get_permission_tuple_list(SUPPORT_LIST, False)
+        permissions = get_tuple_list(SUPPORT_LIST, False)
+
+class UnmanagedExternalAssessmentModel(UnmanagedCustomPermissionModel):
+    class Meta(UnmanagedCustomPermissionModel.Meta):
+        permissions = get_tuple_list(ASSESS_LIST, False)

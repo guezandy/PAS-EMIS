@@ -61,7 +61,7 @@ permissions_by_group = {
 
 def populate_groups_with_permissions(apps, schema_editor):
     """
-    PRS 22-Mar 2021: some helpful resources on how/why this approach is used.
+    PRS 22-Mar 2021: some helpful resources discussing this approach...
 
     https://stackoverflow.com/questions/25024795/django-1-7-where-to-put-the-code-to-add-groups-programmatically/25803284
     https://stackoverflow.com/questions/38491215/programmatically-creating-a-group-cant-access-permissions-from-migration/38491679#38491679
@@ -74,18 +74,19 @@ def populate_groups_with_permissions(apps, schema_editor):
             LOGGER.info('Group "{}" created'.format(group_name))
 
         # TODO: once groups are locked down, only do this when created == True
+        perm_list = []
         for perm_code in permissions_by_group[group_name]:
             LOGGER.info('Granting permission code "{}" to group "{}"'
                         .format(perm_code, group_name))
-            group.permissions.add(Permission.objects.get(codename=perm_code))
-
+            perm_list.append(Permission.objects.get(codename=perm_code))
+        
+        group.permissions.set(perm_list)
         group.save()
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('web_app', '0002_unmanageddistrictadminmodel_unmanagedevaluationmodel_unmanagedschooladminmodel_unmanagedschoolsuperv'),
+        ('web_app', '0001_initial'),
     ]
 
     operations = [

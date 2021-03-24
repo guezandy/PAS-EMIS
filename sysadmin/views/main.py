@@ -1,4 +1,4 @@
-from django import template
+from django.core.paginator import Paginator
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
@@ -11,12 +11,22 @@ from sysadmin.forms.user_detail import CustomEditUserForm
 
 def user_list(request):
     search_term = request.GET.get('search_term')
+    page_number = request.GET.get('page')
+    number_per_page = 25
+  
+
     if(search_term is None or search_term == ''):
         user_list = User.objects.all()
         search_term = ''
+        
+        paginator = Paginator(user_list, number_per_page) # Show 25 contacts per page.
+        page_obj = paginator.get_page(page_number)
     else:
         user_list = User.objects.filter(Q(username__icontains = search_term) |Q(email__icontains = search_term) |Q(first_name__icontains = search_term) | Q(last_name__icontains = search_term))
-    context = { 'user_list' : user_list, 'search_term' :search_term}
+        paginator = Paginator(user_list, number_per_page) # Show 25 contacts per page.
+        page_obj = paginator.get_page(page_number)
+
+    context = { 'user_list' : page_obj, 'search_term' :search_term}
     return render(request, 'sysadmin/user_list.html',context)
 
 

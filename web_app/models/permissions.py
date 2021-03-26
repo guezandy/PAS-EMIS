@@ -1,3 +1,5 @@
+from enum import Enum, IntFlag, unique
+
 from django.db import models
 from django.db.models import Model
 
@@ -12,124 +14,239 @@ The models within this file provide a foundation for permissions management
 and auto-populated group definitions.  As other (managed) models are written,
 they may replace some model/permission definitions within this file.
 
-NOTE: permissions within this file are currently constructed using a simplified
-read/edit model (vs. view/add/change/delete).
+NOTE: permissions within this file are constructed using a simplified
+create/update/view model (vs. view/add/change/delete).
 """
 
-EDIT_PREFIX = 'edit_'
-READ_PREFIX = 'read_'
 
-def get_tuple(base_perm_code: str, edit: bool) -> str:
+class EmisPermMode(IntFlag):
     """
-    Given a permission code *without* an action-specific prefix (e.g. "edit",
-    "read"), return a tuple of the action-complete prefix and description
-    text for use in Permission construction.  The selected prefix is based
-    on the supplied edit argument, where False ~ read-only.
+    Represents a type of action a user may be authorized to perform, for/in
+    a given area.
     """
-    if not base_perm_code:
+    CREATE = 1
+    UPDATE = 2
+    VIEW = 4
+
+
+class EmisPermArea(IntFlag):
+    """
+    Logical grouping for EMIS permissions.
+    """
+    SCHOOL_ADMIN = 1
+    EARLY_CHILDHOOD = 2
+    PRINCIPAL = 4
+    TEACHING = 8
+    DISTRICT = 16
+    SUPERVISION = 32
+    STATISTICS = 64
+    EVALUATION = 128
+    SUPPORT = 256
+    EXTERNAL = 512
+    ALL = (SCHOOL_ADMIN | EARLY_CHILDHOOD | PRINCIPAL | TEACHING | DISTRICT
+            SUPERVISION | STATISTICS | EVALUATION | SUPPORT | EXTERNAL)
+
+
+@unique
+class EmisPermission(Enum):
+    """
+    Contains "base" (without EmisPermMode information) code names and
+    descriptions defining a particular permission or functional area, as well
+    as logical group assignment (EmisPermArea) for each.
+
+    This implementation is an "Enum with attributes", which is to say that
+    we override __new__ and __init__ to allow each enumerated value to store
+    additional information beyond a simple integer.
+    """
+    def __new__(cls, *args, **kwargs):
+        value = len(cls.__members__) + 1
+        obj = object.__new__(cls)
+        obj._value_ = value
+        return obj
+
+    def __init__(self, base_code_name: str, base_desc: str, area: EmisPermArea):
+        self._base_code_name = base_code_name
+        self._base_desc = base_desc
+        self._area = area
+
+    def get_base_code_name(self) -> str:
+        return self._base_code_name
+    
+    def get_base_description(self) -> str:
+        return self._base_desc
+    
+    def get_area(self) -> EmisPermArea:
+        return self._area
+
+    SCHOOL_ACCOUNTING = ('accounting',
+                         'accounting and budgeting information',
+                         EmisPermArea.SCHOOL_ADMIN)
+    
+    SCHOOL_ACTIVITY_CONFIG = ('school_activity_config',
+                              'school subjects, cocurricular, and '
+                              'extra-curricular activities',
+                              EmisPermArea.SCHOOL_ADMIN)
+    
+    STUDENT_ENROLL = ('student_enrollment',
+                      'student enrollment',
+                      EmisPermArea.SCHOOL_ADMIN)
+    
+    TEACHER_APPRAISAL = ('teacher_appraisal',
+                         'teacher appraisals',
+                         EmisPermArea.PRINCIPAL)
+    
+    TEACHER_ENROLL = ('teacher_enrollment',
+                      'teacher enrollment',
+                      EmisPermArea.SCHOOL_ADMIN)
+    
+    TRANSFER_STUDENT = ('student_transfer',
+                        'student transfers',
+                        EmisPermArea.SCHOOL_ADMIN)
+    
+    VICE_PRINCIPAL_APPRAISAL = ('vice_princ_appraisal',
+                                'vice principal appraisals',
+                                EmisPermArea.PRINCIPAL)
+    
+    STUDENT_ATTENDANCE = ('student_attendance',
+                          'student attendance',
+                          EmisPermArea.TEACHING)
+    
+    STUDENT_GRADES = ('student_grades',
+                      'student grades',
+                      EmisPermArea.TEACHING)
+    
+    STUDENT_DEV_BEHAVIORAL = ('student_dev_behavioral',
+                              'student developmental and behavioral data',
+                              EmisPermArea.TEACHING)
+    
+    PRINCIPAL_APPRAISAL = ('principal_appraisal',
+                           'principal appraisals',
+                           EmisPermArea.DISTRICT)
+    
+    SUPERVISION_REPORT = ('supervision_report',
+                          'school supervision reports',
+                          EmisPermArea.SUPERVISION)
+    
+    STATS_REPORT = ('stats_report',
+                    'aggregated data / statistical planning reports',
+                    EmisPermArea.STATISTICS)
+    
+    STATS_DATA_MGMT = ('stats_data_management',
+                       'statistical data',
+                       EmisPermArea.STATISTICS)
+    
+    ACCOMMODATION_ENROLL = ('accommodation_enrollment',
+                            'accommodation enrollments',
+                            EmisPermArea.EVALUATION)
+    
+    STUDENT_SUPPORT_FORM = ('student_support_form',
+                            'student support forms',
+                            EmisPermArea.SUPPORT)
+    
+    STUDENT_RESOURCE_ALLOC = ('student_resource_form',
+                              'student resource allocation forms',
+                              EmisPermArea.SUPPORT)
+    
+    STUDENT_COUNSEL = ('student_counsel_forms',
+                       'student counseling forms',
+                       EmisPermArea.SUPPORT)
+    
+    EXTERNAL_ASSESSMENT = ('external_assessment',
+                           'external assessment report forms',
+                           EmisPermArea.EXTERNAL)
+
+
+def get_code(perm: EmisPermission, mode: EmisPermMode) -> str:
+    """
+    Returns a full code name for the given permission and mode.
+    """
+    if not perm:
         return ''
-    
-    full_perm_code = (EDIT_PREFIX if edit else READ_PREFIX) + base_perm_code
-    perm_desc = (('Can edit ' if edit else 'Can read ')
-                    + base_perm_code.replace('_', ' ').lower())
-    
-    return (full_perm_code, perm_desc)
+    return mode.name.lower() + '_' + perm.get_base_code_name()
 
 
-def get_tuple_list(base_perm_codes: list, read_only: bool) -> list:
+def get_codes(perm: EmisPermission, mode_flags: EmisPermMode) -> list:
     """
-    Given a list of permission codes *without* action-specific prefixes ("edit",
-    "read"), returns a list of tuples of action-complete permission codes and
-    description text for use in Permission construction.  If read_only is
-    specified, only tuples with the "read" prefix shall be constructed;
-    otherwise, the list of tuples shall additionally include items with the
-    "edit" prefix.
+    Returns a list of code names for the given permission and mode(s).
     """
-    if not base_perm_codes:
-        return []
-
-    edit_args = [ False ] if read_only else [ False, True ]
-    results = []
-    for edit_arg in edit_args:
-        for base_perm_code in base_perm_codes:
-            if not base_perm_code:
-                continue
-            next_tuple = get_tuple(base_perm_code, edit_arg)
-            results.append(next_tuple)
-    return results
+    codes = []
+    for mode in EmisPermMode:
+        if mode_flags & mode:
+            codes.append(get_code(perm, mode))
+    return codes
 
 
-def get_codenames(base_perm_codes: list, read_only: bool) -> list:
+def get_description(perm: EmisPermission, mode: EmisPermMode) -> str:
     """
-    Given a list of permission codes *without* action-specific prefixes ("edit",
-    "read"), returns a list of action-complete permission code names.  If
-    read_only is specified, only code names with the "read" prefix shall be
-    constructed; otherwise, the list shall additionally include items with the
-    "edit" prefix.
+    Returns a full description for the given permission and mode.
     """
-    if not base_perm_codes:
-        return []
-    return [ x[0] for x in get_tuple_list(base_perm_codes, read_only) ]
+    if not perm:
+        return ''
+    return 'Can ' + mode.name.lower() + ' ' + perm.get_base_description()
 
 
-"""
-CUSTOM PERMISSION CODE NAMES (W/O PREFIX)
-"""
-# School administration
-SCHOOL_ACCOUNTING = 'accounting'
-SCHOOL_ACTIVITY_CONFIG = 'school_activity_configuration'
-STUDENT_ENROLL = 'student_enrollment'
-TEACHER_APPRAISAL = 'teacher_appraisal'
-TEACHER_ENROLL = 'teacher_enrollment'
-TRANSFER_STUDENT = 'student_transfer'
-VICE_PRINCIPAL_APPRAISAL = 'vice_principal_appraisal'
-SCHOOL_ADMIN_LIST_BASIC = [ SCHOOL_ACCOUNTING, SCHOOL_ACTIVITY_CONFIG,
-                            STUDENT_ENROLL, TEACHER_ENROLL ]
+def get_descriptions(perm: EmisPermission, mode_flags: EmisPermMode) -> list:
+    """
+    Returns a list of descriptions for the given permission and mode(s).
+    """
+    descriptions = []
+    for mode in EmisPermMode:
+        if mode_flags & mode:
+            descriptions.append(get_description(perm, mode))
+    return descriptions
 
-# School administration - early childhood
-SCHOOL_ADMIN_LIST_EC = SCHOOL_ADMIN_LIST_BASIC + [ TRANSFER_STUDENT ]
 
-# School administration - principals(+)
-SCHOOL_ADMIN_LIST_FULL = SCHOOL_ADMIN_LIST_EC + [ TEACHER_APPRAISAL,
-                                                    VICE_PRINCIPAL_APPRAISAL ]
+def get_tuples(perm: EmisPermission, mode_flags: EmisPermMode) -> list:
+    """
+    Returns a list of (code name, description) tuples for the given permission
+    and mode(s).
+    """
+    tuples = []
+    for mode in EmisPermMode:
+        if mode_flags & mode:
+            tuples.append(get_code(perm, mode), get_description(perm, mode))
+    return tuples
 
-# Teaching
-STUDENT_ATTENDANCE = 'student_attendance'
-STUDENT_GRADES = 'student_grades'
-STUDENT_DEV_BEHAVIORAL = 'student_dev_behavioral'
-TEACHING_LIST = [ STUDENT_ATTENDANCE, STUDENT_GRADES, STUDENT_DEV_BEHAVIORAL ]
 
-# District administration
-PRINCIPAL_APPRAISAL = 'principal_appraisal'
-DISTRICT_LIST = [ PRINCIPAL_APPRAISAL ]
+def get_all_tuples(perm: EmisPermission) -> list:
+    """
+    Returns a list of (code name, description) tuples for all possible modes.
+    """
+    return get_tuples(perm,
+                      EmisPermMode.CREATE|EmisPermMode.UPDATE|EmisPermMode.VIEW)
 
-# School supervision
-SUPERVISION_REPORT = 'supervision_report'
-SUPERVISION_LIST = [ SUPERVISION_REPORT ]
 
-# Statistics and planning
-STATS_REPORT = 'stats_report'
-STATS_DATA_MGMT = 'stats_data_management'
-STATS_LIST = [ STATS_REPORT, STATS_DATA_MGMT ]
+def get_codes_by_area(area: EmisPermArea, mode_flags: EmisPermMode) -> list:
+    """
+    Returns a list of code names for all permissions within a logical area,
+    for the indicated modes.
+    """
+    codes = []
+    for perm in EmisPermission:
+        if area & perm.get_area():
+            codes.append(get_codes(perm, mode_flags))
+    return codes
 
-# Evaluation and assessment
-ACCOMMODATION_ENROLL = 'accommodation_enrollment'
-EVAL_LIST = [ ACCOMMODATION_ENROLL ]
 
-# Support services
-STUDENT_SUPPORT_FORM = 'student_support_form'
-STUDENT_RESOURCE_ALLOC = 'student_resource_allocation'
-STUDENT_COUNSEL = 'student_counseling'
-SUPPORT_LIST = [ STUDENT_SUPPORT_FORM, STUDENT_RESOURCE_ALLOC, STUDENT_COUNSEL ]
+def get_tuples_by_area(area: EmisPermArea, mode_flags: EmisPermMode) -> list:
+    """
+    Returns a list of (code name, description) tuples for all permissions
+    within a logical area, for the indicated modes.
+    """
+    tuples = []
+    for perm in EmisPermission:
+        if area & perm.get_area():
+            tuples.append(get_tuples(perm, mode_flags))
+    return tuples
 
-# External assessment
-ASSESSMENT_REPORT = 'assessment_report'
-ASSESS_LIST = [ ASSESSMENT_REPORT ]
 
-# All
-FULL_LIST = (SCHOOL_ADMIN_LIST_FULL + TEACHING_LIST + DISTRICT_LIST
-                + SUPERVISION_LIST + STATS_LIST + EVAL_LIST + SUPPORT_LIST
-                + ASSESS_LIST)
+def get_all_tuples_by_area(area: EmisPermArea):
+    """
+    Returns a list of (code name, description) tuples for all permissions
+    within a logical area, for all possible modes.
+    """
+    return get_tuples_by_area(area,
+                EmisPermMode.CREATE|EmisPermMode.UPDATE|EmisPermMode.VIEW)
 
 
 """
@@ -175,45 +292,52 @@ class UnmanagedCustomPermissionModel(CustomPermissionModel):
 
 """
 UNMANAGED MODEL IMPLEMENTATIONS (W/ ASSOCIATED PERMISSIONS)
-
-PRS 22-Mar 2021 TODO: These can potentially be consolidated into a single
-class, but have been logically divided by subject area as a starting point
-for general model build.
 """
-class UnmanagedSchoolAdminModel(UnmanagedCustomPermissionModel):
+class SchoolAdministration(UnmanagedCustomPermissionModel):
     class Meta(UnmanagedCustomPermissionModel.Meta):
-        permissions = get_tuple_list(SCHOOL_ADMIN_LIST_FULL, False)
+        permissions = get_all_tuples_by_area(EmisPermArea.SCHOOL_ADMIN)
 
 
-class UnmanagedTeachingModel(UnmanagedCustomPermissionModel):
+class EarlyChildhood(UnmanagedCustomPermissionModel):
     class Meta(UnmanagedCustomPermissionModel.Meta):
-        permissions = get_tuple_list(TEACHING_LIST, False)
+        permissions = get_all_tuples_by_area(EmisPermArea.EARLY_CHILDHOOD)
 
 
-class UnmanagedDistrictAdminModel(UnmanagedCustomPermissionModel):
+class Principal(UnmanagedCustomPermissionModel):
     class Meta(UnmanagedCustomPermissionModel.Meta):
-        permissions = get_tuple_list(DISTRICT_LIST, False)
+        permissions = get_all_tuples_by_area(EmisPermArea.PRINCIPAL)
 
 
-class UnmanagedSchoolSupervisionModel(UnmanagedCustomPermissionModel):
+class Teaching(UnmanagedCustomPermissionModel):
     class Meta(UnmanagedCustomPermissionModel.Meta):
-        permissions = get_tuple_list(SUPERVISION_LIST, False)
+        permissions = get_all_tuples_by_area(EmisPermArea.TEACHING)
 
 
-class UnmanagedStatisticsModel(UnmanagedCustomPermissionModel):
+class DistrictAdministration(UnmanagedCustomPermissionModel):
     class Meta(UnmanagedCustomPermissionModel.Meta):
-        permissions = get_tuple_list(STATS_LIST, False)
+        permissions = get_all_tuples_by_area(EmisPermArea.DISTRICT)
 
 
-class UnmanagedEvaluationModel(UnmanagedCustomPermissionModel):
+class SchoolSupervision(UnmanagedCustomPermissionModel):
     class Meta(UnmanagedCustomPermissionModel.Meta):
-        permissions = get_tuple_list(EVAL_LIST, False)
+        permissions = get_all_tuples_by_area(EmisPermArea.SUPERVISION)
 
 
-class UnmanagedSupportServicesModel(UnmanagedCustomPermissionModel):
+class StatisticsAndPlanning(UnmanagedCustomPermissionModel):
     class Meta(UnmanagedCustomPermissionModel.Meta):
-        permissions = get_tuple_list(SUPPORT_LIST, False)
+        permissions = get_all_tuples_by_area(EmisPermArea.STATISTICS)
 
-class UnmanagedExternalAssessmentModel(UnmanagedCustomPermissionModel):
+
+class EvaluationAndAssessment(UnmanagedCustomPermissionModel):
     class Meta(UnmanagedCustomPermissionModel.Meta):
-        permissions = get_tuple_list(ASSESS_LIST, False)
+        permissions = get_all_tuples_by_area(EmisPermArea.EVALUATION)
+
+
+class SupportServices(UnmanagedCustomPermissionModel):
+    class Meta(UnmanagedCustomPermissionModel.Meta):
+        permissions = get_all_tuples_by_area(EmisPermArea.SUPPORT)
+
+
+class ExternalAssessment(UnmanagedCustomPermissionModel):
+    class Meta(UnmanagedCustomPermissionModel.Meta):
+        permissions = get_all_tuples_by_area(EmisPermArea.EXTERNAL)

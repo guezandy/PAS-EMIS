@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Surveillance Home</title>
+    <!-- Latest compiled and minified CSS -->
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+    <!-- jQuery library
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js" integrity="sha384-SR1sx49pcuLnqZUnnPwx6FCym0wLsk5JZuNx2bPPENzswTNFaQU1RDvt3wT4gWFG" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
+
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
+     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
+     <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
+     <script>
+         $(document).ready(function() {
+             $('#dataTable').DataTable();
+            });
+            (function($) {
+                "use strict";
+                var path = window.location.href;
+                $("#layoutSidenav_nav .sb-sidenav a.nav-link").each(function() {
+                    if (this.href === path) {
+                        $(this).addClass("active");
+                    }
+                });
+                $("#sidebarToggle").on("click", function(e) {
+                    e.preventDefault();
+                    $("body").toggleClass("sb-sidenav-toggled");
+                });
+            })(jQuery);
+     </script>
+    <! -- Font Awesome -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
+</head>
+<body class="sb-nav-fixed">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Statistics & Planning</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+            <a class="nav-link" href="#">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Description</a>
+      </li>
+ <!-- put if is authenticated here -->
+
+         <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            School Enrollment Entry forms
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="/district">Create Districts</a></li>
+              <li><a class="dropdown-item" href="/school">Create Schools</a></li>
+              <li><a class="dropdown-item" href="/enrollment">Enrollment History</a></li>
+              <li><a class="dropdown-item" href="/enroll_class">Enrollment / Class size</a></li>
+          </ul>
+          </li>
+
+
+       <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Public School Enrollments / School Capacity
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="/enrolled">National Enrollment / Capacity </a></li>
+              <li><a class="dropdown-item" href="/district_1">District 1 Enrollments / Capacity </a></li>
+              <li><a class="dropdown-item" href="/district_2">District 2 Enrollments / Capacity</a></li>
+              <li><a class="dropdown-item" href="/district_3">District 3 Enrollments / Capacity</a></li>
+              <li><a class="dropdown-item" href="/district_4">District 4 Enrollments / Capacity</a></li>
+              <li><a class="dropdown-item" href="/district_5">District 5 Enrollments / Capacity</a></li>
+              <li><a class="dropdown-item" href="/district_6">District 6 Enrollments / Capacity</a></li>
+              <li><a class="dropdown-item" href="/district_7">District 7 Enrollments / Capacity</a><li>
+              <li><a class="dropdown-item" href="/district_8">District 8 Enrollments / Capacity</a></li>
+          </ul>
+       </li>
+
+
+       <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Enrollment/Capacity Trends
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="/#">National Enrollment / Capacity Trend </a></li>
+              <li><a class="dropdown-item" href="/district_1_trend">District 1 Enrollments / Capacity Trend </a></li>
+              <li><a class="dropdown-item" href="/district_2_trend">District 2 Enrollments / Capacity Trend</a></li>
+              <li><a class="dropdown-item" href="/#">District 3 Enrollments / Capacity Trend</a></li>
+              <li><a class="dropdown-item" href="/#">District 4 Enrollments / Capacity Trend</a></li>
+              <li><a class="dropdown-item" href="/#">District 5 Enrollments / Capacity Trend</a></li>
+              <li><a class="dropdown-item" href="/#">District 6 Enrollments / Capacity Trend</a></li>
+              <li><a class="dropdown-item" href="/#">District 7 Enrollments / Capacity Trend</a></li>
+              <li><a class="dropdown-item" href="/#">District 8 Enrollments / Capacity Trend</a></li>
+      </ul>
+    </li>
+
+ <!-- Close if is authenticated here-->
+ </ul>
+    </div>
+  </div>
+</nav>
+
+<div id="layoutSidenav_content">
+
+
+{% block page_content %}
+{% endblock %}
+
+</div>
+
+</body>
+</html>

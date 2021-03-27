@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+{% block page_content %}
+<main>
+<script src = 'https://cdnjs.com/libraries/Chart.js'></script>
+
+
+
+
+
+
+
+
+  <div class="row">
+                            <div class="col-xl-4 col-md-4">
+                                <div class="card bg-primary text-white mb-4">
+                                    <div class="card-body"><h3>District One Primary & Secondary Schools</h3>
+                                        <p>District one has a total of {{ number_of_primary }} primary schools and {{ number_of_secondary }} secondary schools</p>
+                                    </div>
+                                    <div class="card-footer d-flex align-items-center justify-content-between">
+
+                    <div class="card mb-4">
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" max-width="100%">
+                                <thead>
+                                <tr>
+                                    <th>Name of School</th>
+                                    <th>Category of School</th>
+                                </tr>
+                                </thead>
+                                <tfoot>
+                                <tr>
+                                    <th>Name of School</th>
+                                    <th>Category of School</th>
+                                </tr>
+                                </tfoot>
+                                <tbody>
+                                {% for school in name_of_school %}
+                                    <tr>
+                                        <td>{{ school.name_of_school }}</td>
+                                        <td>{{ school.category_of_school }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+    </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-8 col-md-8">
+                                <div class="card bg-secondary text-white mb-4">
+                                    <div class="card-body">District Enrollment / Capacity Trend</div>
+                                    <div class="card-footer d-flex align-items-center justify-content-between">
+                                        <canvas id="myChart" width="400" height="400"></canvas>
+<script>
+var ctx = document.getElementById('myChart');
+var myChart = new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: ['Trends in Enrollment'],
+    datasets: [
+      {
+        label: 'Capacity of School',
+        data: [{% for items in all_data %} {{ items.capacity_of_school }} {% endfor %}],
+        backgroundColor: '#00ff00',
+      },
+      {
+        label: 'Enrollment',
+        data: [{% for items in all_data %} {{ items.total_enrollment }} {% endfor %}],
+        backgroundColor: '#ff0000',
+      }
+    ]
+  },
+  options: {
+    scales: {
+      xAxes: [{ stacked: true }],
+      yAxes: [{ stacked: true }]
+    }
+  }
+});
+</script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+</main>
+{% endblock %}

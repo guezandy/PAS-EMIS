@@ -4,19 +4,18 @@ from django.db import models
 from django.db.models import Model
 
 """
-PRS 22-Mar 2021
-
 Django permissions are tied to Models, which are in turn typically tied to
 database objects/tables, or "managed".  In some cases this may be too granular
 for the application; in others, model development may still be in progress.
 
 The models within this file provide a foundation for permissions management
-and auto-populated group definitions.  As other (managed) models are written,
-they may replace some model/permission definitions within this file.
+and auto-populated group definitions.
 
 NOTE: permissions within this file are constructed using a simplified
 create/update/view model (vs. view/add/change/delete).
 """
+
+_PERM_MODEL_APP_LABEL = 'permissions'
 
 
 class EmisPermMode(IntFlag):
@@ -34,29 +33,37 @@ class EmisPermArea(IntFlag):
     Logical grouping for EMIS permissions.
     """
     SCHOOL_ADMIN = 1
-    EARLY_CHILDHOOD = 2
-    PRINCIPAL = 4
-    TEACHING = 8
-    DISTRICT = 16
-    SUPERVISION = 32
-    STATISTICS = 64
-    EVALUATION = 128
-    SUPPORT = 256
-    EXTERNAL = 512
-    ALL = (SCHOOL_ADMIN | EARLY_CHILDHOOD | PRINCIPAL | TEACHING | DISTRICT
-            SUPERVISION | STATISTICS | EVALUATION | SUPPORT | EXTERNAL)
+    SCHOOL_ADMIN_RESTR = 2
+    EARLY_CHILDHOOD = 4
+    PRINCIPAL = 8
+    TEACHING = 16
+    DISTRICT = 32
+    SUPERVISION = 64
+    STATISTICS = 128
+    EVALUATION = 256
+    SUPPORT = 512
+    EXTERNAL = 1024
+    ALL = SCHOOL_ADMIN | SCHOOL_ADMIN_RESTR | EARLY_CHILDHOOD | \
+            PRINCIPAL | TEACHING | DISTRICT | SUPERVISION | STATISTICS | \
+                EVALUATION | SUPPORT | EXTERNAL
 
 
 @unique
 class EmisPermission(Enum):
     """
     Contains "base" (without EmisPermMode information) code names and
-    descriptions defining a particular permission or functional area, as well
-    as logical group assignment (EmisPermArea) for each.
+    descriptions which are to be used to define permissions.  Assigns
+    each of these to a logical group (EmisPermArea).
 
     This implementation is an "Enum with attributes", which is to say that
     we override __new__ and __init__ to allow each enumerated value to store
     additional information beyond a simple integer.
+
+    Shorthand properties are provided for ease of use in views, e.g. to
+    check if a user has permission to update accounting data:
+        
+        user.has_perm(EmisPermission.SCHOOL_ACCOUNTING.get_update_code())
+
     """
     def __new__(cls, *args, **kwargs):
         value = len(cls.__members__) + 1
@@ -69,6 +76,7 @@ class EmisPermission(Enum):
         self._base_desc = base_desc
         self._area = area
 
+    # Public properties - general
     def get_base_code_name(self) -> str:
         return self._base_code_name
     
@@ -77,7 +85,18 @@ class EmisPermission(Enum):
     
     def get_area(self) -> EmisPermArea:
         return self._area
+    
+    # Public properties - shorthand / convenience methods
+    def get_create_code(self) -> str:
+        return get_code(self, EmisPermMode.CREATE)
+    
+    def get_update_code(self) -> str:
+        return get_code(self, EmisPermMode.UPDATE)
 
+    def get_view_code(self) -> str:
+        return get_code(self, EmisPermMode.VIEW)
+
+    # Values
     SCHOOL_ACCOUNTING = ('accounting',
                          'accounting and budgeting information',
                          EmisPermArea.SCHOOL_ADMIN)
@@ -97,7 +116,7 @@ class EmisPermission(Enum):
     
     TEACHER_ENROLL = ('teacher_enrollment',
                       'teacher enrollment',
-                      EmisPermArea.SCHOOL_ADMIN)
+                      EmisPermArea.SCHOOL_ADMIN_RESTR)
     
     TRANSFER_STUDENT = ('student_transfer',
                         'student transfers',
@@ -158,7 +177,18 @@ class EmisPermission(Enum):
 
 def get_code(perm: EmisPermission, mode: EmisPermMode) -> str:
     """
-    Returns a full code name for the given permission and mode.
+    Returns a full code name for the given permission and mode, prefixed with
+    the initialized permissions-model application name.
+    """
+    if not _PERM_MODEL_APP_LABEL:
+        return ''
+    return _PERM_MODEL_APP_LABEL+ '.' + get_raw_code(perm, mode)
+
+
+def get_raw_code(perm: EmisPermission, mode: EmisPermMode) -> str:
+    """
+    Returns a full code name for the given permission and mode.  Does not
+    include the application name under which the permission may be registered.
     """
     if not perm:
         return ''
@@ -167,12 +197,14 @@ def get_code(perm: EmisPermission, mode: EmisPermMode) -> str:
 
 def get_codes(perm: EmisPermission, mode_flags: EmisPermMode) -> list:
     """
-    Returns a list of code names for the given permission and mode(s).
+    Returns a list of code names for the given permission and mode(s).  Does
+    not include the application name(s) under which the permission(s) might be
+    registered.
     """
     codes = []
     for mode in EmisPermMode:
         if mode_flags & mode:
-            codes.append(get_code(perm, mode))
+            codes.append(get_raw_code(perm, mode))
     return codes
 
 
@@ -288,56 +320,5 @@ class UnmanagedCustomPermissionModel(CustomPermissionModel):
         """
         abstract = True  # Base class value not inherited (reset by Django)
         managed = False
-
-
-"""
-UNMANAGED MODEL IMPLEMENTATIONS (W/ ASSOCIATED PERMISSIONS)
-"""
-class SchoolAdministration(UnmanagedCustomPermissionModel):
-    class Meta(UnmanagedCustomPermissionModel.Meta):
-        permissions = get_all_tuples_by_area(EmisPermArea.SCHOOL_ADMIN)
-
-
-class EarlyChildhood(UnmanagedCustomPermissionModel):
-    class Meta(UnmanagedCustomPermissionModel.Meta):
-        permissions = get_all_tuples_by_area(EmisPermArea.EARLY_CHILDHOOD)
-
-
-class Principal(UnmanagedCustomPermissionModel):
-    class Meta(UnmanagedCustomPermissionModel.Meta):
-        permissions = get_all_tuples_by_area(EmisPermArea.PRINCIPAL)
-
-
-class Teaching(UnmanagedCustomPermissionModel):
-    class Meta(UnmanagedCustomPermissionModel.Meta):
-        permissions = get_all_tuples_by_area(EmisPermArea.TEACHING)
-
-
-class DistrictAdministration(UnmanagedCustomPermissionModel):
-    class Meta(UnmanagedCustomPermissionModel.Meta):
-        permissions = get_all_tuples_by_area(EmisPermArea.DISTRICT)
-
-
-class SchoolSupervision(UnmanagedCustomPermissionModel):
-    class Meta(UnmanagedCustomPermissionModel.Meta):
-        permissions = get_all_tuples_by_area(EmisPermArea.SUPERVISION)
-
-
-class StatisticsAndPlanning(UnmanagedCustomPermissionModel):
-    class Meta(UnmanagedCustomPermissionModel.Meta):
-        permissions = get_all_tuples_by_area(EmisPermArea.STATISTICS)
-
-
-class EvaluationAndAssessment(UnmanagedCustomPermissionModel):
-    class Meta(UnmanagedCustomPermissionModel.Meta):
-        permissions = get_all_tuples_by_area(EmisPermArea.EVALUATION)
-
-
-class SupportServices(UnmanagedCustomPermissionModel):
-    class Meta(UnmanagedCustomPermissionModel.Meta):
-        permissions = get_all_tuples_by_area(EmisPermArea.SUPPORT)
-
-
-class ExternalAssessment(UnmanagedCustomPermissionModel):
-    class Meta(UnmanagedCustomPermissionModel.Meta):
-        permissions = get_all_tuples_by_area(EmisPermArea.EXTERNAL)
+        app_label = _PERM_MODEL_APP_LABEL
+    

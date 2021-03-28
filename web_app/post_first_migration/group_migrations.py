@@ -1,47 +1,64 @@
+import logging
+
 from django.db import models, migrations
 from django.contrib.auth.models import Group, Permission
 from django.core.management.sql import emit_post_migrate_signal
 
-from web_app.models import permissions
-from web_app.models.permissions import *
-
-import logging
+from emis import permissions
+from emis.permissions import EmisPermArea, EmisPermMode, EmisPermission, \
+                          get_tuples_by_area, get_all_tuples_by_area, get_tuples
 
 LOGGER = logging.getLogger(__name__)
 
 
 # Group permission lists
-TEACHER_LIST = get_codenames(TEACHING_LIST, read_only=False)
+TEACHER_LIST = get_all_tuples_by_area(EmisPermArea.TEACHING)
 
-ADMIN_LIST = get_codenames(SCHOOL_ADMIN_LIST_BASIC, read_only=False)
 
-PRINCIPAL_LIST = (get_codenames(SCHOOL_ADMIN_LIST_FULL, read_only=False)
-                    + get_codenames(TEACHING_LIST, read_only=False))
+ADMIN_LIST = get_all_tuples_by_area(EmisPermArea.SCHOOL_ADMIN) \
+                + get_tuples_by_area(EmisPermArea.SCHOOL_ADMIN_RESTR, \
+                                     EmisPermMode.VIEW | EmisPermMode.UPDATE) \
+                + get_tuples(EmisPermission.STUDENT_GRADES, \
+                             EmisPermMode.VIEW | EmisPermMode.UPDATE)
 
-DISTRICT_OFC_LIST = (get_codenames(DISTRICT_LIST, read_only=False)
-                        + get_codenames(SCHOOL_ADMIN_LIST_FULL, read_only=True)
-                        + get_codenames(TEACHING_LIST, read_only=True))
+PRINCIPAL_LIST = TEACHER_LIST \
+                + get_all_tuples_by_area(EmisPermArea.SCHOOL_ADMIN) \
+                + get_all_tuples_by_area(EmisPermArea.SCHOOL_ADMIN_RESTR) \
+                + get_all_tuples_by_area(EmisPermArea.PRINCIPAL)
 
-SUPERVISOR_LIST = (get_codenames(FULL_LIST, read_only=True)
-                        + get_codenames(SUPERVISION_LIST, read_only=False))
+DISTRICT_LIST = get_tuples_by_area(EmisPermArea.TEACHING, EmisPermMode.VIEW) \
+      + get_tuples_by_area(EmisPermArea.SCHOOL_ADMIN, EmisPermMode.VIEW) \
+      + get_tuples_by_area(EmisPermArea.SCHOOL_ADMIN_RESTR, EmisPermMode.VIEW) \
+      + get_tuples_by_area(EmisPermArea.PRINCIPAL, EmisPermMode.VIEW) \
+      + get_all_tuples_by_area(EmisPermArea.DISTRICT)
 
-STATISTICIAN_LIST = (get_codenames(FULL_LIST, read_only=True)
-                        + get_codenames(STATS_LIST, read_only=False))
+SUPERVISOR_LIST = get_tuples_by_area(EmisPermArea.ALL, EmisPermMode.VIEW) \
+               + get_tuples_by_area(EmisPermArea.SUPERVISION, \
+                                    EmisPermMode.CREATE|EmisPermMode.UPDATE)
 
-EVALUATOR_LIST = (get_codenames(SCHOOL_ADMIN_LIST_FULL, read_only=False)
-                    + get_codenames(TEACHING_LIST, read_only=False)
-                    + get_codenames(DISTRICT_LIST, read_only=False)
-                    + get_codenames(EVAL_LIST, read_only=False))
+STATISTICIAN_LIST = get_tuples_by_area(EmisPermArea.ALL, EmisPermMode.VIEW) \
+               + get_tuples_by_area(EmisPermArea.STATISTICS, \
+                                    EmisPermMode.CREATE|EmisPermMode.UPDATE)
 
-EARLY_CHILDHOOD_LIST = (get_codenames(SCHOOL_ADMIN_LIST_EC, read_only=False)
-                            + get_codenames(TEACHING_LIST, read_only=False))
+EVALUATOR_LIST = PRINCIPAL_LIST \
+                    + get_all_tuples_by_area(EmisPermArea.DISTRICT) \
+                    + get_all_tuples_by_area(EmisPermArea.EVALUATION)
 
-SUPPORT_SERVICES_LIST = (get_codenames(DISTRICT_LIST, read_only=True)
-                    + get_codenames(SCHOOL_ADMIN_LIST_FULL, read_only=True)
-                    + get_codenames(TEACHING_LIST, read_only=True)
-                    + get_codenames(SUPPORT_LIST, read_only=False))
+# NOTE/TODO: need clarification on this list - document is ambiguous.  Below
+# represents "all principal permissions apart from appraisals".
+EARLY_CHILDHOOD_LIST = TEACHER_LIST \
+                + get_all_tuples_by_area(EmisPermArea.SCHOOL_ADMIN) \
+                + get_all_tuples_by_area(EmisPermArea.SCHOOL_ADMIN_RESTR)
 
-ASSESSOR_LIST = STATISTICIAN_LIST + get_codenames(ASSESS_LIST, read_only=False)
+SUPPORT_LIST = get_tuples_by_area(EmisPermArea.TEACHING, EmisPermMode.VIEW) \
+      + get_tuples_by_area(EmisPermArea.SCHOOL_ADMIN, EmisPermMode.VIEW) \
+      + get_tuples_by_area(EmisPermArea.SCHOOL_ADMIN_RESTR, EmisPermMode.VIEW) \
+      + get_tuples_by_area(EmisPermArea.PRINCIPAL, EmisPermMode.VIEW) \
+      + get_tuples_by_area(EmisPermArea.DISTRICT, EmisPermMode.VIEW) \
+      + get_all_tuples_by_area(EmisPermArea.SUPPORT)
+
+ASSESSOR_LIST = STATISTICIAN_LIST \
+                    + get_all_tuples_by_area(EmisPermArea.EXTERNAL)
 
 
 # Custom group name / permission-list pairings
@@ -49,12 +66,12 @@ permissions_by_group = {
     'Teaching' : TEACHER_LIST,
     'School Admin' : ADMIN_LIST,
     'Principals' : PRINCIPAL_LIST,
-    'District Education Officer' : DISTRICT_OFC_LIST,
+    'District Education Officer' : DISTRICT_LIST,
     'School Supervision' : SUPERVISOR_LIST,
     'Statistics and Planning' : STATISTICIAN_LIST,
     'Evaluation and Assessment' : EVALUATOR_LIST,
     'Early Childhood' : EARLY_CHILDHOOD_LIST,
-    'Support Services' : SUPPORT_SERVICES_LIST,
+    'Support Services' : SUPPORT_LIST,
     'External Assessor' : ASSESSOR_LIST
 }
 

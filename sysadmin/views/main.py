@@ -14,8 +14,9 @@ from sysadmin.models import Activation
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
 from django.template import Context
+from django.contrib.auth.decorators import user_passes_test
 
-
+@user_passes_test(lambda u: u.is_superuser)
 def user_list(request):
     search_term = request.GET.get('search_term')
     page_number = request.GET.get('page')
@@ -36,7 +37,7 @@ def user_list(request):
     context = { 'user_list' : page_obj, 'search_term' :search_term}
     return render(request, 'sysadmin/user_list.html',context)
 
-
+@user_passes_test(lambda u: u.is_superuser)
 def create_user(request):
     if request.method == 'POST':
         f = CustomUserCreationForm(request.POST)
@@ -67,6 +68,23 @@ def create_user(request):
 
     return render(request, 'sysadmin/user_create.html', {'form': f})
 
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def user_detail(request, pk: int):
+    if request.method == 'POST':
+        user = get_object_or_404(User, pk= pk)
+        f = CustomEditUserForm(request.POST, instance=user)
+        if f.is_valid():
+            f.save()
+            messages.success(request, 'User updated successfully')
+            return HttpResponseRedirect(reverse('sysadmin:user-detail', args=(pk,)))
+    else:
+        user = get_object_or_404(User, pk= pk)
+        f = CustomEditUserForm(instance=user)
+
+    return render(request, 'sysadmin/user_detail.html', {'form': f})
+
 def send_activation_email(request, user: User):
     plaintext = get_template('sysadmin/user_activation_email.txt')
     html = get_template('sysadmin/user_activation_email.html')
@@ -82,18 +100,3 @@ def send_activation_email(request, user: User):
     msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
     msg.attach_alternative(html_content, "text/html")
     msg.send(fail_silently=False)
-
-def user_detail(request, pk: int):
-    if request.method == 'POST':
-        user = get_object_or_404(User, pk= pk)
-        f = CustomEditUserForm(request.POST, instance=user)
-        if f.is_valid():
-            f.save()
-            messages.success(request, 'User updated successfully')
-            return HttpResponseRedirect(reverse('sysadmin:user-detail', args=(pk,)))
-    else:
-        user = get_object_or_404(User, pk= pk)
-        f = CustomEditUserForm(instance=user)
-
-    return render(request, 'sysadmin/user_detail.html', {'form': f})
-

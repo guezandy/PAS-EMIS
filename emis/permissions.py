@@ -17,6 +17,14 @@ create/update/view model (vs. view/add/change/delete).
 
 _PERM_MODEL_APP_LABEL = None
 
+def get_perm_app_label() -> str:
+    """
+    Returns the app_label that shall be used for permission-codename matching
+    (e.g. get_code).
+    """
+    return _PERM_MODEL_APP_LABEL
+
+
 def init_perm_model_app_label(app_label: str):
     """
     Sets the app name under which the permissions (and consequently their

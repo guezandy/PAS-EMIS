@@ -13,33 +13,39 @@ CATEGORY_CHOICES = [('primary school', 'Primary School'),
                     ('other', 'Other')]
 
 SEX_CHOICES = [('male', 'Male'),
-                    ('female', 'Female')]
+               ('female', 'Female')]
 
 
 # Create your models here.
 
 class District(models.Model):
-    created_at = models.DateField()
+    created_at = models.DateField(auto_now_add=True)
     created_by = models.CharField(max_length=255)
     District_Code = models.CharField(max_length=50)
     District_Name = models.CharField(max_length=50)
-    updated_at = models.DateField()
+    updated_at = models.DateField(auto_now_add=True)
     updated_by = models.CharField(max_length=255)
+
+    def __str__(self):
+        return str(self.District_Name)
 
 
 class School(models.Model):
-    created_at = models.DateField()
+    created_at = models.DateField(auto_now_add=True)
     created_by = models.CharField(max_length=255)
     School_Code = models.CharField(max_length=50)
     School_Name = models.CharField(max_length=50)
     District_Name = models.CharField(max_length=20, choices=DISTRICT_CHOICES, default='Select')
     category_of_school = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='Select')
-    updated_at = models.DateField
+    updated_at = models.DateField(auto_now_add=True)
     updated_by = models.CharField(max_length=255)
+
+    def __str__(self):
+        return str(self.School_Name)
 
 
 class AggregateEnrollment(models.Model):
-    created_at = models.DateField()
+    created_at = models.DateField(auto_now_add=True)
     created_by = models.CharField(max_length=255)
     name_of_school = models.CharField(max_length=55)
     academic_year = models.CharField(max_length=20)
@@ -47,12 +53,20 @@ class AggregateEnrollment(models.Model):
     district_of_school = models.IntegerField(choices=DISTRICT_CHOICES)
     capacity_of_school = models.IntegerField()
     total_enrollment = models.IntegerField()
-    updated_at = models.DateField()
+    surplus = models.IntegerField(blank=True)
+    updated_at = models.DateField(auto_now_add=True)
     updated_by = models.CharField(max_length=255)
+
+    # def save(self, *args, **kwargs):
+    # self.surplus = self.capacity_of_school - self.total_enrollment
+    # super().save(*args, **kwargs)
+
+    def __str__(self):
+        return "Saved"
 
 
 class Enrollment(models.Model):
-    created_at = models.DateField()
+    created_at = models.DateField(auto_now_add=True)
     created_by = models.CharField(max_length=255)
     school = models.CharField(max_length=50)
     year = models.CharField(max_length=20)
@@ -61,5 +75,5 @@ class Enrollment(models.Model):
     grade = models.CharField(max_length=20, choices=GRADE_CHOICES, default=None)
     enrollment = models.IntegerField(null=True, blank=True)
     sex = models.CharField(max_length=20, null=True, choices=SEX_CHOICES)
-    updated_at = models.DateField()
+    updated_at = models.DateField(auto_now_add=True)
     updated_by = models.CharField(max_length=255)

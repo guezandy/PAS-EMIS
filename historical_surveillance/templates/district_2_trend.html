@@ -3,26 +3,15 @@
 {% load crispy_forms_tags %}
 {% block page_content %}
 <main>
-<script src = 'https://cdnjs.com/libraries/Chart.js'></script>
-
-
-
-
-
-
-
-
   <div class="row">
-                            <div class="col-xl-4 col-md-4">
-                                <div class="card bg-primary text-white mb-4">
-                                    <div class="card-body"><h3>District One Primary & Secondary Schools</h3>
-                                        <p>District two has a total of {{ number_of_primary }} primary schools and {{ number_of_secondary }} secondary schools</p>
-                                    </div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-
-                    <div class="card mb-4">
-
-                        <div class="table-responsive">
+      <div class="col-xl-4 col-md-4">
+          <div class="card bg-primary text-white mb-4">
+              <div class="card-body"><h3>District Two Primary & Secondary Schools</h3>
+                  <p>District two has a total of {{ number_of_primary }} primary schools and {{ number_of_secondary }} secondary schools</p>
+              </div>
+              <div class="card-footer d-flex align-items-center justify-content-between">
+                  <div class="card mb-4">
+                      <div class="table-responsive">
                             <table class="table table-bordered" id="dataTable" max-width="100%">
                                 <thead>
                                 <tr>
@@ -46,50 +35,51 @@
                                 </tbody>
                             </table>
                         </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="col-xl-8 col-md-8">
+          <div class="card bg-secondary text-white mb-4">
+              <div class="card-body">District Enrollment / Capacity Trend<br/>
+                <h1 class ="text-info">{% if error_message %} {{ error_message }} {% endif%}</h1></div>
+              <div class="card-footer d-flex align-items-center justify-content-between">
+              {% if request.POST %}
+                  {% if graph %}
+                  <img src ="data:image/png;base64, {{ graph | safe}}"/>
+                  {%endif%}
+              {% endif%}
 
-    </div>
-
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-8 col-md-8">
-                                <div class="card bg-secondary text-white mb-4">
-                                    <div class="card-body">District Enrollment / Capacity Trend</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <canvas id="myChart" width="400" height="400"></canvas>
-<script>
-var ctx = document.getElementById('myChart');
-var myChart = new Chart(ctx, {
-  type: 'bar',
-  data: {
-    labels: ['Trends in Enrollment'],
-    datasets: [
-      {
-        label: 'Capacity of School',
-        data: [{% for items in all_data %} {{ items.capacity_of_school }} {% endfor %}],
-        backgroundColor: '#00ff00',
-      },
-      {
-        label: 'Enrollment',
-        data: [{% for items in all_data %} {{ items.total_enrollment }} {% endfor %}],
-        backgroundColor: '#ff0000',
-      }
-    ]
-  },
-  options: {
-    scales: {
-      xAxes: [{ stacked: true }],
-      yAxes: [{ stacked: true }]
-    }
-  }
-});
-</script>
-                                    </div>
-                                </div>
+               <form action="" method="POST">
+                   {% csrf_token %}
+                   	<div class="form-row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="small mb-1" for="chart_type">Choose a Chart type</label>
+                                <select name ="chart" id = "chart_type">
+                                    <option value ="" selected>[Choose Here]</option>
+                                    <option value ="barplot">Bar Plot</option>
+                                    <option value ="lineplot">Line Plot</option>
+                                </select>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <label class="small mb-1" for="school">Select a school</label>
+                            <select name ="school_name" id = "school">
+                                <option value ="" selected>[Choose Here]</option>
+                                {% for item in schools %}
+                                <option value = "{{ item }}">{{ item }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                   <br/><input type ="submit" name ="submit" class ="btn btn-primary" value="Get Trend"/>
+               </form>
+              </div>
+          </div>
+      </div>
+  </div>
 
 
 </main>
-{% endblock %}
+{% endblock page_content %}

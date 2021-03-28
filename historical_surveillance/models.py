@@ -1,5 +1,6 @@
 from django.db import models
 
+# from django.utils import timezone
 DISTRICT_CHOICES = [(1, 'District 1'), (2, 'District 2'),
                     (3, 'District 3'), (4, 'District 4'),
                     (5, 'District 5'), (6, 'District 6'),
@@ -23,6 +24,7 @@ class District(models.Model):
     created_by = models.CharField(max_length=255)
     District_Code = models.CharField(max_length=50)
     District_Name = models.CharField(max_length=50)
+    # updated_at = models.DateField(default=timezone.now())
     updated_at = models.DateField(auto_now_add=True)
     updated_by = models.CharField(max_length=255)
 
@@ -45,6 +47,7 @@ class School(models.Model):
 
 
 class AggregateEnrollment(models.Model):
+    objects = None
     created_at = models.DateField(auto_now_add=True)
     created_by = models.CharField(max_length=255)
     name_of_school = models.CharField(max_length=55)
@@ -53,7 +56,7 @@ class AggregateEnrollment(models.Model):
     district_of_school = models.IntegerField(choices=DISTRICT_CHOICES)
     capacity_of_school = models.IntegerField()
     total_enrollment = models.IntegerField()
-    surplus = models.IntegerField(blank=True)
+    # surplus = models.IntegerField(blank=True)
     updated_at = models.DateField(auto_now_add=True)
     updated_by = models.CharField(max_length=255)
 

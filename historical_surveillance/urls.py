@@ -31,5 +31,6 @@ urlpatterns = [
     path('district_8', views.enrolled_trend_district_8, name='enrolled_trend_8'),
     path('district_1_trend', views.district_1_trend, name='district_1_trend'),
     path('district_2_trend', views.district_2_trend, name='district_2_trend'),
+    path('district_3_trend', views.district_3_trend, name='district_3_trend'),
 
 ]

@@ -12,7 +12,7 @@ class TestScore(CustomPermissionModel):
     non_sensitive_data = models.CharField(max_length=50)
 
 """
-UNMANAGED MODEL IMPLEMENTATIONS (W/ ASSOCIATED PERMISSIONS)
+Models (unmanaged) for custom app permissions.
 """
 class SchoolAdministration(UnmanagedCustomPermissionModel):
     class Meta(UnmanagedCustomPermissionModel.Meta):

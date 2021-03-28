@@ -186,7 +186,8 @@ class EmisPermission(Enum):
 def get_code(perm: EmisPermission, mode: EmisPermMode) -> str:
     """
     Returns a full code name for the given permission and mode, prefixed with
-    the initialized permissions-model application name.
+    the initialized permissions-model application name.  Returns an empty
+    string instead if this module has not yet been initialized.
     """
     if not _PERM_MODEL_APP_LABEL:
         return ''

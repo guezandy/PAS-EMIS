@@ -271,6 +271,15 @@ def get_raw_codes_by_area(area: EmisPermArea, mode_flags: EmisPermMode) -> list:
     return codes
 
 
+def get_all_raw_codes_by_area(area: EmisPermArea):
+    """
+    Returns a list of code names for all permissions within a logical area,
+    for all possible modes.
+    """
+    return get_raw_codes_by_area(area,
+                EmisPermMode.CREATE|EmisPermMode.UPDATE|EmisPermMode.VIEW)
+
+
 def get_tuples_by_area(area: EmisPermArea, mode_flags: EmisPermMode) -> list:
     """
     Returns a list of (code name, description) tuples for all permissions

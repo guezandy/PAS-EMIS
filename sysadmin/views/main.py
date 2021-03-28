@@ -4,12 +4,17 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.urls import reverse
-from django import forms
-from django.contrib.auth.forms import ReadOnlyPasswordHashField
-
 from django.db.models import Q
 from sysadmin.forms.user_create import CustomUserCreationForm
 from sysadmin.forms.user_detail import CustomEditUserForm
+from django.core.mail import send_mail
+from django.core.signing import TimestampSigner
+from sysadmin.models import Activation
+
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import get_template
+from django.template import Context
+
 
 def user_list(request):
     search_term = request.GET.get('search_term')
@@ -40,13 +45,43 @@ def create_user(request):
             user = f.save()
             rand_password = User.objects.make_random_password()
             user.set_password(rand_password)
+            user.is_active = False
             user.save()
+
+
+            # create an activation key by signing the user's email
+            signer = TimestampSigner()
+            signed_value = signer.sign(user.email)
+            code = signed_value[signed_value.find(':')+1:]
+            
+            activation = Activation(user=user, code = code)
+            activation.save()
+
+
+            send_activation_email(request, user)
+
             messages.success(request, 'User created successfully')
             return HttpResponseRedirect(reverse('sysadmin:create-user'))
     else:
         f = CustomUserCreationForm()
 
     return render(request, 'sysadmin/user_create.html', {'form': f})
+
+def send_activation_email(request, user: User):
+    plaintext = get_template('sysadmin/user_activation_email.txt')
+    html = get_template('sysadmin/user_activation_email.html')
+
+    # url = reverse('web_app:activate', args=(user.activation.code,))
+    url = request.build_absolute_uri(reverse('web_app:activate', args=(user.activation.code,)))
+    d = { 'user': user, 'url': url }
+
+    subject, from_email, to = 'PAS Profile Created', 'pas@email.com', user.email
+    text_content = plaintext.render(d)
+    html_content = html.render(d)
+
+    msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+    msg.attach_alternative(html_content, "text/html")
+    msg.send(fail_silently=False)
 
 def user_detail(request, pk: int):
     if request.method == 'POST':

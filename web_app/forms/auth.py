@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import SetPasswordForm, UserChangeForm, UserCreationForm
 from django.contrib.auth.models import User
 
 
@@ -11,3 +11,10 @@ class SignUpForm(UserCreationForm):
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', )
+
+class ActivationForm(SetPasswordForm):
+    field_order = ['email','new_password1','new_password2']
+    email = forms.EmailField(max_length=254, help_text='The email address where you received your actvation email.', label='Email Address')
+    class Meta:
+        model = User
+        fields = ('new_password1','new_password2')

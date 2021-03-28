@@ -1,11 +1,9 @@
-from django.db import connection, models
-from django.contrib.contenttypes.models import ContentType
+from django.db import models
 from django_cryptography.fields import encrypt
 
 from emis import permissions
 from emis.permissions import CustomPermissionModel, \
-    UnmanagedCustomPermissionModel, EmisPermArea, \
-    init_perm_model_app_label, get_all_tuples_by_area
+    UnmanagedCustomPermissionModel, EmisPermArea, get_all_tuples_by_area
 
 # Create your models here.
 
@@ -61,17 +59,3 @@ class SupportServices(UnmanagedCustomPermissionModel):
 class ExternalAssessment(UnmanagedCustomPermissionModel):
     class Meta(UnmanagedCustomPermissionModel.Meta):
         permissions = get_all_tuples_by_area(EmisPermArea.EXTERNAL)
-
-"""
-We choose an arbitrary model to use for permissions module initialization
-(so that the app name of these models can be easily incorporated when checking
-permissions from views).
-"""
-school_admin_cls_name = SchoolAdministration.__class__.__name__
-# Verify that SchoolAdministration has been migrated into the database before
-# attempting to initialize the permissions module with information from it.
-if any([x.endswith(school_admin_cls_name) for x
-            in connection.introspection.table_names()]):
-    contentType = ContentType.objects.get_for_model(SchoolAdministration())
-    print('app_label: {}'.format(contentType.app_label))
-    init_perm_model_app_label(contentType.app_label)

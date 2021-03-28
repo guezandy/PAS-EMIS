@@ -2,6 +2,11 @@ from django.urls import path
 
 from .views import auth, main
 
+from emis.permissions import init_perm_model_app_label
+
+# Initialize permissions module with the app_name
+init_perm_model_app_label(app_label=__package__)
+
 urlpatterns = [
     # Authentication related views
     path('login', auth.login_view, name='login'),

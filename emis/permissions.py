@@ -19,7 +19,8 @@ _PERM_MODEL_APP_LABEL = None
 
 def init_perm_model_app_label(app_label: str):
     """
-
+    Sets the app name under which the permissions (and consequently their
+    code names) are binned.
     """
     global _PERM_MODEL_APP_LABEL
     if not _PERM_MODEL_APP_LABEL:

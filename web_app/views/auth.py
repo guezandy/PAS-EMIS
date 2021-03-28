@@ -53,7 +53,7 @@ def activation_view(request, code: str):
                     if user is not None and user.is_active:
                         activation_record.delete() # delete the activation record so it can no longer be used
                         login(request, user)
-                        redirect('web_app:index')
+                        return redirect('web_app:index')
                 else:
                     form.add_error(None, 'The code or email provided was invalid.')      
             except:

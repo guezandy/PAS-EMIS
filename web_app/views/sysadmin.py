@@ -5,11 +5,11 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.urls import reverse
 from django.db.models import Q
-from sysadmin.forms.user_create import CustomUserCreationForm
-from sysadmin.forms.user_detail import CustomEditUserForm
+from web_app.forms.user import CustomUserCreationForm
+from web_app.forms.user import CustomEditUserForm
 from django.core.mail import send_mail
 from django.core.signing import TimestampSigner
-from sysadmin.models import Activation
+from web_app.models.activation import Activation
 
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
@@ -40,7 +40,7 @@ def user_list(request):
         page_obj = paginator.get_page(page_number)
 
     context = {"user_list": page_obj, "search_term": search_term}
-    return render(request, "sysadmin/user_list.html", context)
+    return render(request, "web_app/sysadmin/user_list.html", context)
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -66,11 +66,11 @@ def create_user(request):
             send_activation_email(request, user)
 
             messages.success(request, "User created successfully")
-            return HttpResponseRedirect(reverse("sysadmin:create-user"))
+            return HttpResponseRedirect(reverse("web_app:create-user"))
     else:
         f = CustomUserCreationForm()
 
-    return render(request, "sysadmin/user_create.html", {"form": f})
+    return render(request, "web_app/sysadmin/user_create.html", {"form": f})
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -81,17 +81,17 @@ def user_detail(request, pk: int):
         if f.is_valid():
             f.save()
             messages.success(request, "User updated successfully")
-            return HttpResponseRedirect(reverse("sysadmin:user-detail", args=(pk,)))
+            return HttpResponseRedirect(reverse("web_app:user-detail", args=(pk,)))
     else:
         user = get_object_or_404(User, pk=pk)
         f = CustomEditUserForm(instance=user)
 
-    return render(request, "sysadmin/user_detail.html", {"form": f})
+    return render(request, "web_app/sysadmin/user_detail.html", {"form": f})
 
 
 def send_activation_email(request, user: User):
-    plaintext = get_template("sysadmin/user_activation_email.txt")
-    html = get_template("sysadmin/user_activation_email.html")
+    plaintext = get_template("web_app/sysadmin/user_activation_email.txt")
+    html = get_template("web_app/sysadmin/user_activation_email.html")
 
     # url = reverse('web_app:activate', args=(user.activation.code,))
     url = request.build_absolute_uri(

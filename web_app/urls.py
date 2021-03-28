@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import auth, main
+from .views import auth, main, sysadmin
 
 from emis.permissions import init_perm_model_app_label
 
@@ -12,8 +12,13 @@ urlpatterns = [
     # Authentication related views
     path("login", auth.login_view, name="login"),
     path("activate/<str:code>", auth.activation_view, name="activate"),
-    # path('register', auth.register_view, name='register'),
     path("logout", auth.logout_view, name="logout"),
+
+    # System administration views
+    path("sysadmin/users/create/", sysadmin.create_user, name="create-user"),
+    path("sysadmin/users/<int:pk>/detail", sysadmin.user_detail, name="user-detail"),
+    path("sysadmin/users", sysadmin.user_list, name="user-directory"),
+
     # Main views
     path("foo", main.foo, name="foo"),
     path("rest", main.json_endpoint, name="rest"),

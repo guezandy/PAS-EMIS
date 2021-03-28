@@ -7,7 +7,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import get_object_or_404
 
 from web_app.forms.auth import ActivationForm, SignUpForm
-from sysadmin.models import Activation
+from web_app.models.activation import Activation
 
 
 def register_view(request):

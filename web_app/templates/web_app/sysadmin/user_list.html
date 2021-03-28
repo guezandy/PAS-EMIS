@@ -16,7 +16,7 @@
   </div>
 
 
-<a href="{% url 'sysadmin:create-user' %}" ><button type="button" class="btn btn-success mb-2">Create User</button></a>
+<a href="{% url 'web_app:create-user' %}" ><button type="button" class="btn btn-success mb-2">Create User</button></a>
 
 {% if user_list.paginator.num_pages > 1 %}
 <nav aria-label="paginator">
@@ -73,7 +73,7 @@
     </thead>
     <tbody>
     {% for user in user_list %}
-        <tr class="user-row" data-url="{% url 'sysadmin:user-detail' user.id %}">
+        <tr class="user-row" data-url="{% url 'web_app:user-detail' user.id %}">
             <td> {{ user.id }}</td>
             <td> {{ user.username }}</td>
             <td> {{ user.email }}</td>

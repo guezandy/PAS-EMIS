@@ -15,7 +15,15 @@ NOTE: permissions within this file are constructed using a simplified
 create/update/view model (vs. view/add/change/delete).
 """
 
-_PERM_MODEL_APP_LABEL = 'permissions'
+_PERM_MODEL_APP_LABEL = None
+
+def init_perm_model_app_label(app_label: str):
+    """
+
+    """
+    global _PERM_MODEL_APP_LABEL
+    if not _PERM_MODEL_APP_LABEL:
+        _PERM_MODEL_APP_LABEL = app_label
 
 
 class EmisPermMode(IntFlag):
@@ -195,7 +203,7 @@ def get_raw_code(perm: EmisPermission, mode: EmisPermMode) -> str:
     return mode.name.lower() + '_' + perm.get_base_code_name()
 
 
-def get_codes(perm: EmisPermission, mode_flags: EmisPermMode) -> list:
+def get_raw_codes(perm: EmisPermission, mode_flags: EmisPermMode) -> list:
     """
     Returns a list of code names for the given permission and mode(s).  Does
     not include the application name(s) under which the permission(s) might be
@@ -236,7 +244,8 @@ def get_tuples(perm: EmisPermission, mode_flags: EmisPermMode) -> list:
     tuples = []
     for mode in EmisPermMode:
         if mode_flags & mode:
-            tuples.append(get_code(perm, mode), get_description(perm, mode))
+            tuples.append((get_raw_code(perm, mode), \
+                           get_description(perm, mode)))
     return tuples
 
 
@@ -248,7 +257,7 @@ def get_all_tuples(perm: EmisPermission) -> list:
                       EmisPermMode.CREATE|EmisPermMode.UPDATE|EmisPermMode.VIEW)
 
 
-def get_codes_by_area(area: EmisPermArea, mode_flags: EmisPermMode) -> list:
+def get_raw_codes_by_area(area: EmisPermArea, mode_flags: EmisPermMode) -> list:
     """
     Returns a list of code names for all permissions within a logical area,
     for the indicated modes.
@@ -256,7 +265,7 @@ def get_codes_by_area(area: EmisPermArea, mode_flags: EmisPermMode) -> list:
     codes = []
     for perm in EmisPermission:
         if area & perm.get_area():
-            codes.append(get_codes(perm, mode_flags))
+            codes += get_raw_codes(perm, mode_flags)
     return codes
 
 
@@ -268,7 +277,7 @@ def get_tuples_by_area(area: EmisPermArea, mode_flags: EmisPermMode) -> list:
     tuples = []
     for perm in EmisPermission:
         if area & perm.get_area():
-            tuples.append(get_tuples(perm, mode_flags))
+            tuples += get_tuples(perm, mode_flags)
     return tuples
 
 
@@ -320,5 +329,4 @@ class UnmanagedCustomPermissionModel(CustomPermissionModel):
         """
         abstract = True  # Base class value not inherited (reset by Django)
         managed = False
-        app_label = _PERM_MODEL_APP_LABEL
     

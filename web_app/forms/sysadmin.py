@@ -6,13 +6,13 @@ from django.forms.models import ModelForm
 
 class AdminUserCreationForm(ModelForm):
     first_name = forms.CharField(
-        max_length=30,
+        max_length=150,
     )
     last_name = forms.CharField(
-        max_length=30,
+        max_length=150,
     )
     email = forms.CharField(
-        max_length=100,
+        max_length=254,
     )
 
     class Meta:
@@ -21,8 +21,8 @@ class AdminUserCreationForm(ModelForm):
 
 
 class AdminEditUserForm(UserChangeForm):
-    first_name = forms.CharField(max_length=30, help_text="Required.")
-    last_name = forms.CharField(max_length=30, help_text="Required.")
+    first_name = forms.CharField(max_length=150)
+    last_name = forms.CharField(max_length=150)
     password = None
 
     class Meta:

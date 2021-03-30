@@ -98,7 +98,7 @@ def user_detail(request, pk: int):
         user = get_object_or_404(User, pk=pk)
         f = UserEditSelfForm(instance=user)
 
-    return render(request, "web_app/sysadmin/user_detail_admin.html", {"form": f})
+    return render(request, "web_app/sysadmin/user_detail.html", {"form": f})
 
 
 def logout_view(request):

@@ -41,10 +41,10 @@
                     </li>
                     {% if user.is_superuser %}
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="sysadmin-dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             System Admin
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <div class="dropdown-menu" aria-labelledby="sysadmin-dropdown">
                             <a class="dropdown-item" href="{% url 'web_app:user-directory' %}">User Directory</a>
                             <a class="dropdown-item" href="{% url 'web_app:create-user' %}">Create User</a>
                         </div>
@@ -53,6 +53,16 @@
                    
                 </ul>
                 <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="user-dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                             {{ user.first_name }} {{ user.last_name }}
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="user-dropdown">
+                            <a class="dropdown-item" href="{% url 'web_app:user-detail' user.id%}">User Profile</a>
+                        </div>
+                    </li>
+                    {% endif %}
                     {% if not user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="/login">Login</a>
@@ -68,11 +78,7 @@
 
         {% endblock nav %}
 
-        {% if user.is_authenticated %}
-        <p>Welcome, {{ user.get_username }}. Thanks for logging in.</p>
-        {% else %}
-        <p>Welcome, new user. Please log in.</p>
-        {% endif %}
+
 
         <div class="content">
             {% block body %}{% endblock body %}

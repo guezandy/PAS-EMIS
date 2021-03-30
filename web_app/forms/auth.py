@@ -33,3 +33,12 @@ class ActivationForm(SetPasswordForm):
     class Meta:
         model = User
         fields = ("new_password1", "new_password2")
+
+
+class UserEditSelfForm(UserChangeForm):
+    first_name = forms.CharField(max_length=30, help_text="Required.")
+    last_name = forms.CharField(max_length=30, help_text="Required.")
+
+    class Meta:
+        model = User
+        fields = ("username", "first_name", "last_name", "email")

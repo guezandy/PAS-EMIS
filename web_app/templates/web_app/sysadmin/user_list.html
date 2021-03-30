@@ -73,7 +73,7 @@
     </thead>
     <tbody>
     {% for user in user_list %}
-        <tr class="user-row" data-url="{% url 'web_app:user-detail' user.id %}">
+        <tr class="user-row" data-url="{% url 'web_app:user-detail-admin' user.id %}">
             <td> {{ user.id }}</td>
             <td> {{ user.username }}</td>
             <td> {{ user.email }}</td>

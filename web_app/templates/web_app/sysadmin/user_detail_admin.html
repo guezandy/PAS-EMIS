@@ -1,7 +1,7 @@
 {% extends "web_app/base.html" %} {% block body %}
 {% load crispy_forms_tags %}
 
-<h1>User Profile</h1>
+<h1>User Detail</h1>
 {% if messages %}
     <div class="alert alert-success" role="alert">
         {% for message in messages %}
@@ -13,7 +13,8 @@
     <form method="post" >
         {% csrf_token %}
         {{ form | crispy }}
-        <input class="btn btn-primary" type="submit" name="submit" value="Update Profile" /></td>
+        <input class="btn btn-primary" type="submit" name="submit" value="Update User" /></td>
+        <a href="{% url 'web_app:user-directory' %}"><button class="btn btn-secondary" type="button">Back to User Directory</button></a>
     </form>
 
 {% endblock body %}

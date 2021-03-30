@@ -1,12 +1,16 @@
 from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core.signing import TimestampSigner
+from django.http.response import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import get_object_or_404
+from django.contrib import messages
+from django.urls.base import reverse
+from django.core.exceptions import PermissionDenied
 
-from web_app.forms.auth import ActivationForm, SignUpForm
+
+from web_app.forms.auth import ActivationForm, SignUpForm, UserEditSelfForm
 from web_app.models.activation import Activation
 
 
@@ -77,6 +81,24 @@ def activation_view(request, code: str):
     else:
         form = ActivationForm(None)
     return render(request, "web_app/auth/activation.html", {"form": form})
+
+
+def user_detail(request, pk: int):
+    current_user = request.user
+    if current_user.pk != pk:
+        raise PermissionDenied()
+    if request.method == "POST":
+        user = get_object_or_404(User, pk=pk)
+        f = UserEditSelfForm(request.POST, instance=user)
+        if f.is_valid():
+            f.save()
+            messages.success(request, "User updated successfully")
+            return HttpResponseRedirect(reverse("web_app:user-detail", args=(pk,)))
+    else:
+        user = get_object_or_404(User, pk=pk)
+        f = UserEditSelfForm(instance=user)
+
+    return render(request, "web_app/sysadmin/user_detail_admin.html", {"form": f})
 
 
 def logout_view(request):

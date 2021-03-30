@@ -5,8 +5,8 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.urls import reverse
 from django.db.models import Q
-from web_app.forms.user import CustomUserCreationForm
-from web_app.forms.user import CustomEditUserForm
+from web_app.forms.sysadmin import AdminUserCreationForm
+from web_app.forms.sysadmin import AdminEditUserForm
 from django.core.mail import send_mail
 from django.core.signing import TimestampSigner
 from web_app.models.activation import Activation
@@ -46,7 +46,7 @@ def user_list(request):
 @user_passes_test(lambda u: u.is_superuser)
 def create_user(request):
     if request.method == "POST":
-        f = CustomUserCreationForm(request.POST)
+        f = AdminUserCreationForm(request.POST)
 
         if f.is_valid():
             user = f.save()
@@ -68,7 +68,7 @@ def create_user(request):
             messages.success(request, "User created successfully")
             return HttpResponseRedirect(reverse("web_app:create-user"))
     else:
-        f = CustomUserCreationForm()
+        f = AdminUserCreationForm()
 
     return render(request, "web_app/sysadmin/user_create.html", {"form": f})
 
@@ -77,16 +77,18 @@ def create_user(request):
 def user_detail(request, pk: int):
     if request.method == "POST":
         user = get_object_or_404(User, pk=pk)
-        f = CustomEditUserForm(request.POST, instance=user)
+        f = AdminEditUserForm(request.POST, instance=user)
         if f.is_valid():
             f.save()
             messages.success(request, "User updated successfully")
-            return HttpResponseRedirect(reverse("web_app:user-detail", args=(pk,)))
+            return HttpResponseRedirect(
+                reverse("web_app:user-detail-admin", args=(pk,))
+            )
     else:
         user = get_object_or_404(User, pk=pk)
-        f = CustomEditUserForm(instance=user)
+        f = AdminEditUserForm(instance=user)
 
-    return render(request, "web_app/sysadmin/user_detail.html", {"form": f})
+    return render(request, "web_app/sysadmin/user_detail_admin.html", {"form": f})
 
 
 def send_activation_email(request, user: User):

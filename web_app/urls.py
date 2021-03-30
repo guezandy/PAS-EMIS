@@ -13,12 +13,13 @@ urlpatterns = [
     path("login", auth.login_view, name="login"),
     path("activate/<str:code>", auth.activation_view, name="activate"),
     path("logout", auth.logout_view, name="logout"),
-
+    path("users/<int:pk>", auth.user_detail, name="user-detail"),
     # System administration views
     path("sysadmin/users/create/", sysadmin.create_user, name="create-user"),
-    path("sysadmin/users/<int:pk>/detail", sysadmin.user_detail, name="user-detail"),
+    path(
+        "sysadmin/users/<int:pk>/detail", sysadmin.user_detail, name="user-detail-admin"
+    ),
     path("sysadmin/users", sysadmin.user_list, name="user-directory"),
-
     # Main views
     path("foo", main.foo, name="foo"),
     path("rest", main.json_endpoint, name="rest"),

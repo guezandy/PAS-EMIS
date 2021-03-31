@@ -136,3 +136,11 @@ Crispy forms
 """
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 
+"""
+Email settings
+"""
+EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+EMAIL_FILE_PATH = (
+    "/Applications/MAMP/htdocs/tmp/email"  # change this to a proper location for your local environment
+)
+

@@ -2,8 +2,16 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
+from authentication.forms import SignUpForm
+from django.template import loader
+from django.http import HttpResponse
 
-from web_app.forms.auth import SignUpForm
+def index(request):
+    template = loader.get_template('authentication/index.html')
+    # Any additional data needed
+    context = {}
+    return HttpResponse(template.render(context, request))
+
 
 def register_view(request):
     if request.method == 'POST':
@@ -15,9 +23,9 @@ def register_view(request):
             user = authenticate(username=username, password=raw_password)
             login(request, user)
             return redirect('index')
-    else:
-        form = SignUpForm()
-    return render(request, 'web_app/auth/register.html', {'form': form})
+
+    form = SignUpForm()
+    return render(request, 'authentication/register.html', {'form': form})
 
 def login_view(request):
     if request.method == 'POST':
@@ -27,8 +35,9 @@ def login_view(request):
         if user is not None:
             login(request, user)
             return redirect('index')
+
     form = AuthenticationForm()
-    return render(request, 'web_app/auth/login.html', {'form': form})
+    return render(request, 'authentication/login.html', {'form': form})
 
 def logout_view(request):
     logout(request)

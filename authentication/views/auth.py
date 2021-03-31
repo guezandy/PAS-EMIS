@@ -101,7 +101,8 @@ def user_detail(request, pk: int):
         if f.is_valid():
             f.save()
             messages.success(request, "User updated successfully")
-            return HttpResponseRedirect(reverse(auth.user_detail, args=(pk,)))
+            # Redirect back to current page with url params
+            return redirect(request.build_absolute_uri())
     else:
         user = get_object_or_404(User, pk=pk)
         f = UserEditSelfForm(instance=user)

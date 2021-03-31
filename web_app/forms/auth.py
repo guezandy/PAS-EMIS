@@ -38,6 +38,7 @@ class ActivationForm(SetPasswordForm):
 class UserEditSelfForm(UserChangeForm):
     first_name = forms.CharField(max_length=150, help_text="Required.")
     last_name = forms.CharField(max_length=150, help_text="Required.")
+    password = None
 
     class Meta:
         model = User

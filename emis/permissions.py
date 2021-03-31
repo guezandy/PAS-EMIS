@@ -165,7 +165,7 @@ class EmisPermission(Enum):
     )
 
     VICE_PRINCIPAL_APPRAISAL = (
-        "vice_princ_appraisal",
+        "vice_principal_appraisal",
         "vice principal appraisals",
         EmisPermArea.PRINCIPAL,
     )

@@ -15,11 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from authentication.views import index
+from authentication.views.auth import index
 
 urlpatterns = [
     # Temporary index route
-    path('', index, name="index"),
-    path('auth/', include('authentication.urls')),
-    path('admin/', admin.site.urls),
+    path("", index, name="index"),
+    path("auth/", include("authentication.urls")),
+    path("admin/", admin.site.urls),
 ]

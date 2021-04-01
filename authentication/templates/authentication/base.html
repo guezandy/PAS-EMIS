@@ -7,8 +7,15 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'auth_styles.css' %}">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
     <title>PAS</title>
 </head>
 
@@ -30,18 +37,40 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/">Home</a>
                     </li>
+                    {% if user.is_superuser %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="sysadmin-dropdown" role="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            System Admin
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="sysadmin-dropdown">
+                            <a class="dropdown-item" href="{% url 'authentication:user-directory' %}">User Directory</a>
+                            <a class="dropdown-item" href="{% url 'authentication:create-user' %}">Create User</a>
+                        </div>
+                    </li>
+                    {% endif %}
                 </ul>
                 <ul class="navbar-nav">
-                    {% if not user.is_authenticated %}
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="user-dropdown" role="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{ user.first_name }} {{ user.last_name }}
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="user-dropdown">
+                            <a class="dropdown-item" href="{% url 'authentication:user-detail' user.id%}">User
+                                Profile</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/auth/logout">Logout</a>
+                    </li>
+                    {% else %}
                     <li class="nav-item">
                         <a class="nav-link" href="/auth/login">Login</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/auth/register">Register</a>
-                    </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="/logout">Logout</a>
                     </li>
                     {% endif %}
                 </ul>
@@ -49,25 +78,9 @@
         </nav>
         {% endblock nav %}
 
-        {% if user.is_authenticated %}
-        <p>Welcome, {{ user.get_username }}. Thanks for logging in.</p>
-        {% else %}
-        <p>Welcome, new user. Please log in.</p>
-        {% endif %}
-
-        <div class="content">
+        <div class="content pt-5 mt-3">
             {% block body %}{% endblock body %}
         </div>
-
-        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-            crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-            crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-            crossorigin="anonymous"></script>
         <hr>
 </body>
 

@@ -1,0 +1,19 @@
+{% extends "authentication/base.html" %} {% block body %}
+{% load crispy_forms_tags %}
+
+<h1>User Profile</h1>
+{% if messages %}
+<div class="alert alert-success" role="alert">
+    {% for message in messages %}
+    {{ message }}
+    {% endfor %}
+</div>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    {{ form | crispy }}
+    <input class="btn btn-primary" type="submit" name="submit" value="Update Profile" /></td>
+</form>
+
+{% endblock body %}

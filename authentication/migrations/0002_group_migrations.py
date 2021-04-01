@@ -3,6 +3,7 @@ import logging
 from django.db import models, migrations
 from django.contrib.auth.models import Group, Permission
 from django.core.management.sql import emit_post_migrate_signal
+from django.contrib.contenttypes.models import ContentType
 
 from emis import permissions
 from emis.permissions import (
@@ -121,7 +122,11 @@ def populate_groups_with_permissions(apps, schema_editor):
                     perm_code, group_name
                 )
             )
-            perm_list.append(Permission.objects.get(codename=perm_code))
+            permission, created = Permission.objects.get_or_create(
+                codename=perm_code,
+                content_type=ContentType.objects.get(app_label="auth", model="user"),
+            )
+            perm_list.append(permission)
 
         group.permissions.set(perm_list)
         group.save()

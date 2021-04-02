@@ -122,11 +122,7 @@ def populate_groups_with_permissions(apps, schema_editor):
                     perm_code, group_name
                 )
             )
-            permission, created = Permission.objects.get_or_create(
-                codename=perm_code,
-                content_type=ContentType.objects.get(app_label="auth", model="user"),
-            )
-            perm_list.append(permission)
+            perm_list.append(Permission.objects.get(codename=perm_code))
 
         group.permissions.set(perm_list)
         group.save()

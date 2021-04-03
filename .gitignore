@@ -1,4 +1,7 @@
-
+**/*.pyc
+**/__pycache__/
 db.sqlite3
-*.pyc
+*.code-workspace
 .idea/*
+historical_surveillance/__pychache__
+historical_surveillance/__init__

@@ -19,14 +19,17 @@ urlpatterns = [
     # for the create schools page
     path('school', views.create_school, name='school'),
 
-    # to
+    # National enrollment /capacity table view
     path('enrolled', views.enrolled, name='enrolled'),
-    path('district_1', views.enrolled_trend_district_1, name='enrolled_trend_1'),
-    path('district_1_trend', views.district_1_trend, name='district_1_trend'),
+
+    # enrollment/capacity table by district view
+    path('enrolled_district', views.enrolled_district, name='enrolled_district'),
+
+    # Visualization of enrollment / Capacity
+    path('district_trend', views.district_trend, name='district_trend'),
     path('compare_trends', views.compare_trends, name='compare_trend'),
-    path('enrolled_grade', views.enrolled_grade, name ='enrolled_grade'),
+    path('enrolled_grade', views.enrolled_grade, name='enrolled_grade'),
     path('district_grade', views.district_grade, name='district_grade'),
     path('district_grade_school', views.district_grade_school, name='district_grade_school'),
-
 
 ]

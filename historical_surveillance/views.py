@@ -87,7 +87,7 @@ def create_school(request):
 def enrollment(request):
     form = EnrollmentForms()
     district_df = pd.DataFrame(District.objects.all().values())
-    districts_names = district_df['District_Name']
+    districts_names = district_df['district_name']
     return render(request, 'enrollment.html', {'form': form, 'district_names': districts_names})
 
 
@@ -122,10 +122,10 @@ def enrolled(request):
 
 #change this to get a form to select the district and pass it as a parameter to present filter the table and present
 # the data for each district
-def enrolled_trend_district_1(request):
+def enrolled_district(request):
     error_message = None
     district_df = pd.DataFrame(District.objects.all().values())
-    districts_names = district_df['District_Name']
+    districts_names = district_df['district_name']
     if district_df.shape[0] > 0:
         if request.method == 'POST':
             district_selected = request.POST.get('district_name', False)
@@ -140,9 +140,9 @@ def enrolled_trend_district_1(request):
                     "district_selected" : district_selected,
                     "data" : data,
                 }
-                return render(request, 'district_1.html', stu)
+                return render(request, 'enrolled_district.html', stu)
         else:
-            return render(request, 'district_1.html', {"districts_names":districts_names})
+            return render(request, 'enrolled_district.html', {"districts_names":districts_names})
 
 
 
@@ -151,12 +151,12 @@ def enrolled_trend_district_1(request):
 
 
 
-def district_1_trend(request):
+def district_trend(request):
     error_message = None
     graph = None
 
     district_df = pd.DataFrame(District.objects.all().values())
-    districts_lists = district_df['District_Name']
+    districts_lists = district_df['district_name']
 
     schools_df = pd.DataFrame(AggregateEnrollment.objects.all().values())
     schools = schools_df['name_of_school'].unique()
@@ -197,14 +197,14 @@ def district_1_trend(request):
         "districts_lists" : districts_lists,
 
     }
-    return render(request, 'district_1_trend.html', stu)
+    return render(request, 'district_trend.html', stu)
 
 def compare_trends(request):
     error_message = None
     graph = None
     district_df = pd.DataFrame(District.objects.all().values())
     year_df = pd.DataFrame(AggregateEnrollment.objects.all().values())
-    districts_lists = district_df['District_Name']
+    districts_lists = district_df['district_name']
     year_list = year_df['academic_year'].unique()
     if district_df.shape[0] > 0:
         if request.method == 'POST':
@@ -251,7 +251,7 @@ def enrolled_grade(request):
 def district_grade(request):
     error_message = None
     district_df = pd.DataFrame(District.objects.all().values())
-    districts_names = district_df['District_Name']
+    districts_names = district_df['district_name']
     if district_df.shape[0] > 0:
         if request.method == 'POST':
             district_selected = request.POST.get('district_name', False)

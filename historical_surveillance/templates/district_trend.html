@@ -58,7 +58,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label class="small mb-1" for="chart_type">Choose a Chart type</label>
-                                <select name ="chart" id = "chart_type">
+                                <select name ="chart" id = "chart_type" required>
                                     <option value ="" selected>[Choose Here]</option>
                                     <option value ="barplot">Bar Plot</option>
                                     <option value ="lineplot">Line Plot</option>
@@ -68,7 +68,7 @@
 
                           <div class="col-md-6">
                             <label class="small mb-1" for="school">Select a school</label>
-                            <select name ="school_name" id = "school">
+                            <select name ="school_name" id = "school" required>
                                 <option value ="" selected>[Choose Here]</option>
                                 {% for item in schools %}
                                 <option value = "{{ item }}">{{ item }}</option>

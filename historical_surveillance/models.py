@@ -23,29 +23,28 @@ SEX_CHOICES = [('male', 'Male'),
 class District(models.Model):
     created_at = models.DateField(auto_now_add=True)
     created_by = models.CharField(max_length=255)
-    District_Code = models.CharField(max_length=50, blank=True)
-    District_Name = models.CharField(max_length=50, choices=DISTRICT_CHOICES)
-    # updated_at = models.DateField(default=timezone.now())
+    district_code = models.CharField(max_length=50, blank=True)
+    district_name = models.CharField(max_length=50)
     updated_at = models.DateField(auto_now_add=True)
     updated_by = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
-        return str(self.District_Name)
+        return str(self.district_name)
 
 
 class School(models.Model):
     objects = None
     created_at = models.DateField(auto_now_add=True)
     created_by = models.CharField(max_length=255)
-    School_Code = models.CharField(max_length=50, blank=True)
-    School_Name = models.CharField(max_length=50)
-    District_Name = models.CharField(max_length=20, choices=DISTRICT_CHOICES)
+    school_code = models.CharField(max_length=50, blank=True)
+    school_name = models.CharField(max_length=50)
+    district_name = models.CharField(max_length=20, choices=DISTRICT_CHOICES)
     category_of_school = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
     updated_at = models.DateField(auto_now_add=True)
     updated_by = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
-        return "Saved"
+        return self.school_name
 
 
 class AggregateEnrollment(models.Model):
@@ -61,12 +60,8 @@ class AggregateEnrollment(models.Model):
     updated_at = models.DateField(auto_now_add=True)
     updated_by = models.CharField(max_length=255)
 
-    # def save(self, *args, **kwargs):
-    # self.surplus = self.capacity_of_school - self.total_enrollment
-    # super().save(*args, **kwargs)
-
     def __str__(self):
-        return "Saved"
+        return self.name_of_school
 
 
 class Enrollment(models.Model):

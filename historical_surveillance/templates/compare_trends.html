@@ -21,7 +21,7 @@
 
                           <div class="col-md-6">
                             <label class="small mb-1" for="district">District</label>
-                            <select name ="district_name" id = "district">
+                            <select name ="district_name" id = "district" required>
                                 <option value ="" selected>[Choose Here]</option>
                                 {% for item in districts_lists %}
                                 <option value = "{{ item }}">{{ item }}</option>
@@ -30,7 +30,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="small mb-1" for="year">Academic year</label>
-                            <select name ="year" id = "year">
+                            <select name ="year" id = "year" required>
                                 <option value ="" selected>[Choose Here]</option>
                                 {% for item in year_list %}
                                 <option value = "{{ item }}">{{ item }}</option>

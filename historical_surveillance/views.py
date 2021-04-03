@@ -27,9 +27,9 @@ def district(request):
             # change the updated by column to automatically insert the name of the logged in user updating the column
             district_updated = form.cleaned_data['updated_by']
             if not District.objects.filter(District_Code=district_code,
-                                         created_by=district_created_by,
-                                         updated_by=district_updated,
-                                         District_Name=district_name).exists():
+                                           created_by=district_created_by,
+                                           updated_by=district_updated,
+                                           District_Name=district_name).exists():
                 form.save()
                 return redirect("/")
 
@@ -76,10 +76,10 @@ def create_school(request):
         stu = {
             "name_of_school": data,
             "error_message": error_message,
-            "form" : form,
+            "form": form,
         }
         return render(request, 'school.html', stu)
-    return render(request, 'school.html', {'form':form, 'name_of_school':data})
+    return render(request, 'school.html', {'form': form, 'name_of_school': data})
 
 
 # This function controls the enrollment by school,
@@ -120,7 +120,8 @@ def enrolled(request):
     }
     return render(request, 'enrolled.html', stu)
 
-#change this to get a form to select the district and pass it as a parameter to present filter the table and present
+
+# change this to get a form to select the district and pass it as a parameter to present filter the table and present
 # the data for each district
 def enrolled_district(request):
     error_message = None
@@ -137,18 +138,17 @@ def enrolled_district(request):
                 stu = {
                     "error_message": error_message,
                     "districts_names": districts_names,
-                    "district_selected" : district_selected,
-                    "data" : data,
+                    "district_selected": district_selected,
+                    "data": data,
                 }
                 return render(request, 'enrolled_district.html', stu)
         else:
-            return render(request, 'enrolled_district.html', {"districts_names":districts_names})
+            return render(request, 'enrolled_district.html', {"districts_names": districts_names})
 
 
 
     else:
         error_message = "No records found for the selected district"
-
 
 
 def district_trend(request):
@@ -161,7 +161,8 @@ def district_trend(request):
     schools_df = pd.DataFrame(AggregateEnrollment.objects.all().values())
     schools = schools_df['name_of_school'].unique()
 
-    data = AggregateEnrollment.objects.all().values('name_of_school', 'category_of_school', 'district_of_school').distinct().\
+    data = AggregateEnrollment.objects.all().values('name_of_school', 'category_of_school',
+                                                    'district_of_school').distinct(). \
         annotate(total=Count('name_of_school')).order_by('category_of_school')
 
     if schools_df.shape[0] > 0:
@@ -194,10 +195,11 @@ def district_trend(request):
         "name_of_school": data,
         "schools": schools,
         "schools_df": schools_df,
-        "districts_lists" : districts_lists,
+        "districts_lists": districts_lists,
 
     }
     return render(request, 'district_trend.html', stu)
+
 
 def compare_trends(request):
     error_message = None
@@ -216,17 +218,18 @@ def compare_trends(request):
             else:
                 if selected_district is not False:
                     if year is not False:
-                        select_district_df = pd.DataFrame(AggregateEnrollment.objects.values('name_of_school', 'total_enrollment', 'capacity_of_school').
-                                                        filter(district_of_school=selected_district, academic_year=year))
-
+                        select_district_df = pd.DataFrame(
+                            AggregateEnrollment.objects.values('name_of_school', 'total_enrollment',
+                                                               'capacity_of_school').
+                            filter(district_of_school=selected_district, academic_year=year))
 
                         # function to get the graph
                         graph = get_pairs(x=select_district_df['total_enrollment'],
-                                         y=select_district_df['capacity_of_school'],
-                                         data=select_district_df,
-                                         academic_year=year,
-                                          district_name = selected_district,
-                                         name_of_school=select_district_df['name_of_school'])
+                                          y=select_district_df['capacity_of_school'],
+                                          data=select_district_df,
+                                          academic_year=year,
+                                          district_name=selected_district,
+                                          name_of_school=select_district_df['name_of_school'])
     else:
         error_message = "No records found"
 
@@ -234,10 +237,11 @@ def compare_trends(request):
         "graph": graph,
         "error_message": error_message,
         "districts_lists": districts_lists,
-        "year_list" : year_list,
+        "year_list": year_list,
 
     }
     return render(request, 'compare_trends.html', stu)
+
 
 # This view controls the enrollment / Capacity views table
 def enrolled_grade(request):
@@ -247,6 +251,7 @@ def enrolled_grade(request):
         "name_of_school": data
     }
     return render(request, 'enrolled_grade.html', stu)
+
 
 def district_grade(request):
     error_message = None
@@ -263,12 +268,12 @@ def district_grade(request):
                 stu = {
                     "error_message": error_message,
                     "districts_names": districts_names,
-                    "district_selected" : district_selected,
-                    "data" : data,
+                    "district_selected": district_selected,
+                    "data": data,
                 }
                 return render(request, 'district_grade.html', stu)
         else:
-            return render(request, 'district_grade.html', {"districts_names":districts_names})
+            return render(request, 'district_grade.html', {"districts_names": districts_names})
 
 
 
@@ -276,19 +281,18 @@ def district_grade(request):
         error_message = "No records found for the selected district"
 
 
-
 def district_grade_school(request):
     error_message = None
     graph = None
 
     district_df = pd.DataFrame(District.objects.all().values())
-    districts_lists = district_df['District_Name']
+    districts_lists = district_df['district_name']
 
     schools_df = pd.DataFrame(Enrollment.objects.all().values())
     schools = schools_df['school'].unique()
 
-    data = Enrollment.objects.all().\
-        values('school', 'year', 'category_of_school','district','grade', 'sex', 'enrollment').distinct().\
+    data = Enrollment.objects.all(). \
+        values('school', 'year', 'category_of_school', 'district', 'grade', 'sex', 'enrollment').distinct(). \
         annotate(total=Count('school')).order_by('category_of_school')
 
     if schools_df.shape[0] > 0:
@@ -307,12 +311,12 @@ def district_grade_school(request):
                         select_school_df.sort_values(by=['year'], inplace=True)
                         select_school_df = select_school_df.tail(10)
                         # function to get the graph
-                        #graph = get_school_plot(chart, z=select_school_df['sex'],
-                                         #y=select_school_df['enrollment'],
-                                         #x=select_school_df['year'],
-                                         #a=select_school_df['grade'],
-                                         #data=select_school_df,
-                                         #name_of_school=selected_school)
+                        # graph = get_school_plot(chart, z=select_school_df['sex'],
+                        # y=select_school_df['enrollment'],
+                        # x=select_school_df['year'],
+                        # a=select_school_df['grade'],
+                        # data=select_school_df,
+                        # name_of_school=selected_school)
     else:
         error_message = "No records found"
 
@@ -322,7 +326,7 @@ def district_grade_school(request):
         "name_of_school": data,
         "schools": schools,
         "schools_df": schools_df,
-        "districts_lists" : districts_lists,
+        "districts_lists": districts_lists,
 
     }
     return render(request, 'district_grade_school.html', stu)

@@ -1,3 +1,13 @@
+from django.db import models
+
+from emis import permissions
+from emis.permissions import (
+    CustomPermissionModel,
+    UnmanagedCustomPermissionModel,
+    EmisPermArea,
+    get_all_tuples_by_area,
+)
+
 """
 Models (unmanaged) for custom app permissions.  These must remain within the
 same app for the permissions architecture to function properly.

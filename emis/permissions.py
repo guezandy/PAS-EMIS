@@ -136,7 +136,7 @@ class EmisPermission(Enum):
 
     SCHOOL_ACTIVITY_CONFIG = (
         "school_activity_config",
-        "school subjects, cocurricular, and " "extra-curricular activities",
+        "school subjects, cocurricular, and extra-curricular activities",
         EmisPermArea.SCHOOL_ADMIN,
     )
 

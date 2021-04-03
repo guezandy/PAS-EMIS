@@ -15,9 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from authentication.views.auth import index
 
 urlpatterns = [
-    path("", include("web_app.urls")),
+    # Temporary index route
+    path("", index, name="index"),
+    path("auth/", include("authentication.urls")),
     path("admin/", admin.site.urls),
     path("school/", include("school.urls")),
 ]

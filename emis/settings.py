@@ -29,12 +29,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+LOGIN_URL = "/auth/login"
 
 # Application definition
 
 INSTALLED_APPS = [
     "school",
-    "web_app.apps.WebAppConfig",
+    "authentication",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -121,7 +122,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = "web_app/static/"
+STATIC_URL = "static/"
 
 
 """
@@ -135,4 +136,10 @@ CRYPTOGRAPHY_SALT = "emis-pas"
 Crispy forms
 """
 CRISPY_TEMPLATE_PACK = "bootstrap4"
+
+"""
+Email settings
+"""
+EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+EMAIL_FILE_PATH = "/Applications/MAMP/htdocs/tmp/email"  # change this to a proper location for your local environment
 

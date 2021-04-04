@@ -6,3 +6,4 @@ sqlparse==0.4.1
 django-cryptography==1.0
 django-crispy-forms==1.11.1
 mysqlclient==2.0.3
+django-environ==0.4.5

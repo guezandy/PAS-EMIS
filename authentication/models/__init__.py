@@ -10,5 +10,5 @@ from .permissions import (
     StatisticsAndPlanning,
     EvaluationAndAssessment,
     SupportServices,
-    ExternalAssessment
+    ExternalAssessment,
 )

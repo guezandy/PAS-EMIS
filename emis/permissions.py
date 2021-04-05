@@ -266,9 +266,8 @@ def decompose_perm_code(raw_code_name: str) -> (EmisPermission, EmisPermMode):
         split_code_name = raw_code_name.split("_", maxsplit=1)
         permission = EmisPermission.NONE
         mode = EmisPermMode.NONE
-        if 2 == len(split_code_name):
-            mode_name = split_code_name[0]
-            perm_name = split_code_name[1]
+        if len(split_code_name) == 2:
+            mode_name, perm_name = split_code_name
             for ep in EmisPermission:
                 if ep.get_base_code_name() == perm_name.lower():
                     permission = ep

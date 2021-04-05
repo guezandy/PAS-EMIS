@@ -26,7 +26,7 @@ def populate_groups_with_permissions(apps, schema_editor):
 
         # TODO: once groups are locked down, only do this when created == True
         perm_list = []
-        for perm_code in PERMISSIONS_BY_GROUP[group_name]:
+        for perm_code in PERMISSIONS_BY_GROUP.get(group_name, []):
             LOGGER.info(
                 'Granting permission code "{}" to group "{}"'.format(
                     perm_code, group_name

@@ -2,19 +2,10 @@ from django.test import TestCase
 from django.contrib.auth.models import User, Group
 from emis.permissions import EmisPermission, EmisPermMode, decompose_perm_code, get_code
 from emis.groups import PERMISSIONS_BY_GROUP
+from helpers.testing.TestCases import create_user_in_group
 
 
 class GroupPermissionTests(TestCase):
-    @staticmethod
-    def create_user_in_group(group_name: str) -> User:
-        if not group_name:
-            return None
-        user, _ = User.objects.get_or_create(
-            username="test_user_in_" + group_name,
-        )
-        group = Group.objects.get(name=group_name)
-        group.user_set.add(user)
-        return user
 
     @staticmethod
     def confirm_user_has_perm(
@@ -42,9 +33,8 @@ class GroupPermissionTests(TestCase):
         was assembled properly and initialized with its app name).
         """
         for group_name, permission_codes in PERMISSIONS_BY_GROUP.items():
-            test_user = GroupPermissionTests.create_user_in_group(group_name)
+            test_user = create_user_in_group(group_name)
             self.assertIsNotNone(test_user)
-            self.assertTrue(group_name in PERMISSIONS_BY_GROUP)
             for code in permission_codes:
                 permission, mode = decompose_perm_code(code)
                 perm_found = GroupPermissionTests.confirm_user_has_perm(

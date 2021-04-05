@@ -16,10 +16,7 @@ from emis.logger import EmisLogger
 
 # Read environment variables
 # creation of a .env file is required in the /emis directory for this to work
-env = environ.Env(
-    APP_DEBUG = (bool, False),
-    LOG_DEV = (bool, False)
-)
+env = environ.Env(APP_DEBUG=(bool, False), LOG_DEV=(bool, False))
 environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -107,9 +104,15 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",},
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",},
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",},
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
 ]
 
 
@@ -149,15 +152,13 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 Email settings
 """
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
-EMAIL_FILE_PATH = (
-    "/Applications/MAMP/htdocs/tmp/email"  # change this to a proper location for your local environment
-)
+EMAIL_FILE_PATH = "/Applications/MAMP/htdocs/tmp/email"  # change this to a proper location for your local environment
 
 
 """
 Logger settings
 """
-app_debug = env('APP_DEBUG')
-log_dev = env('LOG_DEV')
-log_dir_path = env('LOG_DIRECTORY')
+app_debug = env("APP_DEBUG")
+log_dev = env("LOG_DEV")
+log_dir_path = env("LOG_DIRECTORY")
 LOGGING = EmisLogger(app_debug, log_dev, log_dir_path).get_config()

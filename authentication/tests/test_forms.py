@@ -46,4 +46,3 @@ class AdminUserCreationFormTests(ViewTestCase):
             },
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
-

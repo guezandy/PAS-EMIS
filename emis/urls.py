@@ -21,5 +21,6 @@ urlpatterns = [
     # Temporary index route
     path("", index, name="index"),
     path("auth/", include("authentication.urls")),
+    path("historical/", include("historical_surveillance.urls")),
     path("admin/", admin.site.urls),
 ]

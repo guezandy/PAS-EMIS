@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "crispy_forms",
+    "historical_surveillance",
 ]
 
 MIDDLEWARE = [
@@ -84,9 +85,9 @@ DATABASES = {
         # TODO Move to .env file
         "NAME": "lucia_education",
         "USER": "root",
-        "PASSWORD": "root",
+        "PASSWORD": "",
         "HOST": "127.0.0.1",
-        "PORT": "8889",
+        "PORT": "3306",
     }
 }
 

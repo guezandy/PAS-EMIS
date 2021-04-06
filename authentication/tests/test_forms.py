@@ -38,12 +38,12 @@ class AdminUserCreationFormTests(ViewTestCase):
         response = self.client.post(
             reverse("authentication:create-user"),
             data={
-                "username": "user name",
+                "username": "username",
                 "first_name": "first name",
                 "last_name": "last name",
                 "email": "email@email.com",
                 "groups": [],
             },
         )
-        self.assertEqual(response.status_code, HTTPStatus.OK)
-        user = User.objects.get(username="user name")
+        self.assertEqual(response.status_code, HTTPStatus.FOUND)
+        self.assertEqual(User.objects.filter(username="username").exists(), True)

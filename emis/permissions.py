@@ -368,7 +368,18 @@ def get_raw_codes_by_area(area: EmisPermArea, mode_flags: EmisPermMode) -> list:
     return codes
 
 
-def get_all_raw_codes_by_area(area: EmisPermArea):
+def get_permissions_by_area(area: EmisPermArea) -> list:
+    """
+    Returns a list of all permissions within a given logical area.
+    """
+    permissions = []
+    for perm in EmisPermission:
+        if area & perm.get_area():
+            permissions.append(perm)
+    return permissions
+
+
+def get_all_raw_codes_by_area(area: EmisPermArea) -> list:
     """
     Returns a list of code names for all permissions within a logical area,
     for all possible modes.

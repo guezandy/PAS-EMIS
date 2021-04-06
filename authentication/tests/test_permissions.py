@@ -1,12 +1,21 @@
+from http import HTTPStatus
+
 from django.test import TestCase
+from django.urls import reverse
 from django.contrib.auth.models import User, Group
-from emis.permissions import EmisPermission, EmisPermMode, decompose_perm_code, get_code
-from emis.groups import PERMISSIONS_BY_GROUP
-from helpers.testing.TestCases import create_user_in_group
+from emis.permissions import (
+    EmisPermission,
+    EmisPermMode,
+    EmisPermArea,
+    decompose_perm_code,
+    get_code,
+    get_permissions_by_area,
+)
+from emis.groups import PERMISSIONS_BY_GROUP, TEACHERS_GROUP
+from helpers.testing.TestCases import create_user_in_group, ViewTestCase
 
 
-class GroupPermissionTests(TestCase):
-
+class GroupPermissionTests(ViewTestCase):
     @staticmethod
     def confirm_user_has_perm(
         user: User, permission: EmisPermission, mode: EmisPermMode
@@ -31,6 +40,8 @@ class GroupPermissionTests(TestCase):
         each can be checked by passing the output of EmisPermission.get_code
         (or a derivative method) to User.has_perm (i.e. the permissions module
         was assembled properly and initialized with its app name).
+
+        This test does not examine the UI/form path to create users.
         """
         for group_name, permission_codes in PERMISSIONS_BY_GROUP.items():
             test_user = create_user_in_group(group_name)
@@ -41,3 +52,37 @@ class GroupPermissionTests(TestCase):
                     test_user, permission, mode
                 )
                 self.assertTrue(perm_found)
+
+    def test_perm_ui_created_user(self):
+        """
+        Creates a Teacher through the new user form, and verifies that
+        known-applicable and known-unapplicable permissions can be checked
+        via user.has_perm and EmisPermission convenience methods.
+        """
+        self.login_super_user()
+        username = "teacher_test"
+        response = self.client.post(
+            reverse("authentication:create-user"),
+            data={
+                "username": username,
+                "first_name": "teacher",
+                "last_name": "test",
+                "email": "teacher@test.com",
+                "groups": [TEACHERS_GROUP],
+            },
+        )
+        
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        user = User.objects.get(username=username)
+
+        # A teacher should have full permissions to their area granted by group
+        for permission in get_permissions_by_area(EmisPermArea.TEACHING):
+            self.assertTrue(user.has_perm(permission.get_create_code()))
+            self.assertTrue(user.has_perm(permission.get_update_code()))
+            self.assertTrue(user.has_perm(permission.get_view_code()))
+
+        # ...and not have any permissions in an unrelated group (by default)
+        for permission in get_permissions_by_area(EmisPermArea.PRINCIPAL):
+            self.assertFalse(user.has_perm(permission.get_create_code()))
+            self.assertFalse(user.has_perm(permission.get_update_code()))
+            self.assertFalse(user.has_perm(permission.get_view_code()))

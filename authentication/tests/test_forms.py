@@ -46,3 +46,4 @@ class AdminUserCreationFormTests(ViewTestCase):
             },
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
+        user = User.objects.get(username="user name")

@@ -1,4 +1,4 @@
-version: "3.9"
+version: "3"
    
 services:
   db:
@@ -13,12 +13,14 @@ services:
 
   web:
     build: .
+    image: xinxyu/pas-emis
     command: sh -c "gunicorn emis.wsgi -b 0.0.0.0:8000"
     working_dir: /application
     volumes:
       - .:/application
     ports:
-      - 8000:8000
+      - "80:8000"
+      - "443:8000"
     environment:
       MYSQL_HOST: mysql
       MYSQL_USER: root

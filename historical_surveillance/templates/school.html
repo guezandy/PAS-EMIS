@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+{% block page_content %}
+<!-- This form handles the creation of schools in each district.
+The error handling needs to be reviewed for now, it takes the error messaged passed as a dictionary
+from the school view and displays to the user preventing duplicate data entry.
+The form is redirected to the home page of the app when a data is inserted to prevent double insert
+of the same data which is also handled by the error message displayed.
+-->
+<main>
+<div class="row">
+
+     <div class="col-xl-5 col-md-5">
+          <div class="card bg-transparent container-fluid text-dark mb-4">
+              <div class="card-body"><h3>Create Schools</h3>
+               <h1 class ="text-danger">{% if error_message %} {{ error_message }} {% endif%}</h1></div>
+                   <form action ="" method="post">
+                       {% csrf_token %}
+                       {{ form | crispy }}
+                       <br/><input type="submit" value="Submit" class ="btn btn-lg btn-primary">
+                   </form>
+
+              </div>
+              <div class="card-footer d-flex align-items-center justify-content-between">
+
+      </div>
+  </div>
+
+      <div class="col-xl-7 col-md-7">
+          <div class="card bg-primary text-white mb-4">
+              <div class="card-body"><h3>St. Lucia Schools</h3>
+                  <!-- TO DO :
+                  Make table updatable -->
+                        <div class="table-responsive card bg-body mb-4">
+                            <table class="table table-bordered" id="dataTable" max-width="100%">
+                                <thead>
+                                <tr>
+                                    <th>Name of School</th>
+                                    <th>District of School</th>
+                                    <th>Category of School</th>
+                                </tr>
+                                </thead>
+                                <tfoot>
+                                <tr>
+                                    <th>Name of School</th>
+                                    <th>District of School</th>
+                                    <th>Category of School</th>
+                                </tr>
+                                </tfoot>
+                                <tbody>
+                                {% for school in name_of_school %}
+                                    <tr>
+                                        <td>{{ school.school_name }}</td>
+                                        <td>{{ school.district_name }}</td>
+                                        <td>{{ school.category_of_school }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+              </div>
+              <div class="card-footer d-flex align-items-center justify-content-between">
+                  <div class="card mb-4">
+
+                  </div>
+              </div>
+          </div>
+      </div>
+
+
+
+</div>
+</main>
+
+
+
+
+
+{% endblock%}

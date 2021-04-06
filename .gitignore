@@ -7,3 +7,6 @@ db.sqlite3
 emis/*
 authentication/*
 helpers/*
+=======
+.env
+

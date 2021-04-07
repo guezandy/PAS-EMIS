@@ -76,10 +76,10 @@ class GroupPermissionTests(ViewTestCase):
                 "first_name": "teacher",
                 "last_name": "test",
                 "email": "teacher@test.com",
-                "groups": [ str(teacher_group_pos) ],
+                "groups": [str(teacher_group_pos)],
             },
         )
-        
+
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         matching_users = User.objects.filter(username=user_name)
         self.assertEqual(len(matching_users), 1)

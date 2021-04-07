@@ -105,6 +105,7 @@ PERMISSIONS_BY_GROUP = {
     ASSESSOR_GROUP: ASSESSOR_LIST,
 }
 
+
 def build_groups():
     for group_name in PERMISSIONS_BY_GROUP:
         group, created = Group.objects.get_or_create(name=group_name)

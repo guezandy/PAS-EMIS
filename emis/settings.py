@@ -88,20 +88,17 @@ WSGI_APPLICATION = "emis.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-
         # TODO Move to .env file
         "NAME": "lucia_education",
         "USER": "root",
         "PASSWORD": "",
         "HOST": "127.0.0.1",
         "PORT": "3306",
-
         "NAME": env("DATABASE_NAME"),
         "USER": env("DATABASE_USER"),
         "PASSWORD": env("DATABASE_PASSWORD"),
         "HOST": env("DATABASE_HOST"),
         "PORT": env("DATABASE_PORT"),
-
     }
 }
 
@@ -113,9 +110,15 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",},
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",},
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",},
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
 ]
 
 
@@ -155,5 +158,4 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 Email settings
 """
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
-EMAIL_FILE_PATH = env('DEV_EMAIL_FILE_PATH')
-
+EMAIL_FILE_PATH = env("DEV_EMAIL_FILE_PATH")

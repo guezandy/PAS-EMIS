@@ -13,8 +13,7 @@ services:
 
   web:
     build: .
-    image: xinxyu/pas-emis
-    command: sh -c "gunicorn emis.wsgi -b 0.0.0.0:8000"
+    command: sh -c "./manage.py migrate && gunicorn emis.wsgi -b 0.0.0.0:8000"
     working_dir: /application
     volumes:
       - .:/application

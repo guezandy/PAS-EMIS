@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class HistoricalSurveillanceConfig(AppConfig):
-    name = 'historical_surveillance'
+    name = "historical_surveillance"

@@ -1,3 +1,7 @@
+import logging
+
+from django.contrib.auth.models import Group, Permission
+
 from emis.permissions import (
     EmisPermArea,
     EmisPermMode,
@@ -17,6 +21,8 @@ from emis.permissions import (
     ASSESSOR_GROUP,
 )
 
+
+LOGGER = logging.getLogger(__name__)
 
 # Group permission lists
 TEACHER_LIST = get_all_raw_codes_by_area(EmisPermArea.TEACHING)
@@ -98,3 +104,22 @@ PERMISSIONS_BY_GROUP = {
     SUPPORT_GROUP: SUPPORT_LIST,
     ASSESSOR_GROUP: ASSESSOR_LIST,
 }
+
+def build_groups():
+    for group_name in PERMISSIONS_BY_GROUP:
+        group, created = Group.objects.get_or_create(name=group_name)
+        if created:
+            LOGGER.info('Group "{}" created'.format(group_name))
+
+        # TODO: once groups are locked down, only do this when created == True
+        perm_list = []
+        for perm_code in PERMISSIONS_BY_GROUP.get(group_name, []):
+            LOGGER.info(
+                'Granting permission code "{}" to group "{}"'.format(
+                    perm_code, group_name
+                )
+            )
+            perm_list.append(Permission.objects.get(codename=perm_code))
+
+        group.permissions.set(perm_list)
+        group.save()

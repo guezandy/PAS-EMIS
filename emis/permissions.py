@@ -122,6 +122,9 @@ class EmisPermission(Enum):
         self._base_desc = base_desc
         self._area = area
 
+    def __str__(self):
+        return self._base_code_name
+
     # Public properties - general
     def get_base_code_name(self) -> str:
         return self._base_code_name

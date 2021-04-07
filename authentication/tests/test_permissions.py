@@ -11,8 +11,9 @@ from emis.permissions import (
     get_code,
     get_permissions_by_area,
 )
-from emis.groups import PERMISSIONS_BY_GROUP, TEACHERS_GROUP
+from emis.groups import PERMISSIONS_BY_GROUP, TEACHERS_GROUP, build_groups
 from helpers.testing.TestCases import create_user_in_group, ViewTestCase
+from authentication.views.sysadmin import create_user
 
 
 class GroupPermissionTests(ViewTestCase):
@@ -33,6 +34,10 @@ class GroupPermissionTests(ViewTestCase):
             return user.has_perm(permission.get_view_code())
         else:
             return True
+
+    def setUp(self):
+        super(GroupPermissionTests, self).setUp()
+        build_groups()
 
     def test_perm_access_for_groups(self):
         """
@@ -59,21 +64,25 @@ class GroupPermissionTests(ViewTestCase):
         known-applicable and known-unapplicable permissions can be checked
         via user.has_perm and EmisPermission convenience methods.
         """
-        self.login_super_user()
-        username = "teacher_test"
+        user_name = "teacher"
         response = self.client.post(
             reverse("authentication:create-user"),
             data={
-                "username": username,
+                "username": user_name,
                 "first_name": "teacher",
                 "last_name": "test",
                 "email": "teacher@test.com",
-                "groups": [TEACHERS_GROUP],
+                "groups": [ "1" ],
             },
         )
         
-        self.assertEqual(response.status_code, HTTPStatus.OK)
-        user = User.objects.get(username=username)
+        self.assertEqual(response.status_code, HTTPStatus.FOUND)
+        matching_users = User.objects.filter(username=user_name)
+        self.assertEqual(len(matching_users), 1)
+        user = matching_users[0]
+
+        # Force user activation for testing purposes (normally via email)
+        user.is_active = True
 
         # A teacher should have full permissions to their area granted by group
         for permission in get_permissions_by_area(EmisPermArea.TEACHING):

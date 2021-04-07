@@ -1,11 +1,9 @@
 import logging
 
 from django.db import models, migrations
-from django.contrib.auth.models import Group, Permission
 from django.core.management.sql import emit_post_migrate_signal
-from django.contrib.contenttypes.models import ContentType
 
-from emis.groups import PERMISSIONS_BY_GROUP
+from emis.groups import build_groups
 
 LOGGER = logging.getLogger(__name__)
 
@@ -18,24 +16,7 @@ def populate_groups_with_permissions(apps, schema_editor):
     https://stackoverflow.com/questions/38491215/programmatically-creating-a-group-cant-access-permissions-from-migration/38491679#38491679
     """
     emit_post_migrate_signal(2, False, "default")
-
-    for group_name in PERMISSIONS_BY_GROUP:
-        group, created = Group.objects.get_or_create(name=group_name)
-        if created:
-            LOGGER.info('Group "{}" created'.format(group_name))
-
-        # TODO: once groups are locked down, only do this when created == True
-        perm_list = []
-        for perm_code in PERMISSIONS_BY_GROUP.get(group_name, []):
-            LOGGER.info(
-                'Granting permission code "{}" to group "{}"'.format(
-                    perm_code, group_name
-                )
-            )
-            perm_list.append(Permission.objects.get(codename=perm_code))
-
-        group.permissions.set(perm_list)
-        group.save()
+    build_groups()
 
 
 class Migration(migrations.Migration):

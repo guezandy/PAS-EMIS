@@ -65,6 +65,10 @@ class GroupPermissionTests(ViewTestCase):
         via user.has_perm and EmisPermission convenience methods.
         """
         user_name = "teacher"
+
+        # Determine the position of the TEACHERS_GROUP entry within the combobox
+        teacher_group_pos = list(PERMISSIONS_BY_GROUP.keys()).index(TEACHERS_GROUP) + 1
+
         response = self.client.post(
             reverse("authentication:create-user"),
             data={
@@ -72,7 +76,7 @@ class GroupPermissionTests(ViewTestCase):
                 "first_name": "teacher",
                 "last_name": "test",
                 "email": "teacher@test.com",
-                "groups": [ "1" ],
+                "groups": [ str(teacher_group_pos) ],
             },
         )
         

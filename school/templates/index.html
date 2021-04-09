@@ -1,0 +1,42 @@
+{% extends "school_base.html" %}
+
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+{% block page_content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-6">
+            {% if data %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        {% for col in data.columns %}
+                        <th scope="col">{{col}}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for obj in data.values %}
+                    <tr class="row">
+                        {% for value in obj %}
+                        <td> {{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        </div>
+        <div class="col-sm-6">
+            <h5>Create {{ model }} form</h5>
+            {% if form %}
+            <form method="post">
+                {% csrf_token %}
+                {{ form | crispy }}
+                <input class="btn btn-primary" type="submit" name="submit" value="Save" />
+            </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock%}

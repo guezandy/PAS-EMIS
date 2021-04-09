@@ -6,38 +6,38 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('historical_surveillance', '0001_initial'),
+        ("historical_surveillance", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='aggregateenrollment',
-            name='maximum_age',
+            model_name="aggregateenrollment",
+            name="maximum_age",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='aggregateenrollment',
-            name='minimum_age',
+            model_name="aggregateenrollment",
+            name="minimum_age",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='enrollment',
-            name='maximum_age',
+            model_name="enrollment",
+            name="maximum_age",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='enrollment',
-            name='minimum_age',
+            model_name="enrollment",
+            name="minimum_age",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='aggregateenrollment',
-            name='updated_by',
+            model_name="aggregateenrollment",
+            name="updated_by",
             field=models.CharField(blank=True, max_length=255),
         ),
         migrations.AlterField(
-            model_name='enrollment',
-            name='updated_by',
+            model_name="enrollment",
+            name="updated_by",
             field=models.CharField(blank=True, max_length=255),
         ),
     ]

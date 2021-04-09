@@ -1,12 +1,6 @@
-
 **/*.pyc
 **/__pycache__/
 db.sqlite3
 *.code-workspace
 .idea/*
-emis/*
-authentication/*
-helpers/*
-=======
 .env
-

@@ -18,6 +18,19 @@ create/update/view model (vs. view/add/change/delete).
 _PERM_MODEL_APP_LABEL = None
 
 
+# Default Group Names
+TEACHERS_GROUP = "Teaching"
+ADMIN_GROUP = "School Admin"
+PRINCIPALS_GROUP = "Principals"
+DISTRICT_GROUP = "District Education Officer"
+SUPERVISION_GROUP = "School Supervision"
+STATISTICIAN_GROUP = "Statistics and Planning"
+EVALUATION_GROUP = "Evaluation and Assessment"
+EARLY_CHILDHOOD_GROUP = "Early Childhood"
+SUPPORT_GROUP = "Support Services"
+ASSESSOR_GROUP = "External Assessor"
+
+
 def get_perm_app_label() -> str:
     """
     Returns the app_label that shall be used for permission-codename matching
@@ -42,6 +55,7 @@ class EmisPermMode(IntFlag):
     a given area.
     """
 
+    NONE = 0
     CREATE = 1
     UPDATE = 2
     VIEW = 4
@@ -52,6 +66,7 @@ class EmisPermArea(IntFlag):
     Logical grouping for EMIS permissions.
     """
 
+    NONE = 0
     SCHOOL_ADMIN = 1
     SCHOOL_ADMIN_RESTR = 2
     EARLY_CHILDHOOD = 4
@@ -107,6 +122,9 @@ class EmisPermission(Enum):
         self._base_desc = base_desc
         self._area = area
 
+    def __str__(self):
+        return self._base_code_name
+
     # Public properties - general
     def get_base_code_name(self) -> str:
         return self._base_code_name
@@ -128,6 +146,8 @@ class EmisPermission(Enum):
         return get_code(self, EmisPermMode.VIEW)
 
     # Values
+    NONE = ("", "", EmisPermArea.NONE)
+
     SCHOOL_ACCOUNTING = (
         "accounting",
         "accounting and budgeting information",
@@ -239,6 +259,31 @@ class EmisPermission(Enum):
     )
 
 
+def decompose_perm_code(raw_code_name: str) -> (EmisPermission, EmisPermMode):
+    """
+    Support method for testing.  Given an output from get_raw_code, returns
+    a tuple of the EmisPermission and EmisPermMode which may be used to
+    form the same, or a None-tuple if no such combination is found.
+    """
+    if raw_code_name:
+        split_code_name = raw_code_name.split("_", maxsplit=1)
+        permission = EmisPermission.NONE
+        mode = EmisPermMode.NONE
+        if len(split_code_name) == 2:
+            mode_name, perm_name = split_code_name
+            for ep in EmisPermission:
+                if ep.get_base_code_name() == perm_name.lower():
+                    permission = ep
+                    break
+            for em in EmisPermMode:
+                if em.name.lower() == mode_name.lower():
+                    mode = em
+                    break
+            if not (EmisPermission.NONE == permission or EmisPermMode.NONE == mode):
+                return (permission, mode)
+    return None, None
+
+
 def get_code(perm: EmisPermission, mode: EmisPermMode) -> str:
     """
     Returns a full code name for the given permission and mode, prefixed with
@@ -326,7 +371,18 @@ def get_raw_codes_by_area(area: EmisPermArea, mode_flags: EmisPermMode) -> list:
     return codes
 
 
-def get_all_raw_codes_by_area(area: EmisPermArea):
+def get_permissions_by_area(area: EmisPermArea) -> list:
+    """
+    Returns a list of all permissions within a given logical area.
+    """
+    permissions = []
+    for perm in EmisPermission:
+        if area & perm.get_area():
+            permissions.append(perm)
+    return permissions
+
+
+def get_all_raw_codes_by_area(area: EmisPermArea) -> list:
     """
     Returns a list of code names for all permissions within a logical area,
     for all possible modes.

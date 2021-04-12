@@ -14,9 +14,22 @@ from authentication.forms.auth import ActivationForm, SignUpForm, UserEditSelfFo
 from authentication.models.activation import Activation
 from authentication.views import auth
 
+from authentication.models.users import Teacher
+
 
 def index(request):
     template = get_template("authentication/index.html")
+
+    # TODO Continue adding other kinds of users and redirect them to the
+    # right place
+
+    try:
+        # If logged in user is a Teacher navigate to the School Dashboard
+        if Teacher.objects.filter(user_ptr=request.user).exists():
+            return redirect("/school/")
+    except Exception:
+        pass
+
     # Any additional data needed
     context = {}
     return HttpResponse(template.render(context, request))

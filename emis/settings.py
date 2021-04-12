@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "crispy_forms",
     "historical_surveillance",
+    "school",
 ]
 
 MIDDLEWARE = [
@@ -88,14 +89,6 @@ WSGI_APPLICATION = "emis.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-
-        # TODO Move to .env file
-        "NAME": "lucia_education",
-        "USER": "root",
-        "PASSWORD": "",
-        "HOST": "127.0.0.1",
-        "PORT": "3306",
-
         "NAME": env("DATABASE_NAME"),
         "USER": env("DATABASE_USER"),
         "PASSWORD": env("DATABASE_PASSWORD"),
@@ -163,4 +156,8 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 Email settings
 """
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+<<<<<<< HEAD
 EMAIL_FILE_PATH = "/Applications/MAMP/htdocs/tmp/email"  # change this to a proper location for your local environment
+=======
+EMAIL_FILE_PATH = env("DEV_EMAIL_FILE_PATH")
+>>>>>>> 3fee20bc2f79cd5f902d40d92c08e81110bae800

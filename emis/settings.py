@@ -14,9 +14,10 @@ from pathlib import Path
 import environ
 from emis.logger import EmisLogger
 
+
 # Read environment variables
 # creation of a .env file is required in the /emis directory for this to work
-env = environ.Env(APP_DEBUG=(bool, False), LOG_DEV=(bool, False))
+env = environ.Env(APP_DEBUG=(bool, False))
 environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -162,7 +163,6 @@ EMAIL_FILE_PATH = env("DEV_EMAIL_FILE_PATH")
 """
 Logger settings
 """
-app_debug = env("APP_DEBUG")
-log_dev = env("LOG_DEV")
+app_debug = env("LOG_APP_DEBUG")
 log_dir_path = env("LOG_DIRECTORY")
-LOGGING = EmisLogger(app_debug, log_dev, log_dir_path).get_config()
+LOGGING = EmisLogger(app_debug, log_dir_path).get_config()

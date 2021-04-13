@@ -17,6 +17,11 @@ from authentication.views import auth
 from authentication.models.users import Teacher
 
 
+import logging
+LOGGER = logging.getLogger("emis-pas")
+
+
+
 def index(request):
     template = get_template("authentication/index.html")
 
@@ -53,7 +58,6 @@ def register_view(request):
 def login_view(request):
     if request.method == "POST":
         form = AuthenticationForm(data=request.POST)
-        print("form is valid: ", form.is_valid())
         if form.is_valid():
             username = request.POST["username"]
             password = request.POST["password"]

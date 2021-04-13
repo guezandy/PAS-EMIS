@@ -33,46 +33,10 @@
 
             <!-- Navbar links -->
             <div class="collapse navbar-collapse" id="collapsibleNavbar">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
-                    {% if user.is_superuser %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="sysadmin-dropdown" role="button"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            System Admin
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="sysadmin-dropdown">
-                            <a class="dropdown-item" href="{% url 'authentication:user-directory' %}">User Directory</a>
-                            <a class="dropdown-item" href="{% url 'authentication:create-user' %}">Create User</a>
-                        </div>
-                    </li>
-                    {% endif %}
-                </ul>
                 <ul class="navbar-nav">
-                    {% if user.is_authenticated %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="user-dropdown" role="button"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            {{ user.first_name }} {{ user.last_name }}
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="user-dropdown">
-                            <a class="dropdown-item" href="{% url 'authentication:user-detail' user.id%}">User
-                                Profile</a>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/auth/logout">Logout</a>
-                    </li>
-                    {% else %}
                     <li class="nav-item">
                         <a class="nav-link" href="/auth/login">Login</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/auth/register">Register</a>
-                    </li>
-                    {% endif %}
                 </ul>
             </div>
         </nav>

@@ -7,7 +7,7 @@ from .utils import get_plot, get_pairs
 
 # This is the view for the home page of this app
 def index(request):
-    return render(request, "base.html", {})
+    return render(request, "surv_home.html", {})
 
 
 # This function controls the district creation form view and process form data for save into the database

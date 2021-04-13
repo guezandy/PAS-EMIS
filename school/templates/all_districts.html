@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block page_content %}
+<div class="container-fluid">
+    <h1>District Directory</h1>
+
+    <div class="row">
+        <div class="col-12">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Code</th>
+                        <th scope="col">Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for district in data %}
+                    <tr class="district-row" data-url="{% url 'school:district' district.district_code %}">
+                        <td>
+                            <a href="{% url 'school:district' district.district_code %}">
+                                {{ district.district_code}}
+                            </a>
+                        </td>
+                        <td> {{ district.district_name }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<style>
+    tbody tr {
+        cursor: pointer;
+    }
+
+    tbody tr:hover {
+        background-color: rgb(0, 123, 255) !important;
+    }
+</style>
+
+
+{% endblock page_content %}

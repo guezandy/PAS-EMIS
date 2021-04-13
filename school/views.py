@@ -1,9 +1,20 @@
 import datetime
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 
-from authentication.models.users import Teacher
+from authentication.models.users import (
+    SchoolAdministrator,
+    Teacher,
+    SchoolPrincipal,
+    DistrictEducationOfficer,
+    SchoolSuperviser,
+    StatisticianAdmin,
+    EvaluationAdmin,
+    EarlyChildhoodEducator,
+    SupportServicesAdmin,
+    ExternalAccessor,
+)
 from authentication.forms.users import TeacherForm
 from historical_surveillance.models import School
 from .forms import (
@@ -14,11 +25,45 @@ from .forms import (
     GradeForm,
     StudentForm,
 )
+from historical_surveillance.models import District, School
 from .models import Student, Class, Course, SubjectGroup, Subject, Grade
 
 
 def index(request):
+    # Super/SystemAdmin Can see all districts
+    return redirect("/school/districts")
+
+    # District officer - Can only see single district
+    district_officer = DistrictEducationOfficer.objects.filter(user_ptr=request.user)
+    if district_officer.exists():
+        # Every officer should have a district they belong too
+        district = district_officer.district
+        return redirect(f"/school/district/{district.district_code}")
+
+    # Principal - Can only see single school
+    # Teacher - Can only see a single teacher
+
     return render(request, "index.html", {"title": "Welcome"})
+
+
+def all_districts_view(request):
+    # check permission
+    data = District.objects.values("district_code", "district_name")
+    print(data)
+    return render(request, "all_districts.html", {"data": data})
+
+
+def single_district_view(request, code):
+    # check permission
+    district = District.objects.get(district_code=code)
+    data = {
+        "district": {
+            "district_name": district.district_name,
+            "district_code": district.district_code,
+        },
+        "schools": School.objects.filter(district_name=district),
+    }
+    return render(request, "single_district.html", {"data": data})
 
 
 def teachers(request):

@@ -95,7 +95,6 @@ def send_activation_email(request, user: User):
     plaintext = get_template("sysadmin/user_activation_email.txt")
     html = get_template("sysadmin/user_activation_email.html")
 
-    # url = reverse('authentication:activate', args=(user.activation.code,))
     url = request.build_absolute_uri(
         reverse("authentication:activate", args=(user.activation.code,))
     )

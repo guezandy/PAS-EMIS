@@ -1,6 +1,9 @@
+from django.core.mail.message import EmailMultiAlternatives
+from authentication.models.forgot_password import ForgotPassword
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 from django.core.signing import TimestampSigner
+from django.db.models.query_utils import Q
 from django.http.response import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
@@ -10,7 +13,13 @@ from django.urls.base import reverse
 from django.core.exceptions import PermissionDenied
 from django.template.loader import get_template
 
-from authentication.forms.auth import ActivationForm, SignUpForm, UserEditSelfForm
+from authentication.forms.auth import (
+    ActivationForm,
+    ResetPasswordForm,
+    SignUpForm,
+    UserEditSelfForm,
+    ForgotPasswordForm,
+)
 from authentication.models.activation import Activation
 from authentication.views import auth
 
@@ -41,7 +50,6 @@ def register_view(request):
 def login_view(request):
     if request.method == "POST":
         form = AuthenticationForm(data=request.POST)
-        print("form is valid: ", form.is_valid())
         if form.is_valid():
             username = request.POST["username"]
             password = request.POST["password"]
@@ -91,11 +99,71 @@ def activation_view(request, code: str):
         form = ActivationForm(None)
     return render(request, "authentication/activation.html", {"form": form})
 
+
 def forgot_password_view(request):
-    if request.method == 'POST':
-        print('post request from forgot password')
+    if request.method == "POST":
+        form = ForgotPasswordForm(data=request.POST)
+        if form.is_valid():
+            results = User.objects.filter(email=form.cleaned_data["email"])
+            if results:
+                user = results[0]
+                signer = TimestampSigner()
+                signed_value = signer.sign(user.email)
+                code = signed_value[signed_value.find(":") + 1 :]
+
+                forgot_password_record = ForgotPassword(user=user, code=code)
+                forgot_password_record.save()
+
+                messages.success(
+                    request,
+                    "If an account exists with the email address a reset password will be emailed to you. Please check your email and follow instructions from there.",
+                )
+
+                send_forgot_password_email(request, user)
+
+        else:
+            form.add_error("email", "Invalid email address.")
     else:
-        return render(request, "authentication/forgot_password.html",{})
+        form = ForgotPasswordForm()
+    return render(request, "authentication/forgot_password.html", {"form": form})
+
+
+def reset_password_view(request, code: str):
+    if request.method == "POST":
+        form = ResetPasswordForm(user=None, data=request.POST)
+        forgot_password_record = get_object_or_404(ForgotPassword, code=code)
+        form.user = forgot_password_record.user
+        code_is_valid(code, request.POST["email"], forgot_password_record.user)
+        if form.is_valid():
+            try:
+                signer = TimestampSigner()
+                plain_text_email = signer.unsign(
+                    request.POST.get("email") + ":" + forgot_password_record.code
+                )
+                if (
+                    plain_text_email == form.cleaned_data["email"]
+                    and plain_text_email == form.user.email
+                ):
+                    form.save()  # save the forgot password form (password set)
+
+                    form.user.is_active = True
+                    user = authenticate(
+                        request,
+                        username=form.user.username,
+                        password=form.cleaned_data["new_password1"],
+                    )
+                    if user is not None and user.is_active:
+                        forgot_password_record.delete()  # delete the forgot password record so it can no longer be used
+                        login(request, user)
+                        return redirect(auth.index)
+                else:
+                    form.add_error(None, "The code or email provided was invalid.")
+            except:
+                form.add_error(None, "The code or email provided was invalid.")
+    else:
+        form = ResetPasswordForm(None)
+    return render(request, "authentication/reset_password.html", {"form": form})
+
 
 def user_detail(request, pk: int):
     current_user = request.user
@@ -131,3 +199,21 @@ def code_is_valid(code: str, email: str, user: User):
         return signed_text == email
     except:
         return False
+
+
+def send_forgot_password_email(request, user: User):
+    plaintext = get_template("authentication/forgot_password_email.txt")
+    html = get_template("authentication/forgot_password_email.html")
+
+    url = request.build_absolute_uri(
+        reverse("authentication:reset-password", args=(user.forgotpassword.code,))
+    )
+    d = {"user": user, "url": url}
+
+    subject, from_email, to = "PAS Profile Created", "pas@email.com", user.email
+    text_content = plaintext.render(d)
+    html_content = html.render(d)
+
+    msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+    msg.attach_alternative(html_content, "text/html")
+    msg.send(fail_silently=False)

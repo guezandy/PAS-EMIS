@@ -35,6 +35,30 @@ class ActivationForm(SetPasswordForm):
         fields = ("new_password1", "new_password2")
 
 
+class ForgotPasswordForm(forms.Form):
+    email = forms.EmailField(
+        label=("Email Address"),
+        max_length=254,
+        help_text="The email address linked to your account.",
+    )
+
+    class Meta:
+        model = User
+
+
+class ResetPasswordForm(SetPasswordForm):
+    field_order = ["email", "new_password1", "new_password2"]
+    email = forms.EmailField(
+        max_length=254,
+        help_text="The email address where you received your actvation email.",
+        label="Email Address",
+    )
+
+    class Meta:
+        model = User
+        fields = ("new_password1", "new_password2")
+
+
 class UserEditSelfForm(UserChangeForm):
     first_name = forms.CharField(max_length=150, help_text="Required.")
     last_name = forms.CharField(max_length=150, help_text="Required.")

@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 import environ
 from emis.logger import EmisLogger
+from emis import log_callbacks
 
 
 # Read environment variables

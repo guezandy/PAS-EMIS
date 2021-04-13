@@ -3,10 +3,10 @@ import logging
 from django.contrib.auth.signals import user_logged_in, user_logged_out, user_login_failed
 from django.dispatch import receiver
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger("emis-pas")
 
 @receiver(user_logged_in)
-def login_callback(sender, request, user, **kwargs):    
+def login_callback(sender, request, user, **kwargs):
     LOGGER.info("user \"{}\" logged in".format(user))
 
 @receiver(user_logged_out)

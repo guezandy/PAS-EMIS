@@ -1,4 +1,5 @@
 from django.db import models
+from emis.permissions import CustomPermissionModel
 
 GRADE_CHOICES = [
     ("grade k", "Grade k"),
@@ -41,6 +42,9 @@ class District(models.Model):
     updated_at = models.DateField(auto_now_add=True)
     updated_by = models.CharField(max_length=255, blank=True)
 
+    class Meta(CustomPermissionModel.Meta):
+        pass
+
     def __str__(self):
         return str(self.district_name)
 
@@ -55,6 +59,9 @@ class School(models.Model):
     category_of_school = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
     updated_at = models.DateField(auto_now_add=True)
     updated_by = models.CharField(max_length=255, blank=True)
+
+    class Meta(CustomPermissionModel.Meta):
+        pass
 
     def __str__(self):
         return self.school_name
@@ -74,6 +81,9 @@ class AggregateEnrollment(models.Model):
     maximum_age = models.IntegerField(blank=True, null=True)
     updated_at = models.DateField(auto_now_add=True)
     updated_by = models.CharField(max_length=255, blank=True)
+
+    class Meta(CustomPermissionModel.Meta):
+        pass
 
     def __str__(self):
         return self.name_of_school
@@ -96,3 +106,6 @@ class Enrollment(models.Model):
     sex = models.CharField(max_length=20, null=True, choices=SEX_CHOICES)
     updated_at = models.DateField(auto_now_add=True)
     updated_by = models.CharField(max_length=255, blank=True)
+
+    class Meta(CustomPermissionModel.Meta):
+        pass

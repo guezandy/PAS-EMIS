@@ -10,7 +10,11 @@ init_perm_model_app_label(app_label=__package__)
 app_name = "school"
 
 urlpatterns = [
+    # Views
     path("", views.index, name="school_index"),
+    path("districts", views.all_districts_view, name="districts"),
+    path("district/<str:code>", views.single_district_view, name="district"),
+    # Forms
     path("teachers", views.teachers, name="teachers"),
     path("students", views.students, name="students"),
     path("classes", views.classes, name="classes"),

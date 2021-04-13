@@ -31,7 +31,7 @@
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             {% if 'apps_permission' in user_context and 'school' in user_context.apps_permission %}
             <li class="nav-item">
-                <a class="nav-link {% if 'school' in request.path %} active {% endif %}" href="#">Schools</a>
+                <a class="nav-link {% if 'school' in request.path %} active {% endif %}" href="/school">Schools</a>
             </li>
             {% endif %}
             {% if 'apps_permission' in user_context and 'welfare' in user_context.apps_permission %}

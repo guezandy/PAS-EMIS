@@ -23,4 +23,3 @@ admin.site.register(EvaluationAdmin)
 admin.site.register(EarlyChildhoodEducator)
 admin.site.register(SupportServicesAdmin)
 admin.site.register(ExternalAccessor)
-

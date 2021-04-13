@@ -5,4 +5,3 @@ admin.site.register(District)
 admin.site.register(School)
 admin.site.register(AggregateEnrollment)
 admin.site.register(Enrollment)
-

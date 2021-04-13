@@ -46,7 +46,9 @@ class EmisLogger:
             "handlers": {
                 "console": {
                     "level": app_level_str,
-                    "filters": [ "app_debug", ],
+                    "filters": [
+                        "app_debug",
+                    ],
                     "class": "logging.StreamHandler",
                     "formatter": "main",
                 },
@@ -59,18 +61,27 @@ class EmisLogger:
             },
             "loggers": {
                 "django": {
-                    "handlers": [ "console", "file", ],
+                    "handlers": [
+                        "console",
+                        "file",
+                    ],
                     "propagate": True,
                     "level": "WARNING",
                 },
-                "" : {
-                    "handlers": [ "console", "file", ],
+                "": {
+                    "handlers": [
+                        "console",
+                        "file",
+                    ],
                     "level": "WARNING",
                 },
                 "emis-pas": {
-                    "handlers": [ "console", "file", ],
+                    "handlers": [
+                        "console",
+                        "file",
+                    ],
                     "propagate": False,
-                    "level": "INFO"
-                }
+                    "level": "INFO",
+                },
             },
         }

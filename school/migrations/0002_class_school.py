@@ -7,14 +7,18 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('historical_surveillance', '0002_auto_20210406_2357'),
-        ('school', '0001_initial'),
+        ("historical_surveillance", "0002_auto_20210406_2357"),
+        ("school", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='class',
-            name='school',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='historical_surveillance.school'),
+            model_name="class",
+            name="school",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="historical_surveillance.school",
+            ),
         ),
     ]

@@ -18,8 +18,8 @@ from authentication.models.users import Teacher
 
 
 import logging
-LOGGER = logging.getLogger("emis-pas")
 
+LOGGER = logging.getLogger("emis-pas")
 
 
 def index(request):

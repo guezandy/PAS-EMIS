@@ -12,75 +12,175 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('authentication', '0003_districteducationofficer_earlychildhoodeducator_evaluationadmin_externalaccessor_schooladministrator'),
+        (
+            "authentication",
+            "0003_districteducationofficer_earlychildhoodeducator_evaluationadmin_externalaccessor_schooladministrator",
+        ),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Course',
+            name="Course",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Student',
+            name="Student",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('external_key', models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
-                ('first_name', models.CharField(max_length=100)),
-                ('middle_initial', models.CharField(max_length=100)),
-                ('last_name', models.CharField(max_length=100)),
-                ('date_of_birth', models.DateField(max_length=8)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "external_key",
+                    models.UUIDField(default=uuid.uuid4, editable=False, unique=True),
+                ),
+                ("first_name", models.CharField(max_length=100)),
+                ("middle_initial", models.CharField(max_length=100)),
+                ("last_name", models.CharField(max_length=100)),
+                ("date_of_birth", models.DateField(max_length=8)),
             ],
         ),
         migrations.CreateModel(
-            name='SubjectGroup',
+            name="SubjectGroup",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
             ],
         ),
         migrations.CreateModel(
-            name='Subject',
+            name="Subject",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
-                ('subject_group', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='school.subjectgroup')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
+                (
+                    "subject_group",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="school.subjectgroup",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Grade',
+            name="Grade",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('grade', models.CharField(choices=[('A', 'A'), ('B', 'B'), ('C', 'C'), ('D', 'D'), ('F', 'F')], max_length=10)),
-                ('course', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='school.course')),
-                ('student', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='school.student')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "grade",
+                    models.CharField(
+                        choices=[
+                            ("A", "A"),
+                            ("B", "B"),
+                            ("C", "C"),
+                            ("D", "D"),
+                            ("F", "F"),
+                        ],
+                        max_length=10,
+                    ),
+                ),
+                (
+                    "course",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="school.course",
+                    ),
+                ),
+                (
+                    "student",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="school.student",
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='course',
-            name='students',
-            field=models.ManyToManyField(to='school.Student'),
+            model_name="course",
+            name="students",
+            field=models.ManyToManyField(to="school.Student"),
         ),
         migrations.AddField(
-            model_name='course',
-            name='subject',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='school.subject'),
+            model_name="course",
+            name="subject",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="school.subject",
+            ),
         ),
         migrations.AddField(
-            model_name='course',
-            name='teachers',
-            field=models.ManyToManyField(to='authentication.Teacher'),
+            model_name="course",
+            name="teachers",
+            field=models.ManyToManyField(to="authentication.Teacher"),
         ),
         migrations.CreateModel(
-            name='Class',
+            name="Class",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('graduation_year', models.PositiveIntegerField(default=2021, validators=[django.core.validators.MinValueValidator(1984), school.models.Class.max_value_current_year])),
-                ('students', models.ManyToManyField(to='school.Student')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "graduation_year",
+                    models.PositiveIntegerField(
+                        default=2021,
+                        validators=[
+                            django.core.validators.MinValueValidator(1984),
+                            school.models.Class.max_value_current_year,
+                        ],
+                    ),
+                ),
+                ("students", models.ManyToManyField(to="school.Student")),
             ],
             options={
-                'verbose_name_plural': 'Classes',
+                "verbose_name_plural": "Classes",
             },
         ),
     ]

@@ -91,6 +91,11 @@ def activation_view(request, code: str):
         form = ActivationForm(None)
     return render(request, "authentication/activation.html", {"form": form})
 
+def forgot_password_view(request):
+    if request.method == 'POST':
+        print('post request from forgot password')
+    else:
+        return render(request, "authentication/forgot_password.html",{})
 
 def user_detail(request, pk: int):
     current_user = request.user

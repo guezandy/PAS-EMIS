@@ -13,10 +13,13 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 import environ
 import os
+from emis.logger import EmisLogger
+from emis import log_callbacks
+
 
 # Read environment variables
 # creation of a .env file is required in the /emis directory for this to work
-env = environ.Env()
+env = environ.Env(APP_DEBUG=(bool, False))
 environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -152,3 +155,10 @@ Email settings
 """
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = env("DEV_EMAIL_FILE_PATH")
+
+"""
+Logger settings
+"""
+app_debug = env("LOG_APP_DEBUG")
+log_dir_path = env("LOG_DIRECTORY")
+LOGGING = EmisLogger(app_debug, log_dir_path).get_config()

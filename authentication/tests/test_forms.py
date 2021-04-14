@@ -45,5 +45,6 @@ class AdminUserCreationFormTests(ViewTestCase):
                 "groups": [],
             },
         )
+
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertEqual(User.objects.filter(username="username").exists(), True)

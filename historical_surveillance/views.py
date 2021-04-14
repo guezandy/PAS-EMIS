@@ -5,7 +5,6 @@ from .models import AggregateEnrollment, School, District, Enrollment
 import pandas as pd
 from .utils import get_plot, get_pairs
 
-
 # This is the view for the home page of this app
 def index(request):
     return render(request, "surv_home.html", {})

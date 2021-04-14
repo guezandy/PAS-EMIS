@@ -23,21 +23,9 @@ LOGGER = logging.getLogger("emis-pas")
 
 
 def index(request):
-    template = get_template("authentication/index.html")
-
-    # TODO Continue adding other kinds of users and redirect them to the
-    # right place
-
-    try:
-        # If logged in user is a Teacher navigate to the School Dashboard
-        if Teacher.objects.filter(user_ptr=request.user).exists():
-            return redirect("/school/")
-    except Exception:
-        pass
-
-    # Any additional data needed
-    context = {}
-    return HttpResponse(template.render(context, request))
+    if request.user and request.user.is_authenticated:
+        return render(request, "base.html", {})
+    return render(request, "authentication/index.html", {})
 
 
 def register_view(request):

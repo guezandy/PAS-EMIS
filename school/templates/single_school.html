@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block page_content %}
+<div class="container-fluid">
+    <h1>{{school_name}}</h1>
+    <div class="row">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body">
+                    <div class='stat'>{{course_count}}</div>
+                    <div class='stat-label'>Courses</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-success text-white mb-4">
+                <div class="card-body">
+                    <div class='stat'>{{teacher_count}}</div>
+                    <div class='stat-label'>Teachers</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-warning text-white mb-4">
+                <div class="card-body">
+                    <div class='stat'>{{student_count}}</div>
+                    <div class='stat-label'>Students</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    Enrollment
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Graduation year</th>
+                                    <th>Count</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th>Graduation year</th>
+                                    <th>Count</th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                {% for en in enrollment %}
+                                <tr>
+                                    <td>{{en.year}}</td>
+                                    <td>{{en.student_count}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    Teachers
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Teacher code</th>
+                                    <th>Name</th>
+                                    <th>Course count</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th>Teacher code</th>
+                                    <th>Name</th>
+                                    <th>Course count</th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                {% for teacher in teachers %}
+                                <tr>
+                                    <td>{{teacher.teacher_code}}</td>
+                                    <td>{{teacher.name}}</td>
+                                    <td>{{teacher.course_count}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    Courses
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Subject Group</th>
+                                    <th>Subject</th>
+                                    <th>Count</th>
+                                    <th>Student count</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th>Subject Group</th>
+                                    <th>Subject</th>
+                                    <th>Count</th>
+                                    <th>Student count</th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                {% for course in courses %}
+                                <tr>
+                                    <td>{{course.subject_group}}</td>
+                                    <td>{{course.subject}}</td>
+                                    <td>{{course.instances}}</td>
+                                    <td>{{course.student_count}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock page_content %}

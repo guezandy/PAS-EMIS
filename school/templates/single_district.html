@@ -1,8 +1,69 @@
 {% extends "base.html" %}
-
 {% block page_content %}
-{% load crispy_forms_tags %}
+<div class="container-fluid">
+    <h1>District {{district_code}}</h1>
+    <div class="row">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body">
+                    <div class='stat'>{{school_count}}</div>
+                    <div class='stat-label'>Schools</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-success text-white mb-4">
+                <div class="card-body">
+                    <div class='stat'>{{teacher_count}}</div>
+                    <div class='stat-label'>Teachers</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-warning text-white mb-4">
+                <div class="card-body">
+                    <div class='stat'>{{student_count}}</div>
+                    <div class='stat-label'>Students</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>School code</th>
+                            <th>School name</th>
+                            <th>Teacher count</th>
+                            <th>Student count</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>School code</th>
+                            <th>School name</th>
+                            <th>Teacher count</th>
+                            <th>Student count</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% for school in schools %}
+                        <tr class='clickable-row' data-href="/school/school_details/{{school.school_code}}">
+                            <td>{{school.school_code}}</td>
+                            <td>{{school.school_name}}</td>
+                            <td>{{school.teacher_count}}</td>
+                            <td>{{school.student_count}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
-Single district
+
 
 {% endblock page_content %}

@@ -14,6 +14,7 @@ urlpatterns = [
     path("", views.index, name="school_index"),
     path("districts", views.all_districts_view, name="districts"),
     path("district/<str:code>", views.single_district_view, name="district"),
+    path("school_details/<str:code>", views.single_school_view, name="school_details"),
     # Forms
     path("teachers", views.teachers, name="teachers"),
     path("students", views.students, name="students"),

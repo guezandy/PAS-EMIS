@@ -26,6 +26,11 @@ from authentication.views import auth
 from authentication.models.users import Teacher
 
 
+import logging
+
+LOGGER = logging.getLogger("emis-pas")
+
+
 def index(request):
     if request.user and request.user.is_authenticated:
         return render(request, "base.html", {})

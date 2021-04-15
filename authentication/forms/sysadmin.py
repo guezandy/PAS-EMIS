@@ -11,7 +11,7 @@ class AdminUserCreationForm(ModelForm):
     last_name = forms.CharField(
         max_length=150,
     )
-    email = forms.CharField(
+    email = forms.EmailField(
         max_length=254,
     )
 

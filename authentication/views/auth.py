@@ -85,9 +85,9 @@ def activation_view(request, code: str):
                     user = authenticate(
                         request,
                         username=form.user.username,
-                        password=form.data["new_password1"],
+                        password=form.cleaned_data["new_password1"],
                     )
-                    if user is not None and user.is_active:
+                    if user and user.is_active:
                         activation_record.delete()  # delete the activation record so it can no longer be used
                         login(request, user)
                         return redirect(auth.index)
@@ -152,7 +152,7 @@ def reset_password_view(request, code: str):
                         username=form.user.username,
                         password=form.cleaned_data["new_password1"],
                     )
-                    if user is not None and user.is_active:
+                    if user and user.is_active:
                         forgot_password_record.delete()  # delete the forgot password record so it can no longer be used
                         login(request, user)
                         return redirect(auth.index)

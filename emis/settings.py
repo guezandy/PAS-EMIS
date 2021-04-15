@@ -162,3 +162,9 @@ Email settings
 """
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = env("DEV_EMAIL_FILE_PATH")
+
+"""
+Activation and Reset Password settings
+"""
+ACTIVATION_EXPIRATION_DAYS = 7
+RESET_PASSWORD_EXPIRATION_DAYS = 7

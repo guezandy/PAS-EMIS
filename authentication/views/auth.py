@@ -12,10 +12,10 @@ from django.contrib import messages
 from django.urls.base import reverse
 from django.core.exceptions import PermissionDenied
 from django.template.loader import get_template
+from django.conf import settings
 
 from authentication.forms.auth import (
-    ActivationForm,
-    ResetPasswordForm,
+    CustomSetPasswordForm,
     SignUpForm,
     UserEditSelfForm,
     ForgotPasswordForm,
@@ -64,10 +64,15 @@ def login_view(request):
 
 def activation_view(request, code: str):
     if request.method == "POST":
-        form = ActivationForm(user=None, data=request.POST)
+        form = CustomSetPasswordForm(user=None, data=request.POST)
         activation_record = get_object_or_404(Activation, code=code)
         form.user = activation_record.user
-        code_is_valid(code, request.POST["email"], activation_record.user)
+        code_is_valid(
+            code,
+            request.POST["email"],
+            activation_record.user,
+            settings.ACTIVATION_EXPIRATION_DAYS,
+        )
         if form.is_valid():
             try:
                 signer = TimestampSigner()
@@ -96,7 +101,7 @@ def activation_view(request, code: str):
             except:
                 form.add_error(None, "The code or email provided was invalid.")
     else:
-        form = ActivationForm(None)
+        form = CustomSetPasswordForm(None)
     return render(request, "authentication/activation.html", {"form": form})
 
 
@@ -130,10 +135,15 @@ def forgot_password_view(request):
 
 def reset_password_view(request, code: str):
     if request.method == "POST":
-        form = ResetPasswordForm(user=None, data=request.POST)
+        form = CustomSetPasswordForm(user=None, data=request.POST)
         forgot_password_record = get_object_or_404(ForgotPassword, code=code)
         form.user = forgot_password_record.user
-        code_is_valid(code, request.POST["email"], forgot_password_record.user)
+        code_is_valid(
+            code,
+            request.POST["email"],
+            forgot_password_record.user,
+            settings.RESET_PASSWORD_EXPIRATION_DAYS,
+        )
         if form.is_valid():
             try:
                 signer = TimestampSigner()
@@ -161,7 +171,7 @@ def reset_password_view(request, code: str):
             except:
                 form.add_error(None, "The code or email provided was invalid.")
     else:
-        form = ResetPasswordForm(None)
+        form = CustomSetPasswordForm(None)
     return render(request, "authentication/reset_password.html", {"form": form})
 
 
@@ -189,8 +199,7 @@ def logout_view(request):
     return redirect(auth.index)
 
 
-def code_is_valid(code: str, email: str, user: User):
-    max_days = 7  # expires in 7 days
+def code_is_valid(code: str, email: str, user: User, max_days: int):
     max_seconds = max_days * 24 * 60 * 60
 
     signer = TimestampSigner()

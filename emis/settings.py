@@ -82,7 +82,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
             ],
-            "libraries": {"get_user_context": "helpers.templatetags.get_user_context"},
+            "libraries": {"tags": "helpers.templatetags.tags"},
         },
     },
 ]

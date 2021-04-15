@@ -9,7 +9,7 @@
     <meta name="author" content="" />
     <title>Education Policy Assistant</title>
     {% load static %}
-    {% load get_user_context %}
+    {% load tags %}
 
     <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
     <link href="{% static 'css/custom-styles.css' %}" rel="stylesheet" />
@@ -84,52 +84,45 @@
                 <div class="sb-sidenav-menu">
                     {% if 'school' in request.path %}
                     <div class="nav">
-                        <div class="sb-sidenav-menu-heading">Forms</div>
-                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts"
-                            aria-expanded="false" aria-controls="collapseLayouts">
-                            <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                            Data Entry forms
-                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne"
-                            data-parent="#sidenavAccordion">
-                            <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="/">Form1</a>
-                            </nav>
-                        </div>
-                        <div class="sb-sidenav-menu-heading">Districts</div>
-                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-                            aria-expanded="false" aria-controls="collapsePages">
+                        <div class="sb-sidenav-menu-heading">Schools</div>
+                        <a class="nav-link" href="/school/districts">All Districts</a>
+                        {% for district in side_nav %}
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse"
+                            data-target="#{{district.district_code}}" aria-expanded="false"
+                            aria-controls="collapsePages">
                             <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                            Districts
+                            {{district.district_name}}
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
-                        <div class="collapse" id="collapsePages" aria-labelledby="headingTwo"
+                        <div class="collapse" id="{{district.district_code}}" aria-labelledby="headingTwo"
                             data-parent="#sidenavAccordion">
+
                             <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
-                                <a class="nav-link" href="/school/districts">All
-                                    Districts</a>
-                                {% for district in side_nav %}
+                                <a class="nav-link" href="/school/district/{{district.district_code}}">District
+                                    Summary</a>
+                                {% for school in district.schools %}
                                 <a class="nav-link collapsed" href="#" data-toggle="collapse"
-                                    data-target="#{{district.district_code}}" aria-expanded="false"
+                                    data-target="#{{school.school_code}}" aria-expanded="false"
                                     aria-controls="pagesCollapseAuth">
-                                    {{district.district_name}}
+                                    {{school.school_name}}
                                     <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                                 </a>
-                                <div class="collapse" id="{{district.district_code}}" aria-labelledby="headingOne"
+                                <div class="collapse" id="{{school.school_code}}" aria-labelledby="headingOne"
                                     data-parent="#sidenavAccordionPages">
                                     <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="/school/district/{{district.district_code}}">District
+                                        <a class="nav-link" href="/school/school_details/{{school.school_code}}">School
                                             Summary</a>
-                                        {% for school in district.schools %}
+                                        {% for teacher in school.teachers %}
                                         <a class="nav-link"
-                                            href="/school/school_details/{{school.school_code}}">{{school.school_name}}</a>
+                                            href="/school/teacher/{{teacher.teacher_code}}">{{teacher.teacher_name}}</a>
                                         {% endfor %}
                                     </nav>
                                 </div>
                                 {% endfor %}
                             </nav>
+
                         </div>
+                        {% endfor %}
                     </div>
                     {% endif %}
                     {% if 'historical' in request.path %}

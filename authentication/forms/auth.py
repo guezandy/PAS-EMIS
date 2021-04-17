@@ -22,7 +22,18 @@ class SignUpForm(UserCreationForm):
         )
 
 
-class ActivationForm(SetPasswordForm):
+class ForgotPasswordForm(forms.Form):
+    email = forms.EmailField(
+        label=("Email Address"),
+        max_length=254,
+        help_text="The email address linked to your account.",
+    )
+
+    class Meta:
+        model = User
+
+
+class CustomSetPasswordForm(SetPasswordForm):
     field_order = ["email", "new_password1", "new_password2"]
     email = forms.EmailField(
         max_length=254,

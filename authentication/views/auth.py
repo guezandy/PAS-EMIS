@@ -24,6 +24,7 @@ from authentication.models.activation import Activation
 from authentication.views import auth
 
 from authentication.models.users import Teacher
+from datetime import date, timedelta
 
 
 import logging
@@ -56,8 +57,8 @@ def login_view(request):
     if request.method == "POST":
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
-            username = request.POST["username"]
-            password = request.POST["password"]
+            username = form.cleaned_data.get("username")
+            password = form.cleaned_data.get("password")
             user = authenticate(request, username=username, password=password)
             if user is not None and user.is_active:
                 login(request, user)
@@ -70,22 +71,23 @@ def login_view(request):
 def activation_view(request, code: str):
     if request.method == "POST":
         form = CustomSetPasswordForm(user=None, data=request.POST)
-        activation_record = get_object_or_404(Activation, code=code)
-        form.user = activation_record.user
-        valid_code = code_is_valid(
-            code,
-            request.POST["email"],
-            activation_record.user,
-            settings.ACTIVATION_EXPIRATION_DAYS,
-        )
-        if valid_code and form.is_valid():
-            try:
+        activation_record_results = Activation.objects.filter(code=code)
+        if activation_record_results.exists() :
+            activation_record = activation_record_results[0]
+            form.user = activation_record.user
+            valid_code = code_is_valid(
+                code,
+                form.cleaned_data.get("email"),
+                activation_record.user,
+                settings.ACTIVATION_EXPIRATION_DAYS,
+            )
+            if valid_code and form.is_valid():
                 signer = TimestampSigner()
                 plain_text_email = signer.unsign(
-                    request.POST.get("email") + ":" + activation_record.code
+                    form.cleaned_data.get("email") + ":" + activation_record.code
                 )
                 if (
-                    plain_text_email == request.POST.get("email")
+                    plain_text_email == form.cleaned_data.get("email")
                     and plain_text_email == form.user.email
                 ):
                     form.user.is_active = True
@@ -101,10 +103,7 @@ def activation_view(request, code: str):
                         activation_record.delete()  # delete the activation record so it can no longer be used
                         login(request, user)
                         return redirect(auth.index)
-                else:
-                    form.add_error(None, "The code or email provided was invalid.")
-            except:
-                form.add_error(None, "The code or email provided was invalid.")
+        form.add_error(None, "The code or email provided was invalid.")
     else:
         form = CustomSetPasswordForm(None)
     return render(request, "authentication/activation.html", {"form": form})
@@ -143,19 +142,20 @@ def forgot_password_view(request):
 def reset_password_view(request, code: str):
     if request.method == "POST":
         form = CustomSetPasswordForm(user=None, data=request.POST)
-        forgot_password_record = get_object_or_404(ForgotPassword, code=code)
-        form.user = forgot_password_record.user
-        valid_code = code_is_valid(
-            code,
-            request.POST["email"],
-            forgot_password_record.user,
-            settings.RESET_PASSWORD_EXPIRATION_DAYS,
-        )
-        if valid_code and form.is_valid():
-            try:
+        forgot_password_results = ForgotPassword.objects.filter(code=code)
+        if forgot_password_results.exists():
+            forgot_password_record = forgot_password_results[0]
+            form.user = forgot_password_record.user
+            valid_code = code_is_valid(
+                code,
+                request.POST["email"],
+                forgot_password_record.user,
+                settings.RESET_PASSWORD_EXPIRATION_DAYS,
+            )
+            if valid_code and form.is_valid():
                 signer = TimestampSigner()
                 plain_text_email = signer.unsign(
-                    request.POST.get("email") + ":" + forgot_password_record.code
+                    form.cleaned_data.get("email") + ":" + forgot_password_record.code
                 )
                 if (
                     plain_text_email == form.cleaned_data["email"]
@@ -173,10 +173,7 @@ def reset_password_view(request, code: str):
                         forgot_password_record.delete()  # delete the forgot password record so it can no longer be used
                         login(request, user)
                         return redirect(auth.index)
-                else:
-                    form.add_error(None, "The code or email provided was invalid.")
-            except:
-                form.add_error(None, "The code or email provided was invalid.")
+        form.add_error(None, "The link or email provided was invalid.")
     else:
         form = CustomSetPasswordForm(None)
     return render(request, "authentication/reset_password.html", {"form": form})
@@ -224,11 +221,12 @@ def send_forgot_password_email(request, user: User):
     url = request.build_absolute_uri(
         reverse("authentication:reset-password", args=(user.forgotpassword.code,))
     )
-    d = {"user": user, "url": url}
+    expiration_date = date.today() + timedelta(days=settings.RESET_PASSWORD_EXPIRATION_DAYS)
+    context = {"user": user, "url": url, "expiration_date": expiration_date}
 
     subject, from_email, to = "PAS Profile Created", "pas@email.com", user.email
-    text_content = plaintext.render(d)
-    html_content = html.render(d)
+    text_content = plaintext.render(context)
+    html_content = html.render(context)
 
     msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
     msg.attach_alternative(html_content, "text/html")

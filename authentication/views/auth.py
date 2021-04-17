@@ -72,7 +72,7 @@ def activation_view(request, code: str):
     if request.method == "POST":
         form = CustomSetPasswordForm(user=None, data=request.POST)
         activation_record_results = Activation.objects.filter(code=code)
-        if activation_record_results.exists() :
+        if activation_record_results.exists():
             activation_record = activation_record_results[0]
             form.user = activation_record.user
             valid_code = code_is_valid(
@@ -103,7 +103,10 @@ def activation_view(request, code: str):
                         activation_record.delete()  # delete the activation record so it can no longer be used
                         login(request, user)
                         return redirect(auth.index)
-        form.add_error(None, "Error activating account.Please check the link, email, and password entered and make sure they are valid.")
+        form.add_error(
+            None,
+            "Error activating account.Please check the link, email, and password entered and make sure they are valid.",
+        )
     else:
         form = CustomSetPasswordForm(None)
     return render(request, "authentication/activation.html", {"form": form})
@@ -120,7 +123,7 @@ def forgot_password_view(request):
                 signed_value = signer.sign(user.email)
                 code_start_index = signed_value.find(":") + 1
                 if len(signed_value) > code_start_index:
-                    code = signed_value[code_start_index :]
+                    code = signed_value[code_start_index:]
 
                     forgot_password_record = ForgotPassword(user=user, code=code)
                     forgot_password_record.save()
@@ -173,7 +176,10 @@ def reset_password_view(request, code: str):
                         forgot_password_record.delete()  # delete the forgot password record so it can no longer be used
                         login(request, user)
                         return redirect(auth.index)
-        form.add_error(None, "Error resetting the password for this account. Please check the link, email, and password entered and make sure they are valid.")
+        form.add_error(
+            None,
+            "Error resetting the password for this account. Please check the link, email, and password entered and make sure they are valid.",
+        )
     else:
         form = CustomSetPasswordForm(None)
     return render(request, "authentication/reset_password.html", {"form": form})
@@ -221,7 +227,9 @@ def send_forgot_password_email(request, user: User):
     url = request.build_absolute_uri(
         reverse("authentication:reset-password", args=(user.forgotpassword.code,))
     )
-    expiration_date = date.today() + timedelta(days=settings.RESET_PASSWORD_EXPIRATION_DAYS)
+    expiration_date = date.today() + timedelta(
+        days=settings.RESET_PASSWORD_EXPIRATION_DAYS
+    )
     context = {"user": user, "url": url, "expiration_date": expiration_date}
 
     subject, from_email, to = "PAS Profile Created", "pas@email.com", user.email

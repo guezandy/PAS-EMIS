@@ -65,7 +65,7 @@ def create_user(request):
 
             send_activation_email(request, user)
 
-            messages.success(request, "User created successfully")
+            messages.success(request, "User " + user.username + " successfully created. An activation email was sent to "+ user.email + ".")
             return HttpResponseRedirect(reverse("authentication:create-user"))
     else:
         f = AdminUserCreationForm()

@@ -43,8 +43,8 @@ def register_view(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             form.save()
-            username = form.cleaned_data.get("username")
-            raw_password = form.cleaned_data.get("password1")
+            username = form.cleaned_data["username"]
+            raw_password = form.cleaned_data["password1"]
             user = authenticate(username=username, password=raw_password)
             login(request, user)
             return redirect(auth.index)
@@ -57,8 +57,8 @@ def login_view(request):
     if request.method == "POST":
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
-            username = form.cleaned_data.get("username")
-            password = form.cleaned_data.get("password")
+            username = form.cleaned_data["username"]
+            password = form.cleaned_data["password"]
             user = authenticate(request, username=username, password=password)
             if user is not None and user.is_active:
                 login(request, user)
@@ -77,17 +77,17 @@ def activation_view(request, code: str):
             form.user = activation_record.user
             valid_code = code_is_valid(
                 code,
-                form.cleaned_data.get("email"),
+                request.POST.get("email"),
                 activation_record.user,
                 settings.ACTIVATION_EXPIRATION_DAYS,
             )
             if valid_code and form.is_valid():
                 signer = TimestampSigner()
                 plain_text_email = signer.unsign(
-                    form.cleaned_data.get("email") + ":" + activation_record.code
+                    form.cleaned_data["email"] + ":" + activation_record.code
                 )
                 if (
-                    plain_text_email == form.cleaned_data.get("email")
+                    plain_text_email == form.cleaned_data["email"]
                     and plain_text_email == form.user.email
                 ):
                     form.user.is_active = True
@@ -103,7 +103,7 @@ def activation_view(request, code: str):
                         activation_record.delete()  # delete the activation record so it can no longer be used
                         login(request, user)
                         return redirect(auth.index)
-        form.add_error(None, "The code or email provided was invalid.")
+        form.add_error(None, "Error activating account.Please check the link, email, and password entered and make sure they are valid.")
     else:
         form = CustomSetPasswordForm(None)
     return render(request, "authentication/activation.html", {"form": form})
@@ -155,7 +155,7 @@ def reset_password_view(request, code: str):
             if valid_code and form.is_valid():
                 signer = TimestampSigner()
                 plain_text_email = signer.unsign(
-                    form.cleaned_data.get("email") + ":" + forgot_password_record.code
+                    form.cleaned_data["email"] + ":" + forgot_password_record.code
                 )
                 if (
                     plain_text_email == form.cleaned_data["email"]
@@ -173,7 +173,7 @@ def reset_password_view(request, code: str):
                         forgot_password_record.delete()  # delete the forgot password record so it can no longer be used
                         login(request, user)
                         return redirect(auth.index)
-        form.add_error(None, "The link or email provided was invalid.")
+        form.add_error(None, "Error resetting the password for this account. Please check the link, email, and password entered and make sure they are valid.")
     else:
         form = CustomSetPasswordForm(None)
     return render(request, "authentication/reset_password.html", {"form": form})

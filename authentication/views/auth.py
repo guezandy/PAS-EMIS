@@ -117,7 +117,7 @@ def forgot_password_view(request):
         form = ForgotPasswordForm(data=request.POST)
         if form.is_valid():
             results = User.objects.filter(email=form.cleaned_data["email"])
-            if results:
+            if results.exists():
                 user = results[0]
                 signer = TimestampSigner()
                 signed_value = signer.sign(user.email)
@@ -125,18 +125,16 @@ def forgot_password_view(request):
                 if len(signed_value) > code_start_index:
                     code = signed_value[code_start_index:]
 
-                    forgot_password_record = ForgotPassword(user=user, code=code)
+                    forgot_password_record = ForgotPassword(
+                        user=user, code=code)
                     forgot_password_record.save()
 
-                    messages.success(
-                        request,
-                        "If an account exists with the email address a reset password will be emailed to you. Please check your email and follow instructions from there.",
-                    )
-
                     send_forgot_password_email(request, user)
-
-        else:
-            form.add_error("email", "Invalid email address.")
+            # "success" message is shown regardless so malicious users can't query this page for valid emails
+            messages.success(
+                request,
+                "If an account exists with the email address a reset password will be emailed to you. Please check your email and follow instructions from there.",
+            )
     else:
         form = ForgotPasswordForm()
     return render(request, "authentication/forgot_password.html", {"form": form})
@@ -158,7 +156,8 @@ def reset_password_view(request, code: str):
             if valid_code and form.is_valid():
                 signer = TimestampSigner()
                 plain_text_email = signer.unsign(
-                    form.cleaned_data["email"] + ":" + forgot_password_record.code
+                    form.cleaned_data["email"] + ":" +
+                    forgot_password_record.code
                 )
                 if (
                     plain_text_email == form.cleaned_data["email"]
@@ -173,7 +172,8 @@ def reset_password_view(request, code: str):
                         password=form.cleaned_data["new_password1"],
                     )
                     if user and user.is_active:
-                        forgot_password_record.delete()  # delete the forgot password record so it can no longer be used
+                        # delete the forgot password record so it can no longer be used
+                        forgot_password_record.delete()
                         login(request, user)
                         return redirect(auth.index)
         form.add_error(
@@ -225,7 +225,8 @@ def send_forgot_password_email(request, user: User):
     html = get_template("authentication/forgot_password_email.html")
 
     url = request.build_absolute_uri(
-        reverse("authentication:reset-password", args=(user.forgotpassword.code,))
+        reverse("authentication:reset-password",
+                args=(user.forgotpassword.code,))
     )
     expiration_date = date.today() + timedelta(
         days=settings.RESET_PASSWORD_EXPIRATION_DAYS

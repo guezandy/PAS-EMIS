@@ -72,13 +72,13 @@ def activation_view(request, code: str):
         form = CustomSetPasswordForm(user=None, data=request.POST)
         activation_record = get_object_or_404(Activation, code=code)
         form.user = activation_record.user
-        code_is_valid(
+        valid_code = code_is_valid(
             code,
             request.POST["email"],
             activation_record.user,
             settings.ACTIVATION_EXPIRATION_DAYS,
         )
-        if form.is_valid():
+        if valid_code and form.is_valid():
             try:
                 signer = TimestampSigner()
                 plain_text_email = signer.unsign(
@@ -119,17 +119,19 @@ def forgot_password_view(request):
                 user = results[0]
                 signer = TimestampSigner()
                 signed_value = signer.sign(user.email)
-                code = signed_value[signed_value.find(":") + 1 :]
+                code_start_index = signed_value.find(":") + 1
+                if len(signed_value) > code_start_index:
+                    code = signed_value[code_start_index :]
 
-                forgot_password_record = ForgotPassword(user=user, code=code)
-                forgot_password_record.save()
+                    forgot_password_record = ForgotPassword(user=user, code=code)
+                    forgot_password_record.save()
 
-                messages.success(
-                    request,
-                    "If an account exists with the email address a reset password will be emailed to you. Please check your email and follow instructions from there.",
-                )
+                    messages.success(
+                        request,
+                        "If an account exists with the email address a reset password will be emailed to you. Please check your email and follow instructions from there.",
+                    )
 
-                send_forgot_password_email(request, user)
+                    send_forgot_password_email(request, user)
 
         else:
             form.add_error("email", "Invalid email address.")
@@ -143,13 +145,13 @@ def reset_password_view(request, code: str):
         form = CustomSetPasswordForm(user=None, data=request.POST)
         forgot_password_record = get_object_or_404(ForgotPassword, code=code)
         form.user = forgot_password_record.user
-        code_is_valid(
+        valid_code = code_is_valid(
             code,
             request.POST["email"],
             forgot_password_record.user,
             settings.RESET_PASSWORD_EXPIRATION_DAYS,
         )
-        if form.is_valid():
+        if valid_code and form.is_valid():
             try:
                 signer = TimestampSigner()
                 plain_text_email = signer.unsign(

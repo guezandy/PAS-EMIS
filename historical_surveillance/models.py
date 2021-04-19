@@ -6,6 +6,7 @@ from emis.permissions import CustomPermissionModel
 import authentication
 from emis import settings
 
+
 GRADE_CHOICES = [
     ("grade k", "Grade k"),
     ("grade 1", "Grade 1"),
@@ -135,6 +136,158 @@ class Enrollment(models.Model):
     sex = models.CharField(max_length=20, null=True, choices=SEX_CHOICES)
     updated_at = models.DateField(auto_now_add=True)
     updated_by = models.CharField(max_length=255, blank=True)
+
+    class Meta(CustomPermissionModel.Meta):
+        pass
+
+
+class NationalGenderEnrollment(models.Model):
+    objects = None
+    created_at = models.DateField(auto_now_add=True)
+    created_by = models.CharField(max_length=255)
+    sex = models.CharField(choices=SEX_CHOICES, max_length=20)
+    academic_year = models.CharField(max_length=30)
+    category_of_school = models.CharField(max_length=100)
+    grade = models.CharField(choices=GRADE_CHOICES, max_length=50)
+    total = models.IntegerField()
+    updated_at = models.DateField(auto_now_add=True)
+    updated_by = models.CharField(max_length=255, blank=True)
+
+    class Meta(CustomPermissionModel.Meta):
+        pass
+
+
+class NationalEducationCensus(models.Model):
+    objects = None
+    created_at = models.DateField(auto_now_add=True)
+    created_by = models.CharField(max_length=255)
+    academic_year = models.CharField(max_length=30)
+    age_3_to_4_years = models.IntegerField()
+    age_5_to_7_years = models.IntegerField()
+    age_12_to_16_years = models.IntegerField()
+    updated_at = models.DateField(auto_now_add=True)
+    updated_by = models.CharField(max_length=255, blank=True)
+
+    class Meta(CustomPermissionModel.Meta):
+        pass
+
+
+class ExpenditurePerStudent(models.Model):
+    objects = None
+    created_at = models.DateField(auto_now_add=True)
+    created_by = models.CharField(max_length=255)
+    total_expenditure = models.IntegerField()
+    no_of_schools = models.IntegerField()
+    expenditure_per_pupil = models.IntegerField()
+    updated_at = models.DateField(auto_now_add=True)
+    updated_by = models.CharField(max_length=255, blank=True)
+
+    class Meta(CustomPermissionModel.Meta):
+        pass
+
+
+class SchoolsStudentTeacherRatio(models.Model):
+    objects = None
+    created_at = models.DateField(auto_now_add=True)
+    created_by = models.CharField(max_length=255)
+    school = models.ForeignKey(School, on_delete=models.CASCADE)
+    year = models.CharField(max_length=20)
+    enrolled = models.IntegerField(blank=True)
+    number_of_teachers = models.IntegerField(blank=True)
+    updated_at = models.DateField(auto_now_add=True)
+    updated_by = models.CharField(max_length=255, blank=True)
+
+    class Meta(CustomPermissionModel.Meta):
+        pass
+
+
+class NationalStudentTeacherRatio(models.Model):
+    objects = None
+    created_at = models.DateField(auto_now_add=True)
+    created_by = models.CharField(max_length=255)
+    academic_year = models.CharField(max_length=20)
+    category_of_school = models.CharField(max_length=20)
+    no_of_schools = models.IntegerField()
+    number_of_boys_enrolled = models.IntegerField()
+    number_of_girls_enrolled = models.IntegerField()
+    total_enrollment = models.IntegerField()
+    number_of_trained_male_teachers = models.IntegerField()
+    number_of_trained_female_teachers = models.IntegerField()
+    number_of_untrained_male_teachers = models.IntegerField()
+    number_of_untrained_female_teachers = models.IntegerField()
+    total_number_of_teachers = models.IntegerField()
+    updated_at = models.DateField(auto_now_add=True)
+    updated_by = models.CharField(max_length=255)
+
+    class Meta(CustomPermissionModel.Meta):
+        pass
+
+
+class LeaversDropouts(models.Model):
+    objects = None
+    created_at = models.DateField(auto_now_add=True)
+    created_by = models.CharField(max_length=255, blank=True)
+    school = models.ForeignKey(School, on_delete=models.CASCADE)
+    year = models.CharField(max_length=20)
+    dropouts = models.IntegerField(blank=True)
+    transfer_out = models.IntegerField(blank=True)
+    others = models.IntegerField(blank=True)
+    updated_at = models.DateField(auto_now_add=True)
+    updated_by = models.CharField(max_length=255, blank=True)
+
+    class Meta(CustomPermissionModel.Meta):
+        pass
+
+
+class SpecialEdQuest(models.Model):
+    objects = None
+    # backgorund Information
+    created_at = models.DateField(auto_now_add=True)
+    created_by = models.CharField(max_length=255, blank=True)
+    school = models.ForeignKey(School, on_delete=models.CASCADE)
+    name_of_principal = models.CharField(max_length=255, blank=True)
+    management = models.CharField(max_length=100, choices=MANAGEMENT_CHOICES)
+    ownership = models.CharField(max_length=100, choices=OWNERSHIP_CHOICES)
+    male_enrollment = models.IntegerField(blank=True)
+    female_enrollment = models.IntegerField(blank=True)
+    total_enrollment = models.IntegerField()
+    number_of_non_teaching_staff = models.IntegerField(blank=True)
+    number_of_teaching_staff = models.IntegerField(blank=True)
+    type_of_school = models.CharField(max_length=100, choices=TYPE_OF_SCHOOL_CHOICES)
+    playing_field = models.CharField(max_length=100, choices=PLAYING_FIELD_CHOICES)
+    academic_year = models.CharField(max_length=50, blank=True)
+    # Class structure
+    number_of_classes = models.IntegerField(blank=True)
+    number_of_classrooms = models.IntegerField(blank=True)
+    number_of_halls = models.IntegerField(blank=True)
+    number_of_single_classes_in_single_classrooms = models.IntegerField(blank=True)
+    number_of_classes_sharing_classrooms = models.IntegerField(blank=True)
+    number_of_classes_in_hall_type_space = models.IntegerField(blank=True)
+    maximum_enrollment_capacity_of_school = models.IntegerField(blank=True)
+    # enrollment information
+    itinerant_enrollment = models.IntegerField(blank=True)
+    resource_room_enrollment = models.IntegerField(blank=True)
+    home_based_enrollment = models.IntegerField(blank=True)
+    # disability information
+    number_of_male_students_using_glasses = models.IntegerField(blank=True)
+    number_of_female_students_using_glasses = models.IntegerField(blank=True)
+    number_of_male_students_using_hearing_aids = models.IntegerField(blank=True)
+    number_of_female_students_using_hearing_aids = models.IntegerField(blank=True)
+    number_of_male_students_using_wheel_chair = models.IntegerField(blank=True)
+    number_of_female_students_using_wheel_chair = models.IntegerField(blank=True)
+    number_of_male_students_using_crutches = models.IntegerField(blank=True)
+    number_of_female_students_using_crutches = models.IntegerField(blank=True)
+    number_of_male_students_using_walkers = models.IntegerField(blank=True)
+    number_of_female_students_using_walkers = models.IntegerField(blank=True)
+    number_of_male_students_using_prosthesis = models.IntegerField(blank=True)
+    number_of_female_students_using_prosthesis = models.IntegerField(blank=True)
+    number_of_male_students_using_arm_leg_braces = models.IntegerField(blank=True)
+    number_of_female_students_using_arm_leg_braces = models.IntegerField(blank=True)
+    specify_other_disability_name = models.CharField(max_length=255, blank=True)
+    specify_other_disability_male = models.IntegerField(blank=True)
+    specify_other_disability_female = models.IntegerField(blank=True)
+    updated_at = models.DateField(auto_now_add=True)
+    updated_by = models.CharField(max_length=255)
 
     class Meta(CustomPermissionModel.Meta):
         pass

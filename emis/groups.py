@@ -25,7 +25,9 @@ from emis.permissions import (
 LOGGER = logging.getLogger(__name__)
 
 # Group permission lists
-TEACHER_LIST = get_all_raw_codes_by_area(EmisPermArea.TEACHING)
+TEACHER_LIST = get_all_raw_codes_by_area(EmisPermArea.TEACHING) + get_raw_codes(
+    EmisPermission.SCHOOL_APP_ACCESS, EmisPermMode.VIEW
+)
 
 
 ADMIN_LIST = (
@@ -36,6 +38,7 @@ ADMIN_LIST = (
     + get_raw_codes(
         EmisPermission.STUDENT_GRADES, EmisPermMode.VIEW | EmisPermMode.UPDATE
     )
+    + get_raw_codes(EmisPermission.SCHOOL_APP_ACCESS, EmisPermMode.VIEW)
 )
 
 PRINCIPAL_LIST = (
@@ -43,6 +46,7 @@ PRINCIPAL_LIST = (
     + get_all_raw_codes_by_area(EmisPermArea.SCHOOL_ADMIN)
     + get_all_raw_codes_by_area(EmisPermArea.SCHOOL_ADMIN_RESTR)
     + get_all_raw_codes_by_area(EmisPermArea.PRINCIPAL)
+    + get_raw_codes(EmisPermission.SCHOOL_APP_ACCESS, EmisPermMode.VIEW)
 )
 
 DISTRICT_LIST = (
@@ -51,24 +55,30 @@ DISTRICT_LIST = (
     + get_raw_codes_by_area(EmisPermArea.SCHOOL_ADMIN_RESTR, EmisPermMode.VIEW)
     + get_raw_codes_by_area(EmisPermArea.PRINCIPAL, EmisPermMode.VIEW)
     + get_all_raw_codes_by_area(EmisPermArea.DISTRICT)
+    + get_raw_codes(EmisPermission.DISTRICT_APP_ACCESS, EmisPermMode.VIEW)
 )
 
-SUPERVISOR_LIST = get_raw_codes_by_area(
-    EmisPermArea.ALL, EmisPermMode.VIEW
-) + get_raw_codes_by_area(
-    EmisPermArea.SUPERVISION, EmisPermMode.CREATE | EmisPermMode.UPDATE
+SUPERVISOR_LIST = (
+    get_raw_codes_by_area(EmisPermArea.ALL_FUNCTIONS, EmisPermMode.VIEW)
+    + get_raw_codes_by_area(
+        EmisPermArea.SUPERVISION, EmisPermMode.CREATE | EmisPermMode.UPDATE
+    )
+    + get_raw_codes(EmisPermission.WELFARE_APP_ACCESS, EmisPermMode.VIEW)
 )
 
-STATISTICIAN_LIST = get_raw_codes_by_area(
-    EmisPermArea.ALL, EmisPermMode.VIEW
-) + get_raw_codes_by_area(
-    EmisPermArea.STATISTICS, EmisPermMode.CREATE | EmisPermMode.UPDATE
+STATISTICIAN_LIST = (
+    get_raw_codes_by_area(EmisPermArea.ALL_FUNCTIONS, EmisPermMode.VIEW)
+    + get_raw_codes_by_area(
+        EmisPermArea.STATISTICS, EmisPermMode.CREATE | EmisPermMode.UPDATE
+    )
+    + get_raw_codes(EmisPermission.SURVEILLANCE_APP_ACCESS, EmisPermMode.VIEW)
 )
 
 EVALUATOR_LIST = (
     PRINCIPAL_LIST
     + get_all_raw_codes_by_area(EmisPermArea.DISTRICT)
     + get_all_raw_codes_by_area(EmisPermArea.EVALUATION)
+    + get_raw_codes(EmisPermission.WELFARE_APP_ACCESS, EmisPermMode.VIEW)
 )
 
 # NOTE/TODO: need clarification on this list - document is ambiguous.  Below
@@ -77,6 +87,7 @@ EARLY_CHILDHOOD_LIST = (
     TEACHER_LIST
     + get_all_raw_codes_by_area(EmisPermArea.SCHOOL_ADMIN)
     + get_all_raw_codes_by_area(EmisPermArea.SCHOOL_ADMIN_RESTR)
+    + get_raw_codes(EmisPermission.WELFARE_APP_ACCESS, EmisPermMode.VIEW)
 )
 
 SUPPORT_LIST = (
@@ -86,9 +97,15 @@ SUPPORT_LIST = (
     + get_raw_codes_by_area(EmisPermArea.PRINCIPAL, EmisPermMode.VIEW)
     + get_raw_codes_by_area(EmisPermArea.DISTRICT, EmisPermMode.VIEW)
     + get_all_raw_codes_by_area(EmisPermArea.SUPPORT)
+    + get_raw_codes(EmisPermission.WELFARE_APP_ACCESS, EmisPermMode.VIEW)
 )
 
-ASSESSOR_LIST = STATISTICIAN_LIST + get_all_raw_codes_by_area(EmisPermArea.EXTERNAL)
+# Assessor has access to both surveillance and welfare apps
+ASSESSOR_LIST = (
+    STATISTICIAN_LIST
+    + get_all_raw_codes_by_area(EmisPermArea.EXTERNAL)
+    + get_raw_codes(EmisPermission.WELFARE_APP_ACCESS, EmisPermMode.VIEW)
+)
 
 
 # Custom group name / permission-list pairings

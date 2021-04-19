@@ -80,7 +80,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
             ],
-            "libraries": {"get_user_context": "helpers.templatetags.get_user_context"},
+            "libraries": {"tags": "helpers.templatetags.tags"},
         },
     },
 ]
@@ -155,6 +155,12 @@ Email settings
 """
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = env("DEV_EMAIL_FILE_PATH")
+
+"""
+Activation and Reset Password settings
+"""
+ACTIVATION_EXPIRATION_DAYS = 7
+RESET_PASSWORD_EXPIRATION_DAYS = 7
 
 """
 Logger settings

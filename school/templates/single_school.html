@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+{% block page_content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class='col-md-6'>
+            <h1>{{school_name}}</h1>
+        </div>
+        <div class="col-md-6 action-button-group">
+            <div class="btn-group">
+                <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    Actions
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'school:create_teacher' %}">Create Teacher</a>
+                    <a class="dropdown-item" href="{% url 'school:create_student' %}">Create Student</a>
+                    <a class="dropdown-item" href="{% url 'school:create_course' %}">Create Course</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'school:edit_school' school_code %}">Edit School</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body">
+                    <div class='stat'>{{course_count}}</div>
+                    <div class='stat-label'>Courses</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-success text-white mb-4">
+                <div class="card-body">
+                    <div class='stat'>{{teacher_count}}</div>
+                    <div class='stat-label'>Teachers</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-warning text-white mb-4">
+                <div class="card-body">
+                    <div class='stat'>{{student_count}}</div>
+                    <div class='stat-label'>Students</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    Enrollment
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Graduation year</th>
+                                    <th>Count</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th>Graduation year</th>
+                                    <th>Count</th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                {% for en in enrollment %}
+                                <tr>
+                                    <td>{{en.graduation_year}}</td>
+                                    <td>{{en.student_count}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    Teachers
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Teacher code</th>
+                                    <th>Name</th>
+                                    <th>Course count</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th>Teacher code</th>
+                                    <th>Name</th>
+                                    <th>Course count</th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                {% for teacher in teachers %}
+                                <tr class="clickable-row" data-href="/school/teacher/{{teacher.teacher_code}}">
+                                    <td>{{teacher.teacher_code}}</td>
+                                    <td>{{teacher.name}}</td>
+                                    <td>{{teacher.course_count}}</td>
+                                    <td><a href="{% url 'school:edit_teacher' teacher.teacher_code %}"><Button
+                                                class="btn btn-primary">Edit</Button></a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    Courses
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Subject Group</th>
+                                    <th>Subject</th>
+                                    <th>Teacher</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th>Subject Group</th>
+                                    <th>Subject</th>
+                                    <th>Teacher</th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                {% for course in courses %}
+                                <tr>
+                                    <td>{{course.subject_group}}</td>
+                                    <td>{{course.subject}}</td>
+                                    <td>{{course.teacher}}</td>
+                                    <td><a href="{% url 'school:edit_course' course.course_code %}"><Button
+                                                class="btn btn-primary">Edit</Button></a>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    Students
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Graduation Year</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Graduation Year</th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                {% for student in students %}
+                                <tr>
+                                    <td>{{student.first_name}} {{student.last_name}}</td>
+                                    <td>{{student.graduation_year}}</td>
+                                    <td><a href="{% url 'school:edit_student' student.id %}"><Button
+                                                class="btn btn-primary">Edit</Button></a>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock page_content %}

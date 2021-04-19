@@ -67,18 +67,19 @@ class EmisPermArea(IntFlag):
     """
 
     NONE = 0
-    SCHOOL_ADMIN = 1
-    SCHOOL_ADMIN_RESTR = 2
-    EARLY_CHILDHOOD = 4
-    PRINCIPAL = 8
-    TEACHING = 16
-    DISTRICT = 32
-    SUPERVISION = 64
-    STATISTICS = 128
-    EVALUATION = 256
-    SUPPORT = 512
-    EXTERNAL = 1024
-    ALL = (
+    APP_ACCESS = 1
+    SCHOOL_ADMIN = 2
+    SCHOOL_ADMIN_RESTR = 4
+    EARLY_CHILDHOOD = 8
+    PRINCIPAL = 16
+    TEACHING = 32
+    DISTRICT = 64
+    SUPERVISION = 128
+    STATISTICS = 256
+    EVALUATION = 512
+    SUPPORT = 1024
+    EXTERNAL = 2048
+    ALL_FUNCTIONS = (
         SCHOOL_ADMIN
         | SCHOOL_ADMIN_RESTR
         | EARLY_CHILDHOOD
@@ -147,6 +148,32 @@ class EmisPermission(Enum):
 
     # Values
     NONE = ("", "", EmisPermArea.NONE)
+
+    # The authentication app is accessed through super-user status alone;
+    # thus, it is not itemized here as a permission for general use.
+    SCHOOL_APP_ACCESS = (
+        "school_app",
+        "school application",
+        EmisPermArea.APP_ACCESS,
+    )
+
+    DISTRICT_APP_ACCESS = (
+        "district_app",
+        "district application",
+        EmisPermArea.APP_ACCESS,
+    )
+
+    WELFARE_APP_ACCESS = (
+        "welfare_app",
+        "welfare and supervision application",
+        EmisPermArea.APP_ACCESS,
+    )
+
+    SURVEILLANCE_APP_ACCESS = (
+        "surveillance_app",
+        "historical surveillance application",
+        EmisPermArea.APP_ACCESS,
+    )
 
     SCHOOL_ACCOUNTING = (
         "accounting",

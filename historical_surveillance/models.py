@@ -1,6 +1,7 @@
 import datetime
 
 from django.db import models
+from emis.permissions import CustomPermissionModel
 
 import authentication
 from emis import settings
@@ -41,13 +42,15 @@ PLAYING_FIELD_CHOICES = [('community owned', 'Community Owned'),
 
 class District(models.Model):
     objects = None
-    # created_at = models.DateField(auto_now_add=True)
-    created_at = models.DateField()
-    created_by = models.CharField(max_length=255, blank=True)
-    district_code = models.CharField(max_length=50, blank=True)
+    created_at = models.DateField(auto_now_add=True)
+    created_by = models.CharField(max_length=255)
+    district_code = models.CharField(max_length=50, blank=True, unique=True)
     district_name = models.CharField(max_length=50)
     updated_at = models.DateField()
     updated_by = models.CharField(max_length=255, blank=True)
+
+    class Meta(CustomPermissionModel.Meta):
+        pass
 
     def __str__(self):
         return str(self.district_name)
@@ -56,13 +59,16 @@ class District(models.Model):
 class School(models.Model):
     objects = None
     created_at = models.DateField(auto_now_add=True)
-    created_by = models.CharField(max_length=255, blank=True)
-    school_code = models.CharField(max_length=50, blank=True)
-    school_name = models.CharField(max_length=100)
+    created_by = models.CharField(max_length=255)
+    school_code = models.CharField(max_length=50, blank=True, unique=True)
+    school_name = models.CharField(max_length=50)
     district_name = models.ForeignKey(District, on_delete=models.CASCADE)
     category_of_school = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
     updated_at = models.DateField(auto_now_add=True)
     updated_by = models.CharField(max_length=255, blank=True)
+
+    class Meta(CustomPermissionModel.Meta):
+        pass
 
     def __str__(self):
         return str(self.school_name)
@@ -83,6 +89,9 @@ class AggregateEnrollment(models.Model):
     updated_at = models.DateField(auto_now_add=True)
     updated_by = models.CharField(max_length=255, blank=True)
 
+    class Meta(CustomPermissionModel.Meta):
+        pass
+
     def __str__(self):
         return str(self.name_of_school)
 
@@ -102,7 +111,6 @@ class Enrollment(models.Model):
     sex = models.CharField(max_length=20, null=True, choices=SEX_CHOICES)
     updated_at = models.DateField(auto_now_add=True)
     updated_by = models.CharField(max_length=255, blank=True)
-
 
 class NationalGenderEnrollment(models.Model):
     objects = None
@@ -233,3 +241,7 @@ class SpecialEdQuest(models.Model):
     specify_other_disability_female = models.IntegerField(blank=True)
     updated_at = models.DateField(auto_now_add=True)
     updated_by = models.CharField(max_length=255)
+
+    class Meta(CustomPermissionModel.Meta):
+        pass
+

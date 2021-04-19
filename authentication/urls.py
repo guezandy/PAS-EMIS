@@ -16,6 +16,8 @@ urlpatterns = [
     path("logout", auth.logout_view, name="logout"),
     path("users/<int:pk>", auth.user_detail, name="user-detail"),
     path("activate/<str:code>", auth.activation_view, name="activate"),
+    path("forgot-password", auth.forgot_password_view, name="forgot-password"),
+    path("reset-password/<str:code>", auth.reset_password_view, name="reset-password"),
     # System administration views
     path("sysadmin/users/create/", sysadmin.create_user, name="create-user"),
     path(

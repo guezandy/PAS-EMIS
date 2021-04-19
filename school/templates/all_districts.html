@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block page_content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class='col-md-6'>
+            <h1>District Directory</h1>
+        </div>
+        <div class="col-md-6 action-button-group">
+            <a href="{% url 'school:create_district' %}"><button type="button" class="btn btn-success mb-2">Create
+                    District</button></a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body">
+                    <div class='stat'>{{data.student_count}}</div>
+                    <div class='stat-label'>Students</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-success text-white mb-4">
+                <div class="card-body">
+                    <div class='stat'>{{data.teacher_count}}</div>
+                    <div class='stat-label'>Teachers</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-success text-white mb-4">
+                <div class="card-body">
+                    <div class='stat'>{{data.school_count}}</div>
+                    <div class='stat-label'>Schools</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>District code</th>
+                            <th>District name</th>
+                            <th>School count</th>
+                            <th>Teacher count</th>
+                            <th>Student count</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>District code</th>
+                            <th>District name</th>
+                            <th>School count</th>
+                            <th>Teacher count</th>
+                            <th>Student count</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% for district in data.districts %}
+                        <tr class='clickable-row' data-href="/school/district/{{district.district_code}}">
+                            <td>{{district.district_code}}</td>
+                            <td>{{district.district_name}}</td>
+                            <td>{{district.school_count}}</td>
+                            <td>{{district.teacher_count}}</td>
+                            <td>{{district.student_count}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock page_content %}

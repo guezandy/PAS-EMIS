@@ -7,7 +7,7 @@
 
       <div class="col-xl-12 col-md-12">
           <div class="card bg-secondary text-white mb-4">
-              <div class="card-body">Schools Enrollment / Grade /  Academic Year<br/>
+              <div class="card-body">District Enrollment / Grade <br/>
                 <h1 class ="text-info">{% if error_message %} {{ error_message }} {% endif%}</h1></div>
               <div class="card-footer d-flex align-items-center justify-content-between">
               {% if request.POST %}
@@ -20,21 +20,32 @@
                    {% csrf_token %}
                    	<div class="form-row">
 
-                          <div class="col-md-6">
-                            <label class="small mb-1" for="school">Select a school</label>
-                            <select name ="school_name" id = "school" required>
+                          <div class="col-md-4">
+                            <label class="small mb-1" for="district">Select a district</label>
+                           <select name ="district_name" id = "district">
                                 <option value ="" selected>[Choose Here]</option>
-                                {% for item in schools %}
-                                <option value = "{{ item.id}}">{{ item.school_name}}</option>
+                                {% for item in district_list %}
+                                <option value = {{ item.id }} > {{ item.district_name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-                         <div class="col-md-6">
+
+                        <div class="col-md-4">
+                            <label class="small mb-1" for="grade">Select a Grade</label>
+                           <select name ="grade" id = "grade">
+                                <option value ="" selected>[Choose Here]</option>
+                                {% for item in grade_list %}
+                                <option value = "{{ item.grade }}" > {{ item.grade}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                         <div class="col-md-4">
                             <label class="small mb-1" for="year">Academic year</label>
                             <select name ="year" id = "year" required>
                                 <option value ="" selected>[Choose Here]</option>
                                 {% for item in year_list %}
-                                <option value = "{{ item }}">{{ item }}</option>
+                                <option value = "{{ item.year}}">{{ item.year }}</option>
                                 {% endfor %}
                             </select>
                         </div>

@@ -14,8 +14,14 @@ of the same data which is also handled by the error message displayed.
      <div class="col-xl-5 col-md-5">
           <div class="card bg-transparent container-fluid text-dark mb-4">
               <div class="card-body"><h3>Create Schools</h3>
-               <h1 class ="text-danger">{% if error_message %} {{ error_message }} {% endif%}</h1></div>
-                   <form action ="" method="post">
+           {% if error_message %}
+                        <div class ="alert alert-danger alert-dismissible fade show" role = "alert">
+                        {{ error_message }}
+                        <button type = "button" class = "btn-close" data-bs-dismiss ="alert" aria-label ="close"></button>
+                        </div>
+                    {% endif%}
+              </div>
+                   <form method="post" action="">
                        {% csrf_token %}
                        {{ form | crispy }}
                        <br/><input type="submit" value="Submit" class ="btn btn-lg btn-primary">
@@ -36,24 +42,35 @@ of the same data which is also handled by the error message displayed.
                             <table class="table table-bordered" id="dataTable" max-width="100%">
                                 <thead>
                                 <tr>
+                                    <th>id</th>
+                                    <th>School Code</th>
                                     <th>Name of School</th>
                                     <th>District of School</th>
                                     <th>Category of School</th>
+                                    <th>Actions</th>
                                 </tr>
                                 </thead>
                                 <tfoot>
                                 <tr>
+                                    <th>id</th>
+                                    <th>School Code</th>
                                     <th>Name of School</th>
                                     <th>District of School</th>
                                     <th>Category of School</th>
+                                    <th>Actions</th>
                                 </tr>
                                 </tfoot>
                                 <tbody>
-                                {% for school in name_of_school %}
+                                {% for item  in name_of_school %}
                                     <tr>
-                                        <td>{{ school.school_name }}</td>
-                                        <td>{{ school.district_name }}</td>
-                                        <td>{{ school.category_of_school }}</td>
+                                       <td>{{ item.id }}</td>
+                                        <td>{{ item.school_code }}</td>
+                                        <td>{{ item.school_name }}</td>
+                                        <td>{{ item.district_name }}</td>
+                                        <td>{{ item.category_of_school }}</td>
+                                     <td>
+                                        <a href="/historical/update_institution/{{ item.id}}"><i class="fas fa-pencil-alt"></i>Edit</a>
+                                     </td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>

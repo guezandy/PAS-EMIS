@@ -75,6 +75,9 @@ def create_institution(request):
     return render(request, "create_school.html", context)
 
 
+# View for the update of a school
+# To-Do
+# work on the form.is_valid for Foreign Key and allow update of district
 def update_institution(request, code=None):
     school_to_update = get_object_or_404(School, pk=code)
     if request.method == 'POST':

@@ -5,6 +5,8 @@ from emis.permissions import (
     CustomPermissionModel,
     UnmanagedCustomPermissionModel,
     EmisPermArea,
+    EmisPermMode,
+    get_tuples_by_area,
     get_all_tuples_by_area,
 )
 
@@ -12,6 +14,11 @@ from emis.permissions import (
 Models (unmanaged) for custom app permissions.  These must remain within the
 same app for the permissions architecture to function properly.
 """
+
+
+class ApplicationAccess(UnmanagedCustomPermissionModel):
+    class Meta(UnmanagedCustomPermissionModel.Meta):
+        permissions = get_tuples_by_area(EmisPermArea.APP_ACCESS, EmisPermMode.VIEW)
 
 
 class SchoolAdministration(UnmanagedCustomPermissionModel):

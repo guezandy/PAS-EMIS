@@ -11,45 +11,24 @@ from emis.permissions import CustomPermissionModel
 
 
 class Student(models.Model):
+    def current_year():
+        return datetime.date.today().year
+
     external_key = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     first_name = models.CharField(max_length=100)
     middle_initial = models.CharField(max_length=100, blank=True)
     last_name = models.CharField(max_length=100)
     date_of_birth = models.DateField(max_length=8)
-
-    class Meta(CustomPermissionModel.Meta):
-        pass
+    school = models.ForeignKey(School, on_delete=models.CASCADE, null=True)
+    graduation_year = models.PositiveIntegerField(default=current_year())
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
 
-# Ex: All students of grade 8
-class Class(models.Model):
-    def current_year():
-        return datetime.date.today().year
-
-    def max_value_current_year(value):
-        # Max year is twelve years from current year
-        return MaxValueValidator(current_year() + 12)(value)
-
-    students = models.ManyToManyField(Student)
-    graduation_year = models.PositiveIntegerField(default=current_year())
-    school = models.ForeignKey(School, on_delete=models.CASCADE, null=True)
-
-    class Meta(CustomPermissionModel.Meta):
-        verbose_name_plural = "Classes"
-
-    def __str__(self):
-        return f"{self.school.school_name} Class of {self.graduation_year}"
-
-
 # Ex: Math, Science, etc
 class SubjectGroup(models.Model):
-    name = models.CharField(max_length=100)
-
-    class Meta(CustomPermissionModel.Meta):
-        pass
+    name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return str(self.name)
@@ -58,10 +37,7 @@ class SubjectGroup(models.Model):
 # Ex: Geometry, Algebra 2, Physics 1, etc
 class Subject(models.Model):
     subject_group = models.ForeignKey(SubjectGroup, on_delete=models.CASCADE, null=True)
-    name = models.CharField(max_length=100)
-
-    class Meta(CustomPermissionModel.Meta):
-        pass
+    name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return f"{self.subject_group.name} {self.name}"
@@ -70,31 +46,38 @@ class Subject(models.Model):
 # Ex: Capstone course - has 1 teacher 1 subject a schedule and many students
 class Course(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, null=True)
-    teachers = models.ManyToManyField(Teacher)
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, null=True)
     students = models.ManyToManyField(Student)
-
-    class Meta(CustomPermissionModel.Meta):
-        pass
+    school = models.ForeignKey(School, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
-        return f"{self.school.subject.name}"
+        return f"{self.subject.name}"
 
 
-class Grade(models.Model):
-    # TODO any more grades? Like Withdrawn etc
-    GRADES = (
-        ("A", "A"),
-        ("B", "B"),
-        ("C", "C"),
-        ("D", "D"),
-        ("F", "F"),
-    )
+class CourseGrade(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
-    grade = models.CharField(max_length=10, choices=GRADES)
+    grade = models.DecimalField(max_digits=4, decimal_places=2)
 
-    class Meta(CustomPermissionModel.Meta):
-        pass
+    class Meta:
+        unique_together = ("course", "student")
 
     def __str__(self):
         return f"{self.student.first_name} {self.student.last_name} | {self.course.subject.name} | {self.grade}"
+
+
+class Assignment(models.Model):
+    name = models.CharField(max_length=100)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
+
+
+class AssignmentGrade(models.Model):
+    assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE, null=True)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
+    grade = models.DecimalField(max_digits=4, decimal_places=2)
+
+    class Meta:
+        unique_together = ("assignment", "student")
+
+    def __str__(self):
+        return f"{self.student.first_name} {self.student.last_name} | {self.assignment.name} | {self.grade}"

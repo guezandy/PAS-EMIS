@@ -30,9 +30,6 @@ class Student(models.Model):
 class SubjectGroup(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
-    class Meta(CustomPermissionModel.Meta):
-        pass
-
     def __str__(self):
         return str(self.name)
 
@@ -41,9 +38,6 @@ class SubjectGroup(models.Model):
 class Subject(models.Model):
     subject_group = models.ForeignKey(SubjectGroup, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=100, unique=True)
-
-    class Meta(CustomPermissionModel.Meta):
-        pass
 
     def __str__(self):
         return f"{self.subject_group.name} {self.name}"
@@ -56,9 +50,6 @@ class Course(models.Model):
     students = models.ManyToManyField(Student)
     school = models.ForeignKey(School, on_delete=models.CASCADE, null=True)
 
-    class Meta(CustomPermissionModel.Meta):
-        pass
-
     def __str__(self):
         return f"{self.subject.name}"
 
@@ -70,9 +61,6 @@ class CourseGrade(models.Model):
 
     class Meta:
         unique_together = ("course", "student")
-
-    class Meta(CustomPermissionModel.Meta):
-        pass
 
     def __str__(self):
         return f"{self.student.first_name} {self.student.last_name} | {self.course.subject.name} | {self.grade}"

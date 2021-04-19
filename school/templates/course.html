@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block page_content %}
+{% load tags %}
+<div class="container-fluid">
+    <div class="row">
+        <div class='col-md-6'>
+            <h1>{{course_name}}</h1>
+        </div>
+        <div class="col-md-6 action-button-group">
+            <a href="{% url 'school:create_assignment' %}"><button type="button" class="btn btn-success mb-2">Create
+                    Assignment</button></a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body">
+                    <div class='stat'>67%</div>
+                    <div class='stat-label'>Class Average</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-header">
+                    Assignments
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    {% for key, name in assignments.items %}
+                                    <th>
+                                        {{name}}
+                                        <a href="{% url 'school:edit_assignment' key %}"><Button
+                                                class="btn btn-primary">Edit</Button></a>
+                                        <a href="{% url 'school:delete_assignment' key %}"><Button
+                                                class="btn btn-danger">Delete</Button></a>
+                                    </th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th>Student</th>
+                                    {% for key, name in assignments.items %}
+                                    <th>
+                                        {{name}}
+                                        <a href="{% url 'school:edit_assignment' key %}"><Button
+                                                class="btn btn-primary">Edit</Button></a>
+                                        <a href="{% url 'school:delete_assignment' key %}"><Button
+                                                class="btn btn-danger">Delete</Button></a>
+                                    </th>
+                                    {% endfor %}
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                {% for student in students %}
+                                <tr>
+                                    <td>{{student.student_name}}</td>
+                                    {% for key, name in assignments.items %}
+                                    <th><input type="number" class="form-input"
+                                            value="{{student.assignments|keyvalue:key}}"></th>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock page_content %}

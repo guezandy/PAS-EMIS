@@ -73,3 +73,12 @@ def _get_user_context(request):
         apps_accessible.append("authentication")
 
     return {"apps_permission": apps_accessible}
+
+
+@register.filter
+def keyvalue(dict, key):
+    try:
+        return dict[key]
+    except KeyError:
+        return ""
+

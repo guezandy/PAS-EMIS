@@ -5,69 +5,70 @@ from historical_surveillance.models import School, District
 from django.contrib.auth.models import User, Group
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from emis.permissions import CustomPermissionModel
 
 
 class SchoolAdministrator(User):
     school = models.ForeignKey(School, on_delete=models.CASCADE, null=True)
 
-    class Meta:
+    class Meta(CustomPermissionModel.Meta):
         verbose_name = "School Administrator"
 
 
 class Teacher(User):
     school = models.ForeignKey(School, on_delete=models.CASCADE, null=True)
 
-    class Meta:
+    class Meta(CustomPermissionModel.Meta):
         verbose_name = "Teacher"
 
 
 class SchoolPrincipal(User):
     school = models.ForeignKey(School, on_delete=models.CASCADE, null=True)
 
-    class Meta:
+    class Meta(CustomPermissionModel.Meta):
         verbose_name = "Principal"
 
 
 class DistrictEducationOfficer(User):
     district = models.ForeignKey(District, on_delete=models.CASCADE, null=True)
 
-    class Meta:
+    class Meta(CustomPermissionModel.Meta):
         verbose_name = "District Education Officer"
 
 
 class SchoolSuperviser(User):
     # TODO
-    class Meta:
+    class Meta(CustomPermissionModel.Meta):
         verbose_name = "School Superviser"
 
 
 class StatisticianAdmin(User):
     # TODO
-    class Meta:
+    class Meta(CustomPermissionModel.Meta):
         verbose_name = "Stastician Admin"
 
 
 class EvaluationAdmin(User):
     # TODO
-    class Meta:
+    class Meta(CustomPermissionModel.Meta):
         verbose_name = "Evaluation Admin"
 
 
 class EarlyChildhoodEducator(User):
     # TODO
-    class Meta:
+    class Meta(CustomPermissionModel.Meta):
         verbose_name = "Early Childhood"
 
 
 class SupportServicesAdmin(User):
     # TODO
-    class Meta:
+    class Meta(CustomPermissionModel.Meta):
         verbose_name = "Support Services Admin"
 
 
 class ExternalAccessor(User):
     # TODO
-    class Meta:
+    class Meta(CustomPermissionModel.Meta):
         verbose_name = "External Accessor"
 
 

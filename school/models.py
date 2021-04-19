@@ -7,6 +7,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from authentication.models.permissions import Teaching
 from historical_surveillance.models import District, School
 from authentication.models.users import Teacher
+from emis.permissions import CustomPermissionModel
 
 
 class Student(models.Model):
@@ -15,6 +16,9 @@ class Student(models.Model):
     middle_initial = models.CharField(max_length=100, blank=True)
     last_name = models.CharField(max_length=100)
     date_of_birth = models.DateField(max_length=8)
+
+    class Meta(CustomPermissionModel.Meta):
+        pass
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
@@ -33,7 +37,7 @@ class Class(models.Model):
     graduation_year = models.PositiveIntegerField(default=current_year())
     school = models.ForeignKey(School, on_delete=models.CASCADE, null=True)
 
-    class Meta:
+    class Meta(CustomPermissionModel.Meta):
         verbose_name_plural = "Classes"
 
     def __str__(self):
@@ -44,6 +48,9 @@ class Class(models.Model):
 class SubjectGroup(models.Model):
     name = models.CharField(max_length=100)
 
+    class Meta(CustomPermissionModel.Meta):
+        pass
+
     def __str__(self):
         return str(self.name)
 
@@ -52,6 +59,9 @@ class SubjectGroup(models.Model):
 class Subject(models.Model):
     subject_group = models.ForeignKey(SubjectGroup, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=100)
+
+    class Meta(CustomPermissionModel.Meta):
+        pass
 
     def __str__(self):
         return f"{self.subject_group.name} {self.name}"
@@ -62,6 +72,9 @@ class Course(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, null=True)
     teachers = models.ManyToManyField(Teacher)
     students = models.ManyToManyField(Student)
+
+    class Meta(CustomPermissionModel.Meta):
+        pass
 
     def __str__(self):
         return f"{self.school.subject.name}"
@@ -79,6 +92,9 @@ class Grade(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
     grade = models.CharField(max_length=10, choices=GRADES)
+
+    class Meta(CustomPermissionModel.Meta):
+        pass
 
     def __str__(self):
         return f"{self.student.first_name} {self.student.last_name} | {self.course.subject.name} | {self.grade}"

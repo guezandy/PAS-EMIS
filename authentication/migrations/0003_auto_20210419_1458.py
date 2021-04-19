@@ -8,191 +8,322 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('auth', '0012_alter_user_first_name_max_length'),
-        ('historical_surveillance', '0001_initial'),
-        ('authentication', '0002_group_migrations'),
+        ("auth", "0012_alter_user_first_name_max_length"),
+        ("historical_surveillance", "0001_initial"),
+        ("authentication", "0002_group_migrations"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ApplicationAccess',
+            name="ApplicationAccess",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
             ],
             options={
-                'permissions': [('view_school_app', 'Can view school application'), ('view_district_app', 'Can view district application'), ('view_welfare_app', 'Can view welfare and supervision application'), ('view_surveillance_app', 'Can view historical surveillance application')],
-                'abstract': False,
-                'managed': False,
-                'default_permissions': (),
+                "permissions": [
+                    ("view_school_app", "Can view school application"),
+                    ("view_district_app", "Can view district application"),
+                    (
+                        "view_welfare_app",
+                        "Can view welfare and supervision application",
+                    ),
+                    (
+                        "view_surveillance_app",
+                        "Can view historical surveillance application",
+                    ),
+                ],
+                "abstract": False,
+                "managed": False,
+                "default_permissions": (),
             },
         ),
         migrations.CreateModel(
-            name='EarlyChildhoodEducator',
+            name="EarlyChildhoodEducator",
             fields=[
-                ('user_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='auth.user')),
+                (
+                    "user_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="auth.user",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Early Childhood',
-                'abstract': False,
-                'default_permissions': (),
+                "verbose_name": "Early Childhood",
+                "abstract": False,
+                "default_permissions": (),
             },
-            bases=('auth.user',),
-            managers=[
-                ('objects', django.contrib.auth.models.UserManager()),
-            ],
+            bases=("auth.user",),
+            managers=[("objects", django.contrib.auth.models.UserManager()),],
         ),
         migrations.CreateModel(
-            name='EvaluationAdmin',
+            name="EvaluationAdmin",
             fields=[
-                ('user_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='auth.user')),
+                (
+                    "user_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="auth.user",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Evaluation Admin',
-                'abstract': False,
-                'default_permissions': (),
+                "verbose_name": "Evaluation Admin",
+                "abstract": False,
+                "default_permissions": (),
             },
-            bases=('auth.user',),
-            managers=[
-                ('objects', django.contrib.auth.models.UserManager()),
-            ],
+            bases=("auth.user",),
+            managers=[("objects", django.contrib.auth.models.UserManager()),],
         ),
         migrations.CreateModel(
-            name='ExternalAccessor',
+            name="ExternalAccessor",
             fields=[
-                ('user_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='auth.user')),
+                (
+                    "user_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="auth.user",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'External Accessor',
-                'abstract': False,
-                'default_permissions': (),
+                "verbose_name": "External Accessor",
+                "abstract": False,
+                "default_permissions": (),
             },
-            bases=('auth.user',),
-            managers=[
-                ('objects', django.contrib.auth.models.UserManager()),
-            ],
+            bases=("auth.user",),
+            managers=[("objects", django.contrib.auth.models.UserManager()),],
         ),
         migrations.CreateModel(
-            name='ForgotPassword',
+            name="ForgotPassword",
             fields=[
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, primary_key=True, serialize=False, to='auth.user')),
-                ('code', models.CharField(max_length=50)),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        primary_key=True,
+                        serialize=False,
+                        to="auth.user",
+                    ),
+                ),
+                ("code", models.CharField(max_length=50)),
             ],
-            options={
-                'abstract': False,
-                'default_permissions': (),
-            },
+            options={"abstract": False, "default_permissions": (),},
         ),
         migrations.CreateModel(
-            name='SchoolSuperviser',
+            name="SchoolSuperviser",
             fields=[
-                ('user_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='auth.user')),
+                (
+                    "user_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="auth.user",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'School Superviser',
-                'abstract': False,
-                'default_permissions': (),
+                "verbose_name": "School Superviser",
+                "abstract": False,
+                "default_permissions": (),
             },
-            bases=('auth.user',),
-            managers=[
-                ('objects', django.contrib.auth.models.UserManager()),
-            ],
+            bases=("auth.user",),
+            managers=[("objects", django.contrib.auth.models.UserManager()),],
         ),
         migrations.CreateModel(
-            name='StatisticianAdmin',
+            name="StatisticianAdmin",
             fields=[
-                ('user_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='auth.user')),
+                (
+                    "user_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="auth.user",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Stastician Admin',
-                'abstract': False,
-                'default_permissions': (),
+                "verbose_name": "Stastician Admin",
+                "abstract": False,
+                "default_permissions": (),
             },
-            bases=('auth.user',),
-            managers=[
-                ('objects', django.contrib.auth.models.UserManager()),
-            ],
+            bases=("auth.user",),
+            managers=[("objects", django.contrib.auth.models.UserManager()),],
         ),
         migrations.CreateModel(
-            name='SupportServicesAdmin',
+            name="SupportServicesAdmin",
             fields=[
-                ('user_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='auth.user')),
+                (
+                    "user_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="auth.user",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Support Services Admin',
-                'abstract': False,
-                'default_permissions': (),
+                "verbose_name": "Support Services Admin",
+                "abstract": False,
+                "default_permissions": (),
             },
-            bases=('auth.user',),
-            managers=[
-                ('objects', django.contrib.auth.models.UserManager()),
-            ],
+            bases=("auth.user",),
+            managers=[("objects", django.contrib.auth.models.UserManager()),],
         ),
         migrations.AlterModelOptions(
-            name='activation',
-            options={'default_permissions': ()},
+            name="activation", options={"default_permissions": ()},
         ),
         migrations.CreateModel(
-            name='Teacher',
+            name="Teacher",
             fields=[
-                ('user_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='auth.user')),
-                ('school', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='historical_surveillance.school')),
+                (
+                    "user_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="auth.user",
+                    ),
+                ),
+                (
+                    "school",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="historical_surveillance.school",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Teacher',
-                'abstract': False,
-                'default_permissions': (),
+                "verbose_name": "Teacher",
+                "abstract": False,
+                "default_permissions": (),
             },
-            bases=('auth.user',),
-            managers=[
-                ('objects', django.contrib.auth.models.UserManager()),
-            ],
+            bases=("auth.user",),
+            managers=[("objects", django.contrib.auth.models.UserManager()),],
         ),
         migrations.CreateModel(
-            name='SchoolPrincipal',
+            name="SchoolPrincipal",
             fields=[
-                ('user_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='auth.user')),
-                ('school', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='historical_surveillance.school')),
+                (
+                    "user_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="auth.user",
+                    ),
+                ),
+                (
+                    "school",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="historical_surveillance.school",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Principal',
-                'abstract': False,
-                'default_permissions': (),
+                "verbose_name": "Principal",
+                "abstract": False,
+                "default_permissions": (),
             },
-            bases=('auth.user',),
-            managers=[
-                ('objects', django.contrib.auth.models.UserManager()),
-            ],
+            bases=("auth.user",),
+            managers=[("objects", django.contrib.auth.models.UserManager()),],
         ),
         migrations.CreateModel(
-            name='SchoolAdministrator',
+            name="SchoolAdministrator",
             fields=[
-                ('user_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='auth.user')),
-                ('school', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='historical_surveillance.school')),
+                (
+                    "user_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="auth.user",
+                    ),
+                ),
+                (
+                    "school",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="historical_surveillance.school",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'School Administrator',
-                'abstract': False,
-                'default_permissions': (),
+                "verbose_name": "School Administrator",
+                "abstract": False,
+                "default_permissions": (),
             },
-            bases=('auth.user',),
-            managers=[
-                ('objects', django.contrib.auth.models.UserManager()),
-            ],
+            bases=("auth.user",),
+            managers=[("objects", django.contrib.auth.models.UserManager()),],
         ),
         migrations.CreateModel(
-            name='DistrictEducationOfficer',
+            name="DistrictEducationOfficer",
             fields=[
-                ('user_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='auth.user')),
-                ('district', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='historical_surveillance.district')),
+                (
+                    "user_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="auth.user",
+                    ),
+                ),
+                (
+                    "district",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="historical_surveillance.district",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'District Education Officer',
-                'abstract': False,
-                'default_permissions': (),
+                "verbose_name": "District Education Officer",
+                "abstract": False,
+                "default_permissions": (),
             },
-            bases=('auth.user',),
-            managers=[
-                ('objects', django.contrib.auth.models.UserManager()),
-            ],
+            bases=("auth.user",),
+            managers=[("objects", django.contrib.auth.models.UserManager()),],
         ),
     ]

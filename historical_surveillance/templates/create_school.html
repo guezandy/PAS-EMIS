@@ -13,16 +13,15 @@ of the same data which is also handled by the error message displayed.
 
      <div class="col-xl-5 col-md-5">
           <div class="card bg-transparent container-fluid text-dark mb-4">
-              <div class="card-body"><h3>Create Districts</h3>
-
-                    {% if error_message %}
+              <div class="card-body"><h3>Create Schools</h3>
+           {% if error_message %}
                         <div class ="alert alert-danger alert-dismissible fade show" role = "alert">
                         {{ error_message }}
                         <button type = "button" class = "btn-close" data-bs-dismiss ="alert" aria-label ="close"></button>
                         </div>
                     {% endif%}
               </div>
-                   <form action ="" method="post">
+                   <form method="post" action="">
                        {% csrf_token %}
                        {{ form | crispy }}
                        <br/><input type="submit" value="Submit" class ="btn btn-lg btn-primary">
@@ -35,41 +34,44 @@ of the same data which is also handled by the error message displayed.
   </div>
 
       <div class="col-xl-7 col-md-7">
-          <div class="card bg-secondary text-white mb-4">
-              <div class="card-body"><h3>Education Districts</h3>
+          <div class="card bg-primary text-white mb-4">
+              <div class="card-body"><h3>St. Lucia Schools</h3>
                   <!-- TO DO :
                   Make table updatable -->
                         <div class="table-responsive card bg-body mb-4">
                             <table class="table table-bordered" id="dataTable" max-width="100%">
                                 <thead>
                                 <tr>
-                                    <th>Id</th>
-                                    <th>District Code</th>
-                                    <th>District Name</th>
-                                    <th> Actions </th>
-
+                                    <th>id</th>
+                                    <th>School Code</th>
+                                    <th>Name of School</th>
+                                    <th>District of School</th>
+                                    <th>Category of School</th>
+                                    <th>Actions</th>
                                 </tr>
                                 </thead>
                                 <tfoot>
                                 <tr>
-                                    <th>Id</th>
-                                    <th>District Code</th>
-                                    <th>District Name</th>
+                                    <th>id</th>
+                                    <th>School Code</th>
+                                    <th>Name of School</th>
+                                    <th>District of School</th>
+                                    <th>Category of School</th>
                                     <th>Actions</th>
                                 </tr>
                                 </tfoot>
                                 <tbody>
-                                {% for district in district_created %}
+                                {% for item  in name_of_school %}
                                     <tr>
-                                        <td>{{ district.id}}</td>
-                                        <td>{{ district.district_code }}</td>
-                                        <td>{{ district.district_name }}</td>
-                                    <td>
-
-                                        <a href="/historical/update_district/{{ district.id}}"><i class="fas fa-pencil-alt"></i>Edit</a>
-                                        <!--<a href="/delete_/{{district.id}}"><i class="fas fa-trash-alt"></i>Delete</a>-->
-        </td>
-
+                                       <td>{{ item.id }}</td>
+                                        <td>{{ item.school_code }}</td>
+                                        <td>{{ item.school_name }}</td>
+                                        <td>{{ item.district_name }}</td>
+                                        <td>{{ item.category_of_school }}</td>
+                                     <td>
+                                        <a href="/historical/update_institution/{{ item.id}}"><i class="fas fa-pencil-alt"></i>Edit</a>
+                                     </td>
+                                    </tr>
                                 {% endfor %}
                                 </tbody>
                             </table>

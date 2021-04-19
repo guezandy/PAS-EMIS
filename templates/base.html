@@ -10,15 +10,35 @@
     <title>Education Policy Assistant</title>
     {% load static %}
     {% load tags %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+      <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+    <!-- jQuery library-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js"
 
     <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
     <link href="{% static 'css/custom-styles.css' %}" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js"
+
         crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
         crossorigin="anonymous"></script>
+     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
+     <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
+     <script src ="https://cdn.datatables.net/buttons/1.7.0/js/dataTables.buttons.min.js"></script>
+     <script src ="https://cdn.datatables.net/buttons/1.7.0/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src ="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src ="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src ="https://cdn.datatables.net/buttons/1.7.0/js/buttons.html5.min.js"></script>
+    <script src ="https://cdn.datatables.net/buttons/1.7.0/js/buttons.print.min.js"></script>
     <script src="{% static 'js/scripts.js' %}"></script>
+
+    <! -- Font Awesome -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
     <script>
@@ -31,6 +51,7 @@
             });
         });
     </script>
+
 </head>
 
 {% _get_user_context request as user_context %}
@@ -137,16 +158,29 @@
                         <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne"
                             data-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="/historical/district">Create Districts</a>
-                                <a class="nav-link" href="/historical/school">Create Schools</a>
-                                <a class="nav-link" href="/historical/enrollment">Enrollment History</a>
-                                <a class="nav-link" href="/historical/enroll_class">Enrollment / School Capacity</a>
-                                <a class="nav-link" href="/historical">Dropouts</a>
-                                <a class="nav-link" href="/historical">Teachers and Qualifications</a>
-                                <a class="nav-link" href="/historical">Accomodations</a>
+                                <a class="nav_link" href="/historical/district">Create Districts</a><br/>
+                                <a class="nav_link" href="/historical/create_institution">Create Schools</a><br/>
+                                <a class="nav_link" href="/historical/enrollment">Enrollment History</a>
+                                <a class="nav_link" href="/historical/enroll_class">Enrollment / School Capacity</a>
+                                <a class="nav_link" href="/historical/special_ed_quest">Special education schools annual questionnaire</a>
                             </nav>
                         </div>
                         <div class="sb-sidenav-menu-heading">Data</div>
+                         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseExams"
+                            aria-expanded="false" aria-controls="collapseExams">
+                            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
+                            Examinations
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapseExams" aria-labelledby="headingOne"
+                            data-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                 <a class="nav_link" href="/historical/#">Common Entrance Examination</a>
+                                 <a class="nav_link" href="/historical/#">CXC / CSEC</a>
+                                 <a class="nav_link" href="/historical/#">Examination Summary</a>
+
+                            </nav>
+                        </div>
                         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                             aria-expanded="false" aria-controls="collapsePages">
                             <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
@@ -159,41 +193,66 @@
                                 <a class="nav-link collapsed" href="#" data-toggle="collapse"
                                     data-target="#pagesCollapseAuth" aria-expanded="false"
                                     aria-controls="pagesCollapseAuth">
-                                    School Capacity
+                                    Capacity
                                     <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                                 </a>
                                 <div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne"
                                     data-parent="#sidenavAccordionPages">
                                     <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="/historical/enrolled">National Enrollment /
-                                            Capacity</a>
-                                        <a class="nav-link" href="/historical/enrolled_district">District Enrollment /
-                                            Capacity</a>
-                                        <a class="nav-link" href="/historical/district_trend">Enrollment / Capacity by
-                                            School Trend</a>
-                                        <a class="nav-link" href="/historical/compare_trends">Enrollment / Capacity by
-                                            District Trend</a>
+                                        <a class="nav_link" href="/historical/enrolled">National Enrollment / Capacity
+                                        </a>
+                                        <a class="nav_link" href="/historical/enrolled_district">
+                                            District Enrollment / Capacity</a>
+                                        <a class="nav_link" href="/historical/district_trend">
+                                            Enrollment / Capacity by School Trend </a>
+                                        <a class="nav_link" href="/historical/compare_trends">
+                                        Enrollment / Capacity by District Trend </a>
+
                                     </nav>
                                 </div>
                                 <a class="nav-link collapsed" href="#" data-toggle="collapse"
                                     data-target="#pagesCollapseError" aria-expanded="false"
                                     aria-controls="pagesCollapseError">
-                                    Grade/School
+                                    Grade - Gender
                                     <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                                 </a>
                                 <div class="collapse" id="pagesCollapseError" aria-labelledby="headingOne"
                                     data-parent="#sidenavAccordionPages">
                                     <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="/historical/enrolled_grade">National Enrollment /
-                                            Grade</a>
-                                        <a class="nav-link" href="/historical/district_grade">District Enrollment /
-                                            Grade</a>
-                                        <a class="nav-link" href="/historical/#">Enrollment / Grade by School Trend</a>
-                                        <a class="nav-link" href="/historical/#">Enrollment / Grade by District
-                                            Trend</a>
-                                        <a class="nav-link" href="/historical/#">Enrollment Summary</a>
+                                       <a class="nav_link" href="/historical/enrolled_grade">
+                                            National Enrollment / Grade </a>
+                                        <a class="nav_link" href="/historical/district_grade">
+                                            District Enrollment / Grade  </a>
+                                        <a class="nav_link" href="/historical/district_grade_school">
+                                            Enrollment / Grade by School </a>
+                                        <a class="nav_link" href="/historical/district_category_school">
+                                            Enrollment / Grade by District Trend </a>
+                                        <a class="nav_link" href="/historical/enrollment_summary">
+                                            Enrollment Summary</a>
                                     </nav>
                                 </div>
+                                 <a class="nav-link collapsed" href="#" data-toggle="collapse"
+                                    data-target="#pagesCollapseNational" aria-expanded="false"
+                                    aria-controls="pagesCollapseNational">
+                                    National Aggregate
+                                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                </a>
+                                <div class="collapse" id="pagesCollapseNational" aria-labelledby="headingOne"
+                                    data-parent="#sidenavAccordionPages">
+                                    <nav class="sb-sidenav-menu-nested nav">
+                                       <a class="nav_link" href="/historical/#">
+                                            National Enrollment / Grade </a>
+                                        <a class="nav_link" href="/historical/#">
+                                            District Enrollment / Grade  </a>
+                                        <a class="nav_link" href="/historical/#">
+                                            Enrollment / Grade by School </a>
+                                        <a class="nav_link" href="/historical/#">
+                                            Enrollment / Grade by District Trend </a>
+                                        <a class="nav_link" href="/historical/#">
+                                            Enrollment Summary</a>
+                                    </nav>
+                                </div>
+
                             </nav>
                         </div>
                     </div>

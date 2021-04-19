@@ -1,6 +1,7 @@
 import datetime
 
 from django.db import models
+from emis.permissions import CustomPermissionModel
 
 import authentication
 from emis import settings
@@ -49,6 +50,9 @@ class District(models.Model):
     updated_at = models.DateField()
     updated_by = models.CharField(max_length=255, blank=True)
 
+    class Meta(CustomPermissionModel.Meta):
+        pass
+
     def __str__(self):
         return str(self.district_name)
 
@@ -63,6 +67,9 @@ class School(models.Model):
     category_of_school = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
     updated_at = models.DateField(auto_now_add=True)
     updated_by = models.CharField(max_length=255, blank=True)
+
+    class Meta(CustomPermissionModel.Meta):
+        pass
 
     def __str__(self):
         return str(self.school_name)
@@ -82,6 +89,9 @@ class AggregateEnrollment(models.Model):
     maximum_age = models.IntegerField(blank=True)
     updated_at = models.DateField(auto_now_add=True)
     updated_by = models.CharField(max_length=255, blank=True)
+
+    class Meta(CustomPermissionModel.Meta):
+        pass
 
     def __str__(self):
         return str(self.name_of_school)
@@ -232,4 +242,7 @@ class SpecialEdQuest(models.Model):
     specify_other_disability_male = models.IntegerField(blank=True)
     specify_other_disability_female = models.IntegerField(blank=True)
     updated_at = models.DateField(auto_now_add=True)
-    updated_by = models.CharField(max_length=255)
+    updated_by = models.CharField(max_length=255
+                                  
+    class Meta(CustomPermissionModel.Meta):
+        pass

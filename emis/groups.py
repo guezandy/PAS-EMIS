@@ -55,7 +55,7 @@ DISTRICT_LIST = (
     + get_raw_codes_by_area(EmisPermArea.SCHOOL_ADMIN_RESTR, EmisPermMode.VIEW)
     + get_raw_codes_by_area(EmisPermArea.PRINCIPAL, EmisPermMode.VIEW)
     + get_all_raw_codes_by_area(EmisPermArea.DISTRICT)
-    + get_raw_codes(EmisPermission.DISTRICT_APP_ACCESS, EmisPermMode.VIEW)
+    + get_raw_codes(EmisPermission.SCHOOL_APP_ACCESS, EmisPermMode.VIEW)
 )
 
 SUPERVISOR_LIST = (

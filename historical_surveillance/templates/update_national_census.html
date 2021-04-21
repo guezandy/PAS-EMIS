@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+{% block page_content %}
+<form method="POST" class="post-form" action="">
+        {% csrf_token %}
+    <div class="container">
+<br>
+    <div class="form-group row">
+    <label class="col-sm-1 col-form-label"></label>
+    <div class="col-sm-4">
+    <h3>Update National Education Census Aggregate</h3>
+    </div>
+  </div>
+
+
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label" for="academic_year">Academic Year:</label>
+    <div class="col-sm-4">
+        <input type="text" name="academic_year" id="academic_year" maxlength="100" value="{{ data_to_update.academic_year }}" />
+    </div>
+  </div>
+
+         <div class="form-group row">
+    <label class="col-sm-2 col-form-label" for="3-14">3 - 4 years</label>
+    <div class="col-sm-4">
+        <input type="integer" name="age_3_to_4" id="3-4" value="{{ data_to_update.age_3_to_4_years}}" />
+    </div>
+  </div>
+
+ <div class="form-group row">
+    <label class="col-sm-2 col-form-label" for="5-11">5 - 11 years</label>
+    <div class="col-sm-4">
+        <input type="integer" name="age_5_to_11" id="5-11" value="{{ data_to_update.age_5_to_11_years}}" />
+    </div>
+  </div>
+
+
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label" for="12-16">12 - 16 years</label>
+    <div class="col-sm-4">
+        <input type="integer" name="age_12_to_16" id="12-16" value="{{ data_to_update.age_12_to_16_years}}" />
+    </div>
+  </div>
+
+
+    <div class="form-group row">
+    <label class="col-sm-1 col-form-label"></label>
+    <div class="col-sm-4">
+    <button type="submit" class="btn btn-success">Update</button>
+    </div>
+  </div>
+    </div>
+</form>
+{% endblock %}

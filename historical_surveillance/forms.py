@@ -67,6 +67,32 @@ class EnrollmentForms(forms.ModelForm):
         """
 
 
+class NationalGenderEnrollmentForms(forms.ModelForm):
+    class Meta:
+        model = NationalGenderEnrollment
+        fields = "__all__"
+
+
+class NationalEducationCensusForms(forms.ModelForm):
+    class Meta:
+        model = NationalEducationCensus
+        fields = "__all__"
+
+
+class NationalExpenditureForms(forms.ModelForm):
+    class Meta:
+        model = NationalExpenditure
+        fields = "__all__"
+
+
+class NationalTeachersRatioForms(forms.ModelForm):
+    class Meta:
+        model = NationalStudentTeacherRatio
+        fields = "__all__"
+
+
+
+
 class SpecialEdForms1(forms.ModelForm):
     class Meta:
         model = SpecialEdQuest
@@ -101,6 +127,6 @@ class SpecialEdForms4(forms.ModelForm):
                   'number_of_male_students_using_prosthesis', 'number_of_female_students_using_prosthesis',
                   'number_of_male_students_using_arm_leg_braces', 'number_of_female_students_using_arm_leg_braces',
                   'specify_other_disability_name', 'specify_other_disability_male', 'specify_other_disability_female']
-        #widgets = {
-            #'specify_other_disability_name' : Textarea(attrs={'cols':80, 'rows' : 20}),
-        #}
+        # widgets = {
+        # 'specify_other_disability_name' : Textarea(attrs={'cols':80, 'rows' : 20}),
+        # }

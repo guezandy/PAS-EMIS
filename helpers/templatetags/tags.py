@@ -47,3 +47,7 @@ def keyvalue(dict, key):
     except KeyError:
         return ""
 
+
+@register.filter
+def remove_spaces(value):
+    return value.replace(" ", "")

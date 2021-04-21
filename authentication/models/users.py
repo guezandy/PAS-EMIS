@@ -6,6 +6,7 @@ from django.contrib.auth.models import User, Group
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from emis.permissions import CustomPermissionModel
+from historical_surveillance.models import SEX_CHOICES
 
 
 class SchoolAdministrator(User):
@@ -24,6 +25,39 @@ class Teacher(User):
 
 class SchoolPrincipal(User):
     school = models.ForeignKey(School, on_delete=models.CASCADE, null=True)
+    sex = models.CharField(choices=SEX_CHOICES, max_length=20, blank=True, null=True)
+    status = models.CharField(
+        choices=(
+            ("permanent", "permanent"),
+            ("probation", "probation"),
+            ("acting", "acting"),
+        ),
+        max_length=20,
+        blank=True,
+        null=True,
+    )
+    date_of_birth = models.DateField(max_length=8, blank=True, null=True)
+    qualifications = models.CharField(
+        choices=(
+            ("Ph.D", "Ph.D"),
+            ("Master's Degree", "Master's Degree"),
+            ("Bachelor's Degree", "Bachelor's Degree"),
+            ("Bachelor's Degree in Education", "Bachelor's Degree in Education"),
+            ("Associate Degree in Education", "Associate Degree in Education"),
+            ("Diploma in Education", "Diploma in Education"),
+            (
+                "Associate Degree in Teacher Education (Primary)",
+                "Associate Degree in Teacher Education (Primary)",
+            ),
+            ("Certificate in Management", "Certificate in Management"),
+            ("2 or more 'A' Levels", "2 or more 'A' Levels"),
+            ("1 'A' Level", "1 'A' Level"),
+            ("5 or more 'O' Levels/CXC general", "5 or more 'O' Levels/CXC general"),
+        ),
+        max_length=50,
+        blank=True,
+        null=True,
+    )
 
     class Meta(CustomPermissionModel.Meta):
         verbose_name = "Principal"

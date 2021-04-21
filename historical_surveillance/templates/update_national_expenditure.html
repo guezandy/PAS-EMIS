@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+{% block page_content %}
+<form method="POST" class="post-form" action="">
+        {% csrf_token %}
+    <div class="container">
+<br>
+    <div class="form-group row">
+    <label class="col-sm-1 col-form-label"></label>
+    <div class="col-sm-4">
+    <h3>Update National Expenditure</h3>
+    </div>
+  </div>
+
+
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label" for="academic_year">Academic Year:</label>
+    <div class="col-sm-4">
+        <input type="text" name="academic_year" id="academic_year" maxlength="100" value="{{ data_to_update.academic_year }}" />
+    </div>
+  </div>
+
+         <div class="form-group row">
+    <label class="col-sm-2 col-form-label" for="educational_expenditure">Educational Expenditure</label>
+    <div class="col-sm-4">
+        <input type="integer" name="educational_expenditure" id="educational_expenditure" value="{{ data_to_update.educational_expenditure}}" />
+    </div>
+  </div>
+
+ <div class="form-group row">
+    <label class="col-sm-2 col-form-label" for="gdp_millions">GDP</label>
+    <div class="col-sm-4">
+        <input type="integer" name="gdp_millions" id="gdp_millions" value="{{ data_to_update.gdp_millions}}" />
+    </div>
+  </div>
+
+
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label" for="government_expenditure">Government Expenditure</label>
+    <div class="col-sm-4">
+        <input type="integer" name="government_expenditure" id="government_expenditure"
+               value="{{ data_to_update.government_expenditure}}" />
+    </div>
+  </div>
+
+         <div class="form-group row">
+    <label class="col-sm-2 col-form-label" for="primary_school_expenditure">Primary School Expenditure</label>
+    <div class="col-sm-4">
+        <input type="integer" name="primary_school_expenditure" id="primary_school_expenditure"
+               value="{{ data_to_update.primary_school_expenditure}}" />
+    </div>
+  </div>
+
+         <div class="form-group row">
+    <label class="col-sm-2 col-form-label" for="secondary_school_expenditure">Secondary School Expenditure</label>
+    <div class="col-sm-4">
+        <input type="integer" name="secondary_school_expenditure" id="secondary_school_expenditure"
+               value="{{ data_to_update.secondary_school_expenditure}}" />
+    </div>
+  </div>
+
+
+    <div class="form-group row">
+    <label class="col-sm-1 col-form-label"></label>
+    <div class="col-sm-4">
+    <button type="submit" class="btn btn-success">Update</button>
+    </div>
+  </div>
+    </div>
+</form>
+{% endblock %}

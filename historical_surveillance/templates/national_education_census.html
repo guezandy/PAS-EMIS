@@ -13,7 +13,7 @@ of the same data which is also handled by the error message displayed.
 
      <div class="col-xl-5 col-md-5">
           <div class="card bg-transparent container-fluid text-dark mb-4">
-              <div class="card-body"><h3>Enrollment by grade and sex</h3>
+              <div class="card-body"><h3>National Education Census</h3>
            {% if error_message %}
                         <div class ="alert alert-danger alert-dismissible fade show" role = "alert">
                         {{ error_message }}
@@ -35,49 +35,41 @@ of the same data which is also handled by the error message displayed.
 
       <div class="col-xl-7 col-md-7">
           <div class="card bg-primary text-white mb-4">
-              <div class="card-body"><h3>Enrollment by Grade & Gender</h3>
-
+              <div class="card-body"><h3>Education Census by age group</h3>
+                  <!-- TO DO :
+                  Make table updatable -->
                         <div class="table-responsive card bg-body mb-4">
-                            <table class="table table-bordered" id="dataTable" max-width="100%" >
+                            <table class="table table-bordered" id="dataTable" max-width="100%">
                                 <thead>
                                 <tr>
-                                    <th> Id </th>
-                                    <th>Name of School</th>
+                                    <th>Id</th>
                                     <th>Academic Year</th>
-                                    <th>Grade</th>
-                                    <th>Sex</th>
-                                    <th>Enrollment</th>
-                                       <th>Minimum Age</th>
-                                    <th>Maximum Age</th>
-                                     <th>Actions</th>
+                                    <th>3- 4 years</th>
+                                    <th>5 - 11 years</th>
+                                    <th>12 - 16 years</th>
+                                    <th>Actions</th>
                                 </tr>
                                 </thead>
                                 <tfoot>
                                 <tr>
                                     <th>Id</th>
-                                   <th>Name of School</th>
                                     <th>Academic Year</th>
-                                    <th>Grade</th>
-                                    <th>Sex</th>
-                                    <th>Enrollment</th>
-                                       <th>Minimum Age</th>
-                                    <th>Maximum Age</th>
-                                     <th>Actions</th>
+                                    <th>3- 4 years</th>
+                                    <th>5 - 11 years</th>
+                                    <th>12 - 16 years</th>
+                                    <th>Actions</th>
                                 </tr>
                                 </tfoot>
                                 <tbody>
-                                {% for school in name_of_school %}
+                                {% for item  in census_data %}
                                     <tr>
-                                        <td>{{ school.id }}</td>
-                                        <td>{{ school.school }}</td>
-                                        <td>{{ school.year }}</td>
-                                        <td>{{ school.grade }}</td>
-                                        <td>{{ school.sex }}</td>
-                                        <td>{{ school.enrollment }}</td>
-                                        <td>{{ school.minimum_age }}</td>
-                                        <td>{{ school.maximum_age }}</td>
-                                        <td>
-                                        <a href="/historical/update_enrollment/{{ school.id}}"><i class="fas fa-pencil-alt"></i>Edit</a>
+                                       <td>{{ item.id }}</td>
+                                        <td>{{ item.academic_year }}</td>
+                                        <td>{{ item.age_3_to_4_years }}</td>
+                                        <td>{{ item.age_5_to_11_years }}</td>
+                                        <td>{{ item.age_12_to_16_years }}</td>
+                                     <td>
+                                        <a href="/historical/update_national_census/{{ item.id}}"><i class="fas fa-pencil-alt"></i>Edit</a>
                                      </td>
                                     </tr>
                                 {% endfor %}

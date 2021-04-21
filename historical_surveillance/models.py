@@ -2,9 +2,9 @@ import datetime
 
 from django.db import models
 from emis.permissions import CustomPermissionModel
-
 import authentication
 from emis import settings
+
 
 GRADE_CHOICES = [
     ("grade k", "Grade k"),
@@ -106,8 +106,8 @@ class AggregateEnrollment(models.Model):
     district_of_school = models.ForeignKey(District, on_delete=models.CASCADE)
     capacity_of_school = models.IntegerField()
     total_enrollment = models.IntegerField()
-    minimum_age = models.IntegerField(blank=True, null=True)
-    maximum_age = models.IntegerField(blank=True, null=True)
+    minimum_age = models.IntegerField(blank=True)
+    maximum_age = models.IntegerField(blank=True)
     updated_at = models.DateField(auto_now_add=True)
     updated_by = models.CharField(max_length=255, blank=True)
 
@@ -130,8 +130,8 @@ class Enrollment(models.Model):
     district = models.ForeignKey(District, on_delete=models.CASCADE)
     grade = models.CharField(max_length=20, choices=GRADE_CHOICES, default=None)
     enrollment = models.IntegerField(null=True, blank=True)
-    minimum_age = models.IntegerField(blank=True, null=True)
-    maximum_age = models.IntegerField(blank=True, null=True)
+    minimum_age = models.IntegerField(blank=True)
+    maximum_age = models.IntegerField(blank=True)
     sex = models.CharField(max_length=20, null=True, choices=SEX_CHOICES)
     updated_at = models.DateField(auto_now_add=True)
     updated_by = models.CharField(max_length=255, blank=True)
@@ -139,21 +139,26 @@ class Enrollment(models.Model):
     class Meta(CustomPermissionModel.Meta):
         pass
 
+    def __str__(self):
+        return str(self.school)
+
 
 class NationalGenderEnrollment(models.Model):
     objects = None
     created_at = models.DateField(auto_now_add=True)
     created_by = models.CharField(max_length=255)
-    sex = models.CharField(choices=SEX_CHOICES, max_length=20)
     academic_year = models.CharField(max_length=30)
-    category_of_school = models.CharField(max_length=100)
-    grade = models.CharField(choices=GRADE_CHOICES, max_length=50)
-    total = models.IntegerField()
+    sex = models.CharField(choices=SEX_CHOICES, max_length=20)
+    enrollment = models.IntegerField()
+    category_of_school = models.CharField(max_length=100, choices=CATEGORY_CHOICES)
     updated_at = models.DateField(auto_now_add=True)
     updated_by = models.CharField(max_length=255, blank=True)
 
     class Meta(CustomPermissionModel.Meta):
         pass
+
+    def __str__(self):
+        return str(self.academic_year)
 
 
 class NationalEducationCensus(models.Model):
@@ -162,7 +167,7 @@ class NationalEducationCensus(models.Model):
     created_by = models.CharField(max_length=255)
     academic_year = models.CharField(max_length=30)
     age_3_to_4_years = models.IntegerField()
-    age_5_to_7_years = models.IntegerField()
+    age_5_to_11_years = models.IntegerField()
     age_12_to_16_years = models.IntegerField()
     updated_at = models.DateField(auto_now_add=True)
     updated_by = models.CharField(max_length=255, blank=True)
@@ -170,72 +175,50 @@ class NationalEducationCensus(models.Model):
     class Meta(CustomPermissionModel.Meta):
         pass
 
+    def __str__(self):
+        return str(self.academic_year)
 
-class ExpenditurePerStudent(models.Model):
+
+class NationalExpenditure(models.Model):
     objects = None
     created_at = models.DateField(auto_now_add=True)
     created_by = models.CharField(max_length=255)
-    total_expenditure = models.IntegerField()
-    no_of_schools = models.IntegerField()
-    expenditure_per_pupil = models.IntegerField()
+    academic_year = models.CharField(max_length=30)
+    educational_expenditure = models.CharField(max_length=50)
+    gdp_millions = models.CharField(max_length=50)
+    government_expenditure = models.CharField(max_length=50)
+    primary_school_expenditure = models.CharField(max_length=50)
+    secondary_school_expenditure = models.CharField(max_length=50)
     updated_at = models.DateField(auto_now_add=True)
     updated_by = models.CharField(max_length=255, blank=True)
 
     class Meta(CustomPermissionModel.Meta):
         pass
 
-
-class SchoolsStudentTeacherRatio(models.Model):
-    objects = None
-    created_at = models.DateField(auto_now_add=True)
-    created_by = models.CharField(max_length=255)
-    school = models.ForeignKey(School, on_delete=models.CASCADE)
-    year = models.CharField(max_length=20)
-    enrolled = models.IntegerField(blank=True)
-    number_of_teachers = models.IntegerField(blank=True)
-    updated_at = models.DateField(auto_now_add=True)
-    updated_by = models.CharField(max_length=255, blank=True)
-
-    class Meta(CustomPermissionModel.Meta):
-        pass
+    def __str__(self):
+        return str(self.academic_year)
 
 
 class NationalStudentTeacherRatio(models.Model):
     objects = None
     created_at = models.DateField(auto_now_add=True)
     created_by = models.CharField(max_length=255)
+    category_of_school = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
     academic_year = models.CharField(max_length=20)
-    category_of_school = models.CharField(max_length=20)
-    no_of_schools = models.IntegerField()
-    number_of_boys_enrolled = models.IntegerField()
-    number_of_girls_enrolled = models.IntegerField()
-    total_enrollment = models.IntegerField()
-    number_of_trained_male_teachers = models.IntegerField()
-    number_of_trained_female_teachers = models.IntegerField()
-    number_of_untrained_male_teachers = models.IntegerField()
-    number_of_untrained_female_teachers = models.IntegerField()
-    total_number_of_teachers = models.IntegerField()
+    total_enrollment = models.CharField(max_length=20)
+    number_of_trained_male_teachers = models.CharField(max_length=20)
+    number_of_trained_female_teachers = models.CharField(max_length=20)
+    number_of_untrained_male_teachers = models.CharField(max_length=20)
+    number_of_untrained_female_teachers = models.CharField(max_length=20)
+    total_number_of_teachers = models.CharField(max_length=20)
     updated_at = models.DateField(auto_now_add=True)
     updated_by = models.CharField(max_length=255)
 
     class Meta(CustomPermissionModel.Meta):
         pass
 
-
-class LeaversDropouts(models.Model):
-    objects = None
-    created_at = models.DateField(auto_now_add=True)
-    created_by = models.CharField(max_length=255, blank=True)
-    school = models.ForeignKey(School, on_delete=models.CASCADE)
-    year = models.CharField(max_length=20)
-    dropouts = models.IntegerField(blank=True)
-    transfer_out = models.IntegerField(blank=True)
-    others = models.IntegerField(blank=True)
-    updated_at = models.DateField(auto_now_add=True)
-    updated_by = models.CharField(max_length=255, blank=True)
-
-    class Meta(CustomPermissionModel.Meta):
-        pass
+    def __str__(self):
+        return str(self.academic_year)
 
 
 class SpecialEdQuest(models.Model):

@@ -3,57 +3,57 @@
 {% load crispy_forms_tags %}
 {% block page_content %}
 <main>
-  <div class="row">
-      <div class="col-xl-4 col-md-4">
-          <div class="card mb-4">
-              <div class="card-body">Schools Enrollment / Capacity Trend<br/>
+    <div class="row">
+        <div class="col-xl-4 col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">Schools Enrollment / Capacity Trend<br />
                     {% if error_message %}
-                        <div class ="alert alert-warning alert-dismissible fade show" role = "alert">
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
                         {{ error_message }}
-                        <button type = "button" class = "btn-close" data-bs-dismiss ="alert" aria-label ="close"></button>
-                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
+                    </div>
                     {% endif%}
-                 <form action="" method="POST">
-                   {% csrf_token %}
+                    <form action="" method="POST">
+                        {% csrf_token %}
 
 
-                                <label class="small mb-1" for="chart_type">Choose a Chart type</label>
-                                <select class ="form-control" name ="chart" id = "chart_type" required >
-                                    <option value ="" selected>[Choose Here]</option>
-                                    <option value ="barplot">Bar Plot</option>
-                                    <option value ="lineplot">Line Plot</option>
-                                </select>
+                        <label class="small mb-1" for="chart_type">Choose a Chart type</label>
+                        <select class="form-control" name="chart" id="chart_type" required>
+                            <option value="" selected>[Choose Here]</option>
+                            <option value="barplot">Bar Plot</option>
+                            <option value="lineplot">Line Plot</option>
+                        </select>
 
-                   <br/>
-                   <br/>
-                   <br/>
+                        <br />
+                        <br />
+                        <br />
 
-                            <label class="small mb-1" for="school">Select a school</label>
-                            <select name ="school_name" id = "school" required class ='form-control'>
-                                <option value ="" selected>[Choose Here]</option>
-                                {% for item in schools %}
-                                <option value = "{{ item.id}}">{{ item.school_name}}</option>
-                                {% endfor %}
-                            </select>
+                        <label class="small mb-1" for="school">Select a school</label>
+                        <select name="school_name" id="school" required class='form-control'>
+                            <option value="" selected>[Choose Here]</option>
+                            {% for item in schools %}
+                            <option value="{{ item.id}}">{{ item.school_name}}</option>
+                            {% endfor %}
+                        </select>
 
 
 
-                   <br/><input type ="submit" name ="submit" class ="btn btn-danger btn-sm" value="Get Trend"/>
-               </form>
-              </div>
+                        <br /><input type="submit" name="submit" class="btn btn-danger btn-sm" value="Get Trend" />
+                    </form>
+                </div>
 
-              </div>
-          </div>
-      <div class="col-xl-8 col-md-8">
-              <div class="card-footer d-flex align-items-center justify-content-between">
-              {% if request.POST %}
-                  {% if graph %}
-                  <img src ="data:image/png;base64, {{ graph | safe}}" alt="analysis Image"/>
-                  {%endif%}
-              {% endif%}
-              </div>
-  </div>
-      </div>
+            </div>
+        </div>
+        <div class="col-xl-8 col-md-8">
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                {% if request.POST %}
+                {% if graph %}
+                <img src="data:image/png;base64, {{ graph | safe}}" alt="analysis Image" />
+                {%endif%}
+                {% endif%}
+            </div>
+        </div>
+    </div>
 
 
 

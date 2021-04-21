@@ -34,7 +34,7 @@ LOGGER = logging.getLogger("emis-pas")
 
 def index(request):
     if request.user and request.user.is_authenticated:
-        return render(request, "base.html", {})
+        return render(request, "index.html", {})
     return render(request, "authentication/index.html", {})
 
 
@@ -125,8 +125,7 @@ def forgot_password_view(request):
                 if len(signed_value) > code_start_index:
                     code = signed_value[code_start_index:]
 
-                    forgot_password_record = ForgotPassword(
-                        user=user, code=code)
+                    forgot_password_record = ForgotPassword(user=user, code=code)
                     forgot_password_record.save()
 
                     send_forgot_password_email(request, user)
@@ -156,8 +155,7 @@ def reset_password_view(request, code: str):
             if valid_code and form.is_valid():
                 signer = TimestampSigner()
                 plain_text_email = signer.unsign(
-                    form.cleaned_data["email"] + ":" +
-                    forgot_password_record.code
+                    form.cleaned_data["email"] + ":" + forgot_password_record.code
                 )
                 if (
                     plain_text_email == form.cleaned_data["email"]
@@ -225,8 +223,7 @@ def send_forgot_password_email(request, user: User):
     html = get_template("authentication/forgot_password_email.html")
 
     url = request.build_absolute_uri(
-        reverse("authentication:reset-password",
-                args=(user.forgotpassword.code,))
+        reverse("authentication:reset-password", args=(user.forgotpassword.code,))
     )
     expiration_date = date.today() + timedelta(
         days=settings.RESET_PASSWORD_EXPIRATION_DAYS

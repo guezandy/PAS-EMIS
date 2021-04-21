@@ -28,6 +28,9 @@ from .forms import (
     AssignmentForm,
     AssignmentGradeForm,
     StudentForm,
+    PrincipalForm,
+    PrincipalAppraisalForm,
+    TeacherAppraisalForm,
 )
 from historical_surveillance.models import District, School
 from .models import (
@@ -38,6 +41,8 @@ from .models import (
     Subject,
     Assignment,
     AssignmentGrade,
+    PrincipalAppraisal,
+    TeacherAppraisal,
 )
 
 
@@ -111,6 +116,17 @@ def single_district_view(request, code):
                 "student_count": Student.objects.filter(school=school).count(),
             }
             for school in School.objects.filter(district_name=district)
+        ],
+        "principals": [
+            {
+                "id": principal.id,
+                "name": f"{principal.first_name} {principal.last_name}",
+                "school_name": principal.school.school_name,
+                "school_code": principal.school.school_code,
+            }
+            for principal in SchoolPrincipal.objects.filter(
+                school__district_name=district
+            )
         ],
     }
     context = _add_side_navigation_context(context)
@@ -321,7 +337,7 @@ def student_form(request, code=None):
         if form.is_valid():
             new_instance = form.save()
             return redirect(f"/school/school_details/{new_instance.school.school_code}")
-    context = {"header": "Edit Student" if code else "Create Student", "form": form}
+    context = {"header": "Edit Student" if code else "Student Enrollment", "form": form}
     context = _add_side_navigation_context(context)
     return render(request, "form.html", context)
 
@@ -413,6 +429,84 @@ def delete_assignment(request, code=None):
     assignment.delete()
 
     return redirect(f"/school/teacher/{teacher_id}/course/{course_id}")
+
+
+def principal_form(request, code=None):
+    # Render edit form
+    if code:
+        principal_query = SchoolPrincipal.objects.filter(id=code)
+        # Invalid course code
+        if not principal_query.exists():
+            return redirect("/school/districts")
+        instance = principal_query.first()
+    # Initialize create form with created_by and updated_by pre-populated
+    else:
+        instance = SchoolPrincipal()
+    form = PrincipalForm(request.POST or None, instance=instance)
+    if request.method == "POST":
+        if form.is_valid():
+            new_instance = form.save()
+            return redirect(
+                f"/school/district/{new_instance.principal.school.school_code}"
+            )
+    context = {
+        "header": "Edit Principal" if code else "Create Principal",
+        "form": form,
+    }
+    context = _add_side_navigation_context(context)
+    return render(request, "form.html", context)
+
+
+def principal_appraisal_form(request, code=None):
+    # Render edit form
+    if code:
+        principal_appraisal_query = PrincipalAppraisal.objects.filter(id=code)
+        # Invalid course code
+        if not principal_appraisal_query.exists():
+            return redirect("/school/districts")
+        instance = principal_appraisal_query.first()
+    # Initialize create form with created_by and updated_by pre-populated
+    else:
+        instance = PrincipalAppraisal()
+    form = PrincipalAppraisalForm(request.POST or None, instance=instance)
+    if request.method == "POST":
+        if form.is_valid():
+            new_instance = form.save()
+            return redirect(
+                f"/school/district/{new_instance.principal.school.school_code}"
+            )
+    context = {
+        "header": "Edit Principal Appraisal" if code else "Create Principal Appraisal",
+        "form": form,
+    }
+    context = _add_side_navigation_context(context)
+    return render(request, "form.html", context)
+
+
+def teacher_appraisal_form(request, code=None):
+    # Render edit form
+    if code:
+        teacher_appraisal_query = TeacherAppraisal.objects.filter(id=code)
+        # Invalid course code
+        if not teacher_appraisal_query.exists():
+            return redirect("/school/districts")
+        instance = teacher_appraisal_query.first()
+    # Initialize create form with created_by and updated_by pre-populated
+    else:
+        instance = TeacherAppraisal()
+    form = TeacherAppraisalForm(request.POST or None, instance=instance)
+    if request.method == "POST":
+        if form.is_valid():
+            new_instance = form.save()
+            return redirect(
+                f"/school/district/{new_instance.teacher.school.school_code}"
+            )
+    context = {
+        "header": "Edit Teacher Appraisal" if code else "Create Teacher Appraisal",
+        "form": form,
+    }
+    context = _add_side_navigation_context(context)
+    return render(request, "form.html", context)
 
 
 def _add_side_navigation_context(context):

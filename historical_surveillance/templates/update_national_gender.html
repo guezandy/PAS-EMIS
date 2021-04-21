@@ -9,30 +9,41 @@
     <div class="form-group row">
       <label class="col-sm-1 col-form-label"></label>
       <div class="col-sm-4">
-        <h3>Update School</h3>
+        <h3>Update National Gender-Based enrollment Aggregates</h3>
       </div>
     </div>
 
 
     <div class="form-group row">
-      <label class="col-sm-2 col-form-label" for="school_code">School Code:</label>
+      <label class="col-sm-2 col-form-label" for="academic_year">Academic Year:</label>
       <div class="col-sm-4">
-        <input type="text" name="school_code" id="school_code" maxlength="100"
-          value="{{ school_to_update.school_code }}" />
+        <input type="text" name="academic_year" id="academic_year" maxlength="100"
+          value="{{ data_to_update.academic_year }}" />
       </div>
     </div>
     <div class="form-group row">
-      <label class="col-sm-2 col-form-label" for="school_name">School Name:</label>
+      <label class="col-sm-2 col-form-label" for="sex">Sex:</label>
       <div class="col-sm-4">
-        <input type="text" name="school_name" id="school_name" required maxlength="254"
-          value="{{ school_to_update.school_name}}" />
+        <select name="sex" id="sex">
+          <option value="{{ data_to_update.sex }}" selected>{{ data_to_update.sex}}</option>
+          <option value="female">females</option>
+          <option value="male">males</option>
+        </select>
+      </div>
+    </div>
+
+
+    <div class="form-group row">
+      <label class="col-sm-2 col-form-label" for="enrollment">Enrollment:</label>
+      <div class="col-sm-4">
+        <input type="text" name="enrollment" id="enrollment" maxlength="100" value="{{ data_to_update.enrollment }}" />
       </div>
     </div>
     <div class="form-group row">
       <label class="col-sm-2 col-form-label" for="category_of_school">Category of School:</label>
       <div class="col-sm-4">
         <select name="category_of_school" id="category_of_school">
-          <option value="{{ school_to_update.category_of_school }}" selected>{{ school_to_update.category_of_school}}
+          <option value="{{ data_to_update.category_of_school }}" selected>{{ data_to_update.category_of_school}}
           </option>
           <option value="public secondary">Public Secondary</option>
           <option value="public primary">Public Primary</option>

@@ -4,5 +4,5 @@ db.sqlite3
 *.code-workspace
 .idea/*
 venv/*
-venv/
+**/venv/
 emis/.env

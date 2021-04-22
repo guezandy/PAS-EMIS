@@ -153,7 +153,7 @@ def single_school_view(request, code):
         "teachers": [
             {
                 "teacher_code": teacher.id,
-                "name": teacher.first_name,
+                "name": f"{teacher.first_name} {teacher.last_name}",
                 "course_count": Course.objects.filter(teacher=teacher).count(),
             }
             for teacher in Teacher.objects.filter(school=school)
@@ -163,7 +163,7 @@ def single_school_view(request, code):
                 "course_code": course.id,
                 "subject_group": course.subject.subject_group,
                 "subject": course.subject,
-                "teacher": course.teacher.first_name,
+                "teacher": f"{course.teacher.first_name} {course.teacher.last_name}",
             }
             for course in Course.objects.filter(school=school)
         ],
@@ -209,6 +209,20 @@ def course_view(request, teacher_code, course_code):
     except Course.DoesNotExist:
         return redirect("/school")
 
+    students = []
+    for student in course.students.all():
+        student_assignments = AssignmentGrade.objects.filter(
+            student=student, assignment__course=course
+        )
+        assignment_map = {a.assignment.id: a.grade for a in student_assignments}
+        students.append(
+            {
+                "student_name": f"{student.first_name} {student.last_name}",
+                "student_code": student.id,
+                "assignments": assignment_map,
+            }
+        )
+
     context = {
         "teacher_name": f"{teacher.first_name} {teacher.last_name}",
         "teacher_code": teacher.id,
@@ -218,15 +232,9 @@ def course_view(request, teacher_code, course_code):
             assignment.id: assignment.name
             for assignment in Assignment.objects.filter(course=course)
         },
-        "students": [
-            {
-                "student_name": f"{student.first_name} {student.last_name}",
-                "student_code": student.id,
-                "assignments": {"a1": 95, "a2": 95, "a3": 95, "a4": 95, "a5": 95,},
-            }
-            for student in course.students.all()
-        ],
+        "students": students,
     }
+    print(context)
     context = _add_side_navigation_context(context)
     return render(request, "course.html", context)
 
@@ -446,9 +454,7 @@ def principal_form(request, code=None):
     if request.method == "POST":
         if form.is_valid():
             new_instance = form.save()
-            return redirect(
-                f"/school/district/{new_instance.principal.school.school_code}"
-            )
+            return redirect(f"/school/district/{new_instance.school.school_code}")
     context = {
         "header": "Edit Principal" if code else "Create Principal",
         "form": form,

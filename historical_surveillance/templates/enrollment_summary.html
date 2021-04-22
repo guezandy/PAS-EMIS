@@ -2,111 +2,112 @@
 {% load crispy_forms_filters %}
 {% load crispy_forms_tags %}
 {% block page_content %}
-      <div id="container-fluid bg-info">
-          <main>
-              <div class="container-fluid bg-transparent pt-3 text-dark">
-                  <h3>Definition of terms and Interpretation of Results</h3>
-                  <ol type="i" style ='text-align: justify'>
-                      <li ><b>Net Enrollment Rate (NER): </b><br/>The NER gives information on the extent of participation in
-                          a given level of education of children belonging to the official age-group corresponding to the
-                          given level of education.<br/>
-                          NER at primary level has been calculated by grade (from K to grade 6),
-                          by relating the population in ages 5 to 11 to the enrolment in those grades.
-                          <br/> NER at secondary level has been calculated by form (1 to 5),
-                          by relating the population in ages 12 to 16 to the enrolment in those forms.
-                      </li>
+<div id="container-fluid bg-info">
+    <main>
+        <div class="container-fluid bg-transparent pt-3 text-dark">
+            <h3>Definition of terms and Interpretation of Results</h3>
+            <ol type="i" style='text-align: justify'>
+                <li><b>Net Enrollment Rate (NER): </b><br />The NER gives information on the extent of participation in
+                    a given level of education of children belonging to the official age-group corresponding to the
+                    given level of education.<br />
+                    NER at primary level has been calculated by grade (from K to grade 6),
+                    by relating the population in ages 5 to 11 to the enrolment in those grades.
+                    <br /> NER at secondary level has been calculated by form (1 to 5),
+                    by relating the population in ages 12 to 16 to the enrolment in those forms.
+                </li>
 
-                      <li>
-                          <b>Gross Enrollment Rate(GER) : </b><br/>The GER gives information on the extent of participation of
-                          a specific school-going age group
-                          population in a specific level of education. <br/>
-                          GER at primary level is calculated by relating population in age group 5 – 11 to the enrolment
-                          in primary schools. <br/>
-                          GER at secondary level is calculated by relating population in age group 12 – 16 to
-                          the enrolment in secondary schools.<br/>
+                <li>
+                    <b>Gross Enrollment Rate(GER) : </b><br />The GER gives information on the extent of participation
+                    of
+                    a specific school-going age group
+                    population in a specific level of education. <br />
+                    GER at primary level is calculated by relating population in age group 5 – 11 to the enrolment
+                    in primary schools. <br />
+                    GER at secondary level is calculated by relating population in age group 12 – 16 to
+                    the enrolment in secondary schools.<br />
 
-                      </li>
+                </li>
 
-                      <li>
-                          <b>Repetition Rate : </b><br/> 	Repetition Rate is the number of students repeating from a
-                          particular year divided by the total enrolment in the previous year.
+                <li>
+                    <b>Repetition Rate : </b><br />  Repetition Rate is the number of students repeating from a
+                    particular year divided by the total enrolment in the previous year.
 
-                      </li>
+                </li>
 
-                      <li>
-                          <b> Dropout Rate : </b><br/>The Dropout Rate is calculated by relating the number of
-                          students who dropped out during a given year to the enrolment in the beginning of the year.
-                      </li>
+                <li>
+                    <b> Dropout Rate : </b><br />The Dropout Rate is calculated by relating the number of
+                    students who dropped out during a given year to the enrolment in the beginning of the year.
+                </li>
 
-                      <li>
-                          <b>Survival Ratio : </b><br/>Divide the total number of students belonging to a school-cohort
-                          who reached each successive grade of the specified level of education by the number of
-                          students in the school-cohort i.e. those originally enrolled in the first grade of primary
-                          education, and multiply the result by 100. The survival rate is calculated on the basis of
-                          the reconstructed cohort method, which uses data on enrolment and repeaters
-                          for two consecutive years.
-                      </li>
-    </ol>
-                  <div class="row">
-                      <div class="col-xl-3 col-md-3">
-                                <div class="card bg-primary text-white mb-4">
-                                    <div class="card-body">Net Enrollment Rate</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <p>Coming Soon....</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-md-3">
-                                <div class="card bg-secondary text-white mb-4">
-                                    <div class="card-body">Gross Enrollment Rate</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-
-                                      <p> Coming Soon.... </p>
-                                    </div>
-                                </div>
-                            </div>
-                      <div class="col-xl-3 col-md-3">
-                                <div class="card bg-primary text-white mb-4">
-                                    <div class="card-body">Repetition Rate</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-
-                                      <p> Coming Soon.... </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                      <div class="col-xl-3 col-md-3">
-                                <div class="card bg-secondary text-white mb-4">
-                                    <div class="card-body">Dropout Rate</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-
-                                      <p> Coming Soon.... </p>
-                                    </div>
-                                </div>
-                            </div>
-
-
+                <li>
+                    <b>Survival Ratio : </b><br />Divide the total number of students belonging to a school-cohort
+                    who reached each successive grade of the specified level of education by the number of
+                    students in the school-cohort i.e. those originally enrolled in the first grade of primary
+                    education, and multiply the result by 100. The survival rate is calculated on the basis of
+                    the reconstructed cohort method, which uses data on enrolment and repeaters
+                    for two consecutive years.
+                </li>
+            </ol>
+            <div class="row">
+                <div class="col-xl-3 col-md-3">
+                    <div class="card bg-primary text-white mb-4">
+                        <div class="card-body">Net Enrollment Rate</div>
+                        <div class="card-footer d-flex align-items-center justify-content-between">
+                            <p>Coming Soon....</p>
                         </div>
-                  <div class ="row">
-                       <div class="col-xl-3 col-md-3">
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-3">
+                    <div class="card bg-secondary text-white mb-4">
+                        <div class="card-body">Gross Enrollment Rate</div>
+                        <div class="card-footer d-flex align-items-center justify-content-between">
 
-                       </div>
-                       <div class="col-xl-6 col-md-6">
-                           <div class="card bg-primary text-white mb-4">
-                                    <div class="card-body">Survival Ratio</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
+                            <p> Coming Soon.... </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-3">
+                    <div class="card bg-primary text-white mb-4">
+                        <div class="card-body">Repetition Rate</div>
+                        <div class="card-footer d-flex align-items-center justify-content-between">
 
-                                      <p> Coming Soon.... </p>
-                                    </div>
-                                </div>
-                       </div>
+                            <p> Coming Soon.... </p>
+                        </div>
+                    </div>
+                </div>
 
-                       <div class="col-xl-3 col-md-3">
+                <div class="col-xl-3 col-md-3">
+                    <div class="card bg-secondary text-white mb-4">
+                        <div class="card-body">Dropout Rate</div>
+                        <div class="card-footer d-flex align-items-center justify-content-between">
 
-                       </div>
-                  </div>
+                            <p> Coming Soon.... </p>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="row">
+                <div class="col-xl-3 col-md-3">
+
+                </div>
+                <div class="col-xl-6 col-md-6">
+                    <div class="card bg-primary text-white mb-4">
+                        <div class="card-body">Survival Ratio</div>
+                        <div class="card-footer d-flex align-items-center justify-content-between">
+
+                            <p> Coming Soon.... </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-3">
+
+                </div>
+            </div>
+        </div>
+
+    </main>
 </div>
-
-                </main>
-      </div>
 {% endblock %}

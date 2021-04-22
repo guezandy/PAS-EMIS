@@ -74,7 +74,6 @@ def create_institution(request):
     context = {"form": form, "name_of_school": data}
     return render(request, "create_school.html", context)
 
-
 # View for the update of a school
 # To-Do
 # work on the form.is_valid for Foreign Key and allow update of district
@@ -93,44 +92,86 @@ def update_institution(request, code=None):
     return render(request, 'edit_school.html', {'school_to_update': school_to_update})
 
 
-# This function controls the enrollment by school,
-# grade and gender form view, processes the and submits form data to the database
-# This view is a place holder and still under construction
+# Enrollment by grade and sex
 def enrollment(request):
-    form = EnrollmentForms()
+    data = Enrollment.objects.all()
     districts_names = District.objects.values('district_code', 'district_name')
-    return render(request, 'enrollment.html', {'form': form, 'district_names': districts_names})
+    instance = Enrollment(
+        created_by=request.user.username,
+        updated_by=request.user.username
+    )
+    form = EnrollmentForms(request.POST or None, instance=instance)
+    if request.method == "POST":
+        if form.is_valid():
+            school = form.cleaned_data['school']
+            grade = form.cleaned_data['grade']
+            sex = form.cleaned_data['sex']
+            year = form.cleaned_data['year']
+            if not Enrollment.objects.filter(school=school,
+                                             grade=grade,
+                                             sex=sex,
+                                             year=year).exists():
+                form.save()
+            return redirect("/historical/enrollment")
+    context = {"form": form, "district_names": districts_names, "name_of_school": data}
+    return render(request, "enrollment.html", context)
 
 
-# This function controls the total enrollment and school capacity form, processes the form data and submits
-# it to the database
-# This view is still under construction
+# update enrollment by grade and sex
+def update_enrollment(request, code=None):
+    school_to_update = get_object_or_404(Enrollment, pk=code)
+    if request.method == 'POST':
+        form = EnrollmentForms(request.POST)
+        if not form.is_valid():
+            school_to_update.grade = form.cleaned_data['grade']
+            school_to_update.enrollment = form.cleaned_data['enrollment']
+            school_to_update.sex = form.cleaned_data['sex']
+            school_to_update.minimum_age = form.cleaned_data['minimum_age']
+            school_to_update.maximum_age = form.cleaned_data['maximum_age']
+            school_to_update.updated_at = date.today().strftime("%Y-%m-%d")
+            school_to_update.updated_by = request.user.username
+            school_to_update.save()
+        return redirect("/historical/enrollment")
+    return render(request, 'edit_enrollment.html', {'school_to_update': school_to_update})
+
+
+# This function controls the total enrollment and school capacity form
+
 def enroll_class(request):
-    form = AggregateEnrollmentForms()
+    data = AggregateEnrollment.objects.all()
+    instance = AggregateEnrollment(
+        created_by=request.user.username,
+        updated_by=request.user.username
+    )
+    form = AggregateEnrollmentForms(request.POST or None, instance=instance)
+    if request.method == "POST":
+        if form.is_valid():
+            name_of_school = form.cleaned_data['name_of_school']
+            academic_year = form.cleaned_data['academic_year']
+            if not AggregateEnrollment.objects.filter(name_of_school=name_of_school,
+                                                      academic_year=academic_year).exists():
+                form.save()
+            return redirect("/historical/enroll_class")
+    context = {"form": form, "name_of_school": data}
+    return render(request, "enroll_class.html", context)
+
+
+# used to update the enrollment versus class capacity entries
+def update_enroll_class(request, code=None):
+    school_to_update = get_object_or_404(AggregateEnrollment, pk=code)
     if request.method == 'POST':
         form = AggregateEnrollmentForms(request.POST)
-        if form.is_valid():
-            school_form = form.cleaned_data['name_of_school']
-            academic_year_form = form.cleaned_data['academic_year']
-            district_form = form.cleaned_data['district_of_school']
-            if not AggregateEnrollment.objects.filter(name_of_school=school_form, academic_year=academic_year_form,
-                                                      district_of_school=district_form).exists():
-                form.save()
-                return redirect("/")
-        else:
-            messages.add_message(request, messages.INFO, 'Data has been entered previously')
-
-    return render(request, 'enroll_class.html', {'form': form})
-
-
-# This view controls the enrollment / Capacity views table
-def enrolled(request):
-    data = AggregateEnrollment.objects.all()
-
-    stu = {
-        "name_of_school": data
-    }
-    return render(request, 'enrolled.html', stu)
+        if not form.is_valid():
+            school_to_update.academic_year = form.cleaned_data['academic_year']
+            school_to_update.capacity_of_school = form.cleaned_data['capacity_of_school']
+            school_to_update.total_enrollment = form.cleaned_data['total_enrollment']
+            school_to_update.minimum_age = form.cleaned_data['minimum_age']
+            school_to_update.maximum_age = form.cleaned_data['maximum_age']
+            school_to_update.updated_at = date.today().strftime("%Y-%m-%d")
+            school_to_update.updated_by = request.user.username
+            school_to_update.save()
+        return redirect("/historical/enroll_class")
+    return render(request, 'update_enroll_class.html', {'school_to_update': school_to_update})
 
 
 # change this to get a form to select the district and pass it as a parameter to present filter the table and present
@@ -239,16 +280,6 @@ def compare_trends(request):
 
     }
     return render(request, 'compare_trends.html', stu)
-
-
-# This view controls the enrollment / Capacity views table
-def enrolled_grade(request):
-    data = Enrollment.objects.all()
-
-    stu = {
-        "name_of_school": data
-    }
-    return render(request, 'enrolled_grade.html', stu)
 
 
 def district_grade(request):
@@ -362,6 +393,150 @@ def district_category_school(request):
     }
 
     return render(request, 'district_category_school.html', dat)
+
+
+def nationalgenderenrollment(request):
+    data = NationalGenderEnrollment.objects.all()
+    instance = NationalGenderEnrollment(
+        created_by=request.user.username,
+        updated_by=request.user.username
+    )
+    form = NationalGenderEnrollmentForms(request.POST or None, instance=instance)
+    if request.method == "POST":
+        if form.is_valid():
+            academic_year = form.cleaned_data['academic_year']
+            sex = form.cleaned_data['sex']
+            category_of_school = form.cleaned_data['category_of_school']
+            if not NationalGenderEnrollment.objects.filter(academic_year=academic_year,
+                                                           sex=sex,
+                                                           category_of_school=category_of_school).exists():
+                form.save()
+            return redirect("/historical/national_gender_enrollment")
+    context = {"form": form, "name_of_school": data}
+    return render(request, "national_gender.html", context)
+
+
+def update_national_gender(request, code=None):
+    data_to_update = get_object_or_404(NationalGenderEnrollment, pk=code)
+    if request.method == 'POST':
+        form = NationalGenderEnrollmentForms(request.POST)
+        if not form.is_valid():
+            data_to_update.academic_year = form.cleaned_data['academic_year']
+            data_to_update.sex = request.POST.get('sex', False)
+            # data_to_update.sex = form.cleaned_data[ request.POST.get('sex', False)]
+            data_to_update.enrollment = form.cleaned_data['enrollment']
+            data_to_update.category_of_school = form.cleaned_data['category_of_school']
+            data_to_update.updated_at = date.today().strftime("%Y-%m-%d")
+            data_to_update.updated_by = request.user.username
+            data_to_update.save()
+        return redirect("/historical/national_gender_enrollment")
+    return render(request, 'update_national_gender.html', {'data_to_update': data_to_update})
+
+
+def national_education_census(request):
+    data = NationalEducationCensus.objects.all()
+    instance = NationalEducationCensus(
+        created_by=request.user.username,
+        updated_by=request.user.username
+    )
+    form = NationalEducationCensusForms(request.POST or None, instance=instance)
+    if request.method == "POST":
+        if form.is_valid():
+            academic_year = form.cleaned_data['academic_year']
+            if not NationalEducationCensus.objects.filter(academic_year=academic_year).exists():
+                form.save()
+            return redirect("/historical/national_education_census")
+    context = {"form": form, "census_data": data}
+    return render(request, "national_education_census.html", context)
+
+
+def update_national_census(request, code=None):
+    data_to_update = get_object_or_404(NationalEducationCensus, pk=code)
+    if request.method == 'POST':
+        form = NationalEducationCensusForms(request.POST)
+        if not form.is_valid():
+            data_to_update.academic_year = form.cleaned_data['academic_year']
+            data_to_update.age_3_to_4_years = request.POST.get('age_3_to_4', False)
+            data_to_update.age_5_to_11_years = request.POST.get('age_5_to_11', False)
+            data_to_update.age_12_to_16_years = request.POST.get('age_12_to_16', False)
+            data_to_update.updated_at = date.today().strftime("%Y-%m-%d")
+            data_to_update.updated_by = request.user.username
+            data_to_update.save()
+        return redirect("/historical/national_education_census")
+    return render(request, 'update_national_census.html', {'data_to_update': data_to_update})
+
+
+def national_education_expenditure(request):
+    data = NationalExpenditure.objects.all()
+    instance = NationalExpenditure(
+        created_by=request.user.username,
+        updated_by=request.user.username
+    )
+    form = NationalExpenditureForms(request.POST or None, instance=instance)
+    if request.method == "POST":
+        if form.is_valid():
+            academic_year = form.cleaned_data['academic_year']
+            if not NationalExpenditure.objects.filter(academic_year=academic_year).exists():
+                form.save()
+            return redirect("/historical/national_education_expenditure")
+    context = {"form": form, "expenditure_data": data}
+    return render(request, "national_education_expenditure.html", context)
+
+
+def update_national_expenditure(request, code=None):
+    data_to_update = get_object_or_404(NationalExpenditure, pk=code)
+    if request.method == 'POST':
+        form = NationalExpenditureForms(request.POST)
+        if not form.is_valid():
+            data_to_update.academic_year = form.cleaned_data['academic_year']
+            data_to_update.educational_expenditure = request.POST.get('educational_expenditure', False)
+            data_to_update.gdp_millions = request.POST.get('gdp_millions', False)
+            data_to_update.government_expenditure = request.POST.get('government_expenditure', False)
+            data_to_update.primary_school_expenditure = request.POST.get('primary_school_expenditure', False)
+            data_to_update.secondary_school_expenditure = request.POST.get('secondary_school_expenditure', False)
+            data_to_update.updated_at = date.today().strftime("%Y-%m-%d")
+            data_to_update.updated_by = request.user.username
+            data_to_update.save()
+        return redirect("/historical/national_education_expenditure")
+    return render(request, 'update_national_expenditure.html', {'data_to_update': data_to_update})
+
+
+def national_teacher_ratio(request):
+    data = NationalStudentTeacherRatio.objects.all()
+    instance = NationalStudentTeacherRatio(
+        created_by=request.user.username,
+        updated_by=request.user.username
+    )
+    form = NationalTeachersRatioForms(request.POST or None, instance=instance)
+    if request.method == "POST":
+        if form.is_valid():
+            academic_year = form.cleaned_data['academic_year']
+            category_of_school = form.cleaned_data['category_of_school']
+            if not NationalStudentTeacherRatio.objects.filter(academic_year=academic_year,
+                                                              category_of_school=category_of_school).exists():
+                form.save()
+            return redirect("/historical/national_teacher_ratio")
+    context = {"form": form, "ratio_data": data}
+    return render(request, "national_teacher_ratio.html", context)
+
+
+def update_national_teacher_ratio(request, code=None):
+    data_to_update = get_object_or_404(NationalStudentTeacherRatio, pk=code)
+    if request.method == 'POST':
+        form = NationalTeachersRatioForms(request.POST)
+        if not form.is_valid():
+            data_to_update.academic_year = form.cleaned_data['academic_year']
+            data_to_update.total_enrollment = request.POST.get('total_enrollment', False)
+            data_to_update.number_of_trained_male_teachers = request.POST.get('number_of_trained_male_teachers', False)
+            data_to_update.number_of_trained_female_teachers = request.POST.get('number_of_trained_female_teachers', False)
+            data_to_update.number_of_untrained_male_teachers = request.POST.get('number_of_untrained_male_teachers', False)
+            data_to_update.number_of_untrained_female_teachers = request.POST.get('number_of_untrained_female_teachers', False)
+            data_to_update.total_number_of_teachers = request.POST.get('total_number_of_teachers', False)
+            data_to_update.updated_at = date.today().strftime("%Y-%m-%d")
+            data_to_update.updated_by = request.user.username
+            data_to_update.save()
+        return redirect("/historical/national_teacher_ratio")
+    return render(request, 'update_national_teacher_ratio.html', {'data_to_update': data_to_update})
 
 
 def enrollment_summary(request):

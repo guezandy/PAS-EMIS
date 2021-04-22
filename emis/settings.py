@@ -44,6 +44,7 @@ LOGIN_URL = "/auth/login"
 # Application definition
 
 INSTALLED_APPS = [
+    "historical_surveillance",
     "authentication",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -52,7 +53,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "crispy_forms",
-    "historical_surveillance",
     "school",
 ]
 

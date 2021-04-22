@@ -157,12 +157,6 @@ class EmisPermission(Enum):
         EmisPermArea.APP_ACCESS,
     )
 
-    DISTRICT_APP_ACCESS = (
-        "district_app",
-        "district application",
-        EmisPermArea.APP_ACCESS,
-    )
-
     WELFARE_APP_ACCESS = (
         "welfare_app",
         "welfare and supervision application",

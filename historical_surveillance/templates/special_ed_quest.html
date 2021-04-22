@@ -2,48 +2,49 @@
 {% load crispy_forms_filters %}
 {% load crispy_forms_tags %}
 {% block page_content %}
-    <main>
-       <div class="container-fluid bg-transparent">
-           <h3 style="text-align: center">Annual Special Education Questionnaire</h3>
-           <div id="wrapper2">
+<main>
+    <div class="container-fluid bg-transparent">
+        <h3 style="text-align: center">Annual Special Education Questionnaire</h3>
+        <div id="wrapper2">
 
             <div id="tabContainer">
-            <div id="tabs">
-                <ul>
-                    <li id="tabHeader_1">Background Information</li>
-                    <li id="tabHeader_2">Class Structure</li>
-                    <li id="tabHeader_3">Enrollment Information</li>
-                    <li id="tabHeader_4">Disability Information</li>
-                    <li id="tabHeader_5">Distribution of Enrollment</li>
-                    <li id="tabHeader_6">School Leavers</li>
-                    <li id="tabHeader_7">Enrollment / Class / Gender / Age</li>
-                    <li id="tabHeader_8">Distribution of Students Communities</li>
-                    <li id="tabHeader_9">Student Transfer</li>
-                    <li id="tabHeader_10">Non-Teacher Staff / Gender</li>
-                    <li id="tabHeader_11">Teachers' Qualification / Gender</li>
-                    <li id="tabHeader_12">Teachers' Status / Nationality / Qualification / Gender</li>
-                    <li id="tabHeader_13">Teachers' Status / Specialization / Gender</li>
-                    <li id="tabHeader_14">Teachers' Leave and Transfer</li>
-                    <li id="tabHeader_15">Conditions of School Buildings</li>
-                    <li id="tabHeader_16">Conditions of Furniture</li>
-                    <li id="tabHeader_17">Conditions of Equipments</li>
-                    <li id="tabHeader_18">Mobilization and Utilization of Funds</li>
-                    <li id="tabHeader_19">Codes and Explaination</li>
-                </ul>
-            </div>
+                <div id="tabs">
+                    <ul>
+                        <li id="tabHeader_1">Background Information</li>
+                        <li id="tabHeader_2">Class Structure</li>
+                        <li id="tabHeader_3">Enrollment Information</li>
+                        <li id="tabHeader_4">Disability Information</li>
+                        <li id="tabHeader_5">Distribution of Enrollment</li>
+                        <li id="tabHeader_6">School Leavers</li>
+                        <li id="tabHeader_7">Enrollment / Class / Gender / Age</li>
+                        <li id="tabHeader_8">Distribution of Students Communities</li>
+                        <li id="tabHeader_9">Student Transfer</li>
+                        <li id="tabHeader_10">Non-Teacher Staff / Gender</li>
+                        <li id="tabHeader_11">Teachers' Qualification / Gender</li>
+                        <li id="tabHeader_12">Teachers' Status / Nationality / Qualification / Gender</li>
+                        <li id="tabHeader_13">Teachers' Status / Specialization / Gender</li>
+                        <li id="tabHeader_14">Teachers' Leave and Transfer</li>
+                        <li id="tabHeader_15">Conditions of School Buildings</li>
+                        <li id="tabHeader_16">Conditions of Furniture</li>
+                        <li id="tabHeader_17">Conditions of Equipments</li>
+                        <li id="tabHeader_18">Mobilization and Utilization of Funds</li>
+                        <li id="tabHeader_19">Codes and Explaination</li>
+                    </ul>
+                </div>
                 <div id="tabscontent">
                     <nav class="tabpage" id="tabpage_1">
                         <div class="row justify-content-center">
                             <div class="col-lg-9">
                                 <div class="card shadow-lg rounded-lg mt-5 pt-5">
-                                    <div class="card-header"><h3 class="text-center font-weight-light my-4">
-                                        School Background Information</h3>
+                                    <div class="card-header">
+                                        <h3 class="text-center font-weight-light my-4">
+                                            School Background Information</h3>
                                     </div>
                                     <div class="card-body">
-                                        <form action ="" method="post">
+                                        <form action="" method="post">
                                             {% csrf_token %}
                                             {{ form1 | crispy }}
-                                            <input type="submit" value="Submit" class ="btn btn-primary">
+                                            <input type="submit" value="Submit" class="btn btn-primary">
                                         </form>
                                     </div>
                                 </div>
@@ -54,14 +55,15 @@
                         <div class="row justify-content-center">
                             <div class="col-lg-9">
                                 <div class="card shadow-lg rounded-lg mt-5 pt-5">
-                                    <div class="card-header"><h3 class="text-center font-weight-light my-4">
-                                        Class Structure</h3>
+                                    <div class="card-header">
+                                        <h3 class="text-center font-weight-light my-4">
+                                            Class Structure</h3>
                                     </div>
                                     <div class="card-body">
-                                        <form action ="" method="post">
+                                        <form action="" method="post">
                                             {% csrf_token %}
                                             {{ form2 | crispy }}
-                                            <input type="submit" value="Submit" class ="btn btn-primary">
+                                            <input type="submit" value="Submit" class="btn btn-primary">
                                         </form>
                                     </div>
                                 </div>
@@ -72,14 +74,15 @@
                         <div class="row justify-content-center">
                             <div class="col-lg-9">
                                 <div class="card shadow-lg rounded-lg mt-5 pt-5">
-                                    <div class="card-header"><h3 class="text-center font-weight-light my-4">
-                                        Enrollment Information</h3>
+                                    <div class="card-header">
+                                        <h3 class="text-center font-weight-light my-4">
+                                            Enrollment Information</h3>
                                     </div>
                                     <div class="card-body">
-                                        <form action ="" method="post">
+                                        <form action="" method="post">
                                             {% csrf_token %}
                                             {{ form3 | crispy }}
-                                            <input type="submit" value="Submit" class ="btn btn-primary">
+                                            <input type="submit" value="Submit" class="btn btn-primary">
                                         </form>
                                     </div>
                                 </div>
@@ -90,14 +93,15 @@
                         <div class="row justify-content-center">
                             <div class="col-lg-9">
                                 <div class="card shadow-lg rounded-lg mt-5 pt-5">
-                                    <div class="card-header"><h3 class="text-center font-weight-light my-4">
-                                        Disability Information</h3>
+                                    <div class="card-header">
+                                        <h3 class="text-center font-weight-light my-4">
+                                            Disability Information</h3>
                                     </div>
                                     <div class="card-body">
-                                        <form action ="" method="post">
+                                        <form action="" method="post">
                                             {% csrf_token %}
                                             {{ form4 | crispy }}
-                                            <input type="submit" value="Submit" class ="btn btn-primary">
+                                            <input type="submit" value="Submit" class="btn btn-primary">
                                         </form>
                                     </div>
                                 </div>
@@ -108,14 +112,15 @@
                         <div class="row justify-content-center">
                             <div class="col-lg-9">
                                 <div class="card shadow-lg rounded-lg mt-5 pt-5">
-                                    <div class="card-header"><h3 class="text-center font-weight-light my-4">
-                                        Distribution of Enrollment</h3>
+                                    <div class="card-header">
+                                        <h3 class="text-center font-weight-light my-4">
+                                            Distribution of Enrollment</h3>
                                     </div>
                                     <div class="card-body">
-                                        <form action ="" method="post">
+                                        <form action="" method="post">
                                             {% csrf_token %}
                                             {{ form5 | crispy }}
-                                            <input type="submit" value="Submit" class ="btn btn-primary">
+                                            <input type="submit" value="Submit" class="btn btn-primary">
                                         </form>
                                     </div>
                                 </div>
@@ -126,14 +131,15 @@
                         <div class="row justify-content-center">
                             <div class="col-lg-9">
                                 <div class="card shadow-lg rounded-lg mt-5 pt-5">
-                                    <div class="card-header"><h3 class="text-center font-weight-light my-4">
-                                        School Leavers</h3>
+                                    <div class="card-header">
+                                        <h3 class="text-center font-weight-light my-4">
+                                            School Leavers</h3>
                                     </div>
                                     <div class="card-body">
-                                        <form action ="" method="post">
+                                        <form action="" method="post">
                                             {% csrf_token %}
                                             {{ form6 | crispy }}
-                                            <input type="submit" value="Submit" class ="btn btn-primary">
+                                            <input type="submit" value="Submit" class="btn btn-primary">
                                         </form>
                                     </div>
                                 </div>
@@ -144,14 +150,15 @@
                         <div class="row justify-content-center">
                             <div class="col-lg-9">
                                 <div class="card shadow-lg rounded-lg mt-5 pt-5">
-                                    <div class="card-header"><h3 class="text-center font-weight-light my-4">
-                                        Enrollment / Class / Gender / Age</h3>
+                                    <div class="card-header">
+                                        <h3 class="text-center font-weight-light my-4">
+                                            Enrollment / Class / Gender / Age</h3>
                                     </div>
                                     <div class="card-body">
-                                        <form action ="" method="post">
+                                        <form action="" method="post">
                                             {% csrf_token %}
                                             {{ form7 | crispy }}
-                                            <input type="submit" value="Submit" class ="btn btn-primary">
+                                            <input type="submit" value="Submit" class="btn btn-primary">
                                         </form>
                                     </div>
                                 </div>
@@ -162,14 +169,15 @@
                         <div class="row justify-content-center">
                             <div class="col-lg-9">
                                 <div class="card shadow-lg rounded-lg mt-5 pt-5">
-                                    <div class="card-header"><h3 class="text-center font-weight-light my-4">
-                                        Distribution of Students Communities</h3>
+                                    <div class="card-header">
+                                        <h3 class="text-center font-weight-light my-4">
+                                            Distribution of Students Communities</h3>
                                     </div>
                                     <div class="card-body">
-                                        <form action ="" method="post">
+                                        <form action="" method="post">
                                             {% csrf_token %}
                                             {{ form8 | crispy }}
-                                            <input type="submit" value="Submit" class ="btn btn-primary">
+                                            <input type="submit" value="Submit" class="btn btn-primary">
                                         </form>
                                     </div>
                                 </div>
@@ -180,14 +188,15 @@
                         <div class="row justify-content-center">
                             <div class="col-lg-9">
                                 <div class="card shadow-lg rounded-lg mt-5 pt-5">
-                                    <div class="card-header"><h3 class="text-center font-weight-light my-4">
-                                        Student Transfer</h3>
+                                    <div class="card-header">
+                                        <h3 class="text-center font-weight-light my-4">
+                                            Student Transfer</h3>
                                     </div>
                                     <div class="card-body">
-                                        <form action ="" method="post">
+                                        <form action="" method="post">
                                             {% csrf_token %}
                                             {{ form9 | crispy }}
-                                            <input type="submit" value="Submit" class ="btn btn-primary">
+                                            <input type="submit" value="Submit" class="btn btn-primary">
                                         </form>
                                     </div>
                                 </div>
@@ -198,14 +207,15 @@
                         <div class="row justify-content-center">
                             <div class="col-lg-5">
                                 <div class="card shadow-lg rounded-lg mt-5 pt-5">
-                                    <div class="card-header"><h3 class="text-center font-weight-light my-4">
-                                        Non-Teacher Staff / Gender</h3>
+                                    <div class="card-header">
+                                        <h3 class="text-center font-weight-light my-4">
+                                            Non-Teacher Staff / Gender</h3>
                                     </div>
                                     <div class="card-body">
-                                        <form action ="" method="post">
+                                        <form action="" method="post">
                                             {% csrf_token %}
                                             {{ form10 | crispy }}
-                                            <input type="submit" value="Submit" class ="btn btn-primary">
+                                            <input type="submit" value="Submit" class="btn btn-primary">
                                         </form>
                                     </div>
                                 </div>
@@ -216,14 +226,15 @@
                         <div class="row justify-content-center">
                             <div class="col-lg-5">
                                 <div class="card shadow-lg rounded-lg mt-5 pt-5">
-                                    <div class="card-header"><h3 class="text-center font-weight-light my-4">
-                                        Teachers' Qualification / Gender</h3>
+                                    <div class="card-header">
+                                        <h3 class="text-center font-weight-light my-4">
+                                            Teachers' Qualification / Gender</h3>
                                     </div>
                                     <div class="card-body">
-                                        <form action ="" method="post">
+                                        <form action="" method="post">
                                             {% csrf_token %}
                                             {{ form11 | crispy }}
-                                            <input type="submit" value="Submit" class ="btn btn-primary">
+                                            <input type="submit" value="Submit" class="btn btn-primary">
                                         </form>
                                     </div>
                                 </div>
@@ -234,14 +245,15 @@
                         <div class="row justify-content-center">
                             <div class="col-lg-5">
                                 <div class="card shadow-lg rounded-lg mt-5 pt-5">
-                                    <div class="card-header"><h3 class="text-center font-weight-light my-4">
-                                        Teachers' Status / Nationality / Qualification / Gender</h3>
+                                    <div class="card-header">
+                                        <h3 class="text-center font-weight-light my-4">
+                                            Teachers' Status / Nationality / Qualification / Gender</h3>
                                     </div>
                                     <div class="card-body">
-                                        <form action ="" method="post">
+                                        <form action="" method="post">
                                             {% csrf_token %}
                                             {{ form12 | crispy }}
-                                            <input type="submit" value="Submit" class ="btn btn-primary">
+                                            <input type="submit" value="Submit" class="btn btn-primary">
                                         </form>
                                     </div>
                                 </div>
@@ -252,14 +264,15 @@
                         <div class="row justify-content-center">
                             <div class="col-lg-5">
                                 <div class="card shadow-lg rounded-lg mt-5 pt-5">
-                                    <div class="card-header"><h3 class="text-center font-weight-light my-4">
-                                        Annual Special Education Questionnaire</h3>
+                                    <div class="card-header">
+                                        <h3 class="text-center font-weight-light my-4">
+                                            Annual Special Education Questionnaire</h3>
                                     </div>
                                     <div class="card-body">
-                                        <form action ="" method="post">
+                                        <form action="" method="post">
                                             {% csrf_token %}
                                             {{ form13 | crispy }}
-                                            <input type="submit" value="Submit" class ="btn btn-primary">
+                                            <input type="submit" value="Submit" class="btn btn-primary">
                                         </form>
                                     </div>
                                 </div>
@@ -270,14 +283,15 @@
                         <div class="row justify-content-center">
                             <div class="col-lg-5">
                                 <div class="card shadow-lg rounded-lg mt-5 pt-5">
-                                    <div class="card-header"><h3 class="text-center font-weight-light my-4">
-                                        Annual Special Education Questionnaire</h3>
+                                    <div class="card-header">
+                                        <h3 class="text-center font-weight-light my-4">
+                                            Annual Special Education Questionnaire</h3>
                                     </div>
                                     <div class="card-body">
-                                        <form action ="" method="post">
+                                        <form action="" method="post">
                                             {% csrf_token %}
                                             {{ form14 | crispy }}
-                                            <input type="submit" value="Submit" class ="btn btn-primary">
+                                            <input type="submit" value="Submit" class="btn btn-primary">
                                         </form>
                                     </div>
                                 </div>
@@ -288,14 +302,15 @@
                         <div class="row justify-content-center">
                             <div class="col-lg-5">
                                 <div class="card shadow-lg rounded-lg mt-5 pt-5">
-                                    <div class="card-header"><h3 class="text-center font-weight-light my-4">
-                                        Annual Special Education Questionnaire</h3>
+                                    <div class="card-header">
+                                        <h3 class="text-center font-weight-light my-4">
+                                            Annual Special Education Questionnaire</h3>
                                     </div>
                                     <div class="card-body">
-                                        <form action ="" method="post">
+                                        <form action="" method="post">
                                             {% csrf_token %}
                                             {{ form15 | crispy }}
-                                            <input type="submit" value="Submit" class ="btn btn-primary">
+                                            <input type="submit" value="Submit" class="btn btn-primary">
                                         </form>
                                     </div>
                                 </div>
@@ -306,14 +321,15 @@
                         <div class="row justify-content-center">
                             <div class="col-lg-5">
                                 <div class="card shadow-lg rounded-lg mt-5 pt-5">
-                                    <div class="card-header"><h3 class="text-center font-weight-light my-4">
-                                        Annual Special Education Questionnaire</h3>
+                                    <div class="card-header">
+                                        <h3 class="text-center font-weight-light my-4">
+                                            Annual Special Education Questionnaire</h3>
                                     </div>
                                     <div class="card-body">
-                                        <form action ="" method="post">
+                                        <form action="" method="post">
                                             {% csrf_token %}
                                             {{ form16 | crispy }}
-                                            <input type="submit" value="Submit" class ="btn btn-primary">
+                                            <input type="submit" value="Submit" class="btn btn-primary">
                                         </form>
                                     </div>
                                 </div>
@@ -324,14 +340,15 @@
                         <div class="row justify-content-center">
                             <div class="col-lg-5">
                                 <div class="card shadow-lg rounded-lg mt-5 pt-5">
-                                    <div class="card-header"><h3 class="text-center font-weight-light my-4">
-                                        Annual Special Education Questionnaire</h3>
+                                    <div class="card-header">
+                                        <h3 class="text-center font-weight-light my-4">
+                                            Annual Special Education Questionnaire</h3>
                                     </div>
                                     <div class="card-body">
-                                        <form action ="" method="post">
+                                        <form action="" method="post">
                                             {% csrf_token %}
                                             {{ form17 | crispy }}
-                                            <input type="submit" value="Submit" class ="btn btn-primary">
+                                            <input type="submit" value="Submit" class="btn btn-primary">
                                         </form>
                                     </div>
                                 </div>
@@ -342,14 +359,15 @@
                         <div class="row justify-content-center">
                             <div class="col-lg-5">
                                 <div class="card shadow-lg rounded-lg mt-5 pt-5">
-                                    <div class="card-header"><h3 class="text-center font-weight-light my-4">
-                                        Annual Special Education Questionnaire</h3>
+                                    <div class="card-header">
+                                        <h3 class="text-center font-weight-light my-4">
+                                            Annual Special Education Questionnaire</h3>
                                     </div>
                                     <div class="card-body">
-                                        <form action ="" method="post">
+                                        <form action="" method="post">
                                             {% csrf_token %}
                                             {{ form18 | crispy }}
-                                            <input type="submit" value="Submit" class ="btn btn-primary">
+                                            <input type="submit" value="Submit" class="btn btn-primary">
                                         </form>
                                     </div>
                                 </div>
@@ -360,14 +378,15 @@
                         <div class="row justify-content-center">
                             <div class="col-lg-5">
                                 <div class="card shadow-lg rounded-lg mt-5 pt-5">
-                                    <div class="card-header"><h3 class="text-center font-weight-light my-4">
-                                        Annual Special Education Questionnaire</h3>
+                                    <div class="card-header">
+                                        <h3 class="text-center font-weight-light my-4">
+                                            Annual Special Education Questionnaire</h3>
                                     </div>
                                     <div class="card-body">
-                                        <form action ="" method="post">
+                                        <form action="" method="post">
                                             {% csrf_token %}
                                             {{ form19 | crispy }}
-                                            <input type="submit" value="Submit" class ="btn btn-primary">
+                                            <input type="submit" value="Submit" class="btn btn-primary">
                                         </form>
                                     </div>
                                 </div>
@@ -378,13 +397,13 @@
 
 
 
+                </div>
             </div>
-           </div>
-           </div>
+        </div>
 
 
 
 
-            </div>
-    </main>
+    </div>
+</main>
 {% endblock %}

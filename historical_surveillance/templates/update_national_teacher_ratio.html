@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+{% block page_content %}
+<form method="POST" class="post-form" action="">
+  {% csrf_token %}
+  <div class="container">
+    <br>
+    <div class="form-group row">
+      <label class="col-sm-1 col-form-label"></label>
+      <div class="col-sm-4">
+        <h3>Update National Teachers Ratio</h3>
+      </div>
+    </div>
+
+
+    <div class="form-group row">
+      <label class="col-sm-2 col-form-label" for="academic_year">Academic Year:</label>
+      <div class="col-sm-4">
+        <input type="text" name="academic_year" id="academic_year" maxlength="100"
+          value="{{ data_to_update.academic_year }}" />
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label class="col-sm-2 col-form-label" for="category_of_school">Category of School:</label>
+      <div class="col-sm-4">
+        <select name="category_of_school" id="category_of_school">
+          <option value="{{ data_to_update.category_of_school }}" selected>{{ data_to_update.category_of_school}}
+          </option>
+          <option value="public secondary">Public Secondary</option>
+          <option value="public primary">Public Primary</option>
+          <option value="private secondary">Private Secondary</option>
+          <option value="private primary">Private Primary</option>
+          <option value="special education">Special Education</option>
+          <option value="secondary">Secondary</option>
+          <option value="primary">Primary</option>
+        </select>
+
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label class="col-sm-2 col-form-label" for="total_enrollment">Total_Enrollment</label>
+      <div class="col-sm-4">
+        <input type="integer" name="total_enrollment" id="total_enrollment"
+          value="{{ data_to_update.total_enrollment}}" />
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label class="col-sm-2 col-form-label" for="trained_male">Trained Male</label>
+      <div class="col-sm-4">
+        <input type="integer" name="number_of_trained_male_teachers" id="trained_male"
+          value="{{ data_to_update.number_of_trained_male_teachers}}" />
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label class="col-sm-2 col-form-label" for="trained_female">Trained Female</label>
+      <div class="col-sm-4">
+        <input type="integer" name="number_of_trained_female_teachers" id="trained_female"
+          value="{{ data_to_update.number_of_trained_female_teachers}}" />
+      </div>
+    </div>
+
+
+    <div class="form-group row">
+      <label class="col-sm-2 col-form-label" for="untrained_male">Untrained male Teachers</label>
+      <div class="col-sm-4">
+        <input type="integer" name="number_of_untrained_male_teachers" id="untrained_male"
+          value="{{ data_to_update.number_of_untrained_male_teachers}}" />
+      </div>
+    </div>
+
+
+    <div class="form-group row">
+      <label class="col-sm-2 col-form-label" for="untrained_female">Untrained Female Teachers</label>
+      <div class="col-sm-4">
+        <input type="integer" name="number_of_untrained_female_teachers" id="untrained_female"
+          value="{{ data_to_update.number_of_untrained_female_teachers}}" />
+      </div>
+    </div>
+
+
+
+    <div class="form-group row">
+      <label class="col-sm-2 col-form-label" for="total_teachers">Total Number of Teachers</label>
+      <div class="col-sm-4">
+        <input type="integer" name="total_number_of_teachers" id="total_number_of_teachers"
+          value="{{ data_to_update.total_number_of_teachers}}" />
+      </div>
+    </div>
+
+
+    <div class="form-group row">
+      <label class="col-sm-1 col-form-label"></label>
+      <div class="col-sm-4">
+        <button type="submit" class="btn btn-success">Update</button>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}

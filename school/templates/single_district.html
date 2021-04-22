@@ -6,11 +6,19 @@
             <h1>{{district_code}}</h1>
         </div>
         <div class="col-md-6 action-button-group">
-            <a href="{% url 'school:edit_district' district_code %}"><button type="button"
-                    class="btn btn-primary ml-2 mb-2">Edit
-                    District</button></a>
-            <a href="{% url 'school:create_school' %}"><button type="button" class="btn btn-success mb-2">Create
-                    School</button></a>
+            <div class="btn-group">
+                <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    Actions
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'school:edit_district' district_code %}">Edit District</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'school:create_school' %}">Create School</a>
+                    <a class="dropdown-item" href="{% url 'school:create_student' %}">Enroll Student</a>
+                    <a class="dropdown-item" href="{% url 'school:create_principal' %}">Create Principal</a>
+                </div>
+            </div>
         </div>
     </div>
     <div class="row">
@@ -40,9 +48,12 @@
         </div>
     </div>
     <div class="card mb-4">
+        <div class="card-header">
+            Schools
+        </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
                             <th>School code</th>
@@ -66,6 +77,51 @@
                             <td>{{school.school_name}}</td>
                             <td>{{school.teacher_count}}</td>
                             <td>{{school.student_count}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <div class="card-header">
+            Principals
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Principal name</th>
+                            <th>School name</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>School code</th>
+                            <th>School name</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% for principal in principals %}
+                        <tr>
+                            <td>{{principal.name}}</td>
+                            <td>{{principal.school_name}}</td>
+                            <td>
+                                <a href="{% url 'school:create_principal_appraisal' %}">
+                                    <button type="button" class="btn btn-info mb-2 ml-2">Submit Appraisal
+                                    </button>
+                                </a>
+                            </td>
+                            <td>
+                                <a href="{% url 'school:edit_principal' principal.id %}"><Button
+                                        class="btn btn-primary">Edit</Button></a>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>

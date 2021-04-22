@@ -36,9 +36,31 @@ urlpatterns = [
     path("edit_subject/<str:code>", views.subject_form, name="edit_subject"),
     path("create_assignment", views.assignment_form, name="create_assignment"),
     path("edit_assignment/<str:code>", views.assignment_form, name="edit_assignment"),
+    path("create_principal", views.principal_form, name="create_principal"),
+    path("edit_principal/<str:code>", views.principal_form, name="edit_principal"),
     path(
         "delete_assignment/<str:code>",
         views.delete_assignment,
         name="delete_assignment",
+    ),
+    path(
+        "create_principal_appraisal",
+        views.principal_appraisal_form,
+        name="create_principal_appraisal",
+    ),
+    path(
+        "edit_principal_appraisal/<str:code>",
+        views.principal_appraisal_form,
+        name="edit_principal_appraisal",
+    ),
+    path(
+        "create_teacher_appraisal",
+        views.teacher_appraisal_form,
+        name="create_teacher_appraisal",
+    ),
+    path(
+        "edit_teacher_appraisal/<str:code>",
+        views.teacher_appraisal_form,
+        name="edit_teacher_appraisal",
     ),
 ]

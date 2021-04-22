@@ -2,11 +2,6 @@ from django.urls import path
 
 from . import views
 
-from emis.permissions import init_perm_model_app_label
-
-# Initialize permissions module with the app_name
-init_perm_model_app_label(app_label=__package__)
-
 app_name = "school"
 
 urlpatterns = [

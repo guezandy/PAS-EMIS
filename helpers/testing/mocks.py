@@ -18,6 +18,7 @@ def generate_school():
     district = generate_district()
     if School.objects.filter(school_code="1").exists():
         return School.objects.filter(school_code="1").first()
+
     school, created = School.objects.get_or_create(
         district_name=district,
         school_code="1",

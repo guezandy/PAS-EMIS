@@ -47,21 +47,42 @@ from .models import (
 
 
 def index(request):
-    # Super/SystemAdmin Can see all districts
-    # if request.user.is_superuser:
-    return redirect("/school/districts")
+    # Can only see the district they manage
+    district_officer = DistrictEducationOfficer.objects.filter(user_ptr=request.user)
+
+    # Can only see the school they manage
+    school_admin = SchoolAdministrator.objects.filter(user_ptr=request.user)
+    principal = SchoolPrincipal.objects.filter(user_ptr=request.user)
+    school_supervisor = SchoolSuperviser.objects.filter(user_ptr=request.user)
+
+    # Can only see their teacher profiles
+    teacher = Teacher.objects.filter(user_ptr=request.user)
+    early_childhood_education = EarlyChildhoodEducator.objects.filter(
+        user_ptr=request.user
+    )
 
     # District officer - Can only see single district
-    district_officer = DistrictEducationOfficer.objects.filter(user_ptr=request.user)
     if district_officer.exists():
         # Every officer should have a district they belong too
         district = district_officer.district
         return redirect(f"/school/district/{district.district_code}")
 
-    # Principal - Can only see single school
-    # Teacher - Can only see a single teacher
+    if school_admin.exists():
+        return redirect(f"/school/school_details/{school_admin.school.school_code}")
+    if principal.exists():
+        return redirect(f"/school/school_details/{principal.school.school_code}")
+    if school_supervisor.exists():
+        return redirect(
+            f"/school/school_details/{school_supervisor.school.school_code}"
+        )
 
-    return render(request, "index.html", {"title": "Welcome"})
+    if teacher.exists():
+        return redirect(f"/school/teacher/{teacher.id}")
+    if early_childhood_education.exists():
+        return redirect(f"/school/teacher/{early_childhood_education.id}")
+
+    # All other roles can access all parts of the school application
+    return redirect("/school/districts")
 
 
 def all_districts_view(request):

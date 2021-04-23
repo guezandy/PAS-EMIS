@@ -66,6 +66,7 @@
         <thead>
           <tr>
             <th scope="col">Id</th>
+            <th scope="col">Type</th>
             <th scope="col">Username</th>
             <th scope="col">Email</th>
             <th scope="col">First Name</th>
@@ -79,6 +80,7 @@
           {% for user in user_list %}
           <tr class="user-row" data-url="{% url 'authentication:user-detail-admin' user.id %}">
             <td> {{ user.id }}</td>
+            <td> {{ user.type }}</td>
             <td> {{ user.username }}</td>
             <td> {{ user.email }}</td>
             <td> {{ user.first_name }}</td>

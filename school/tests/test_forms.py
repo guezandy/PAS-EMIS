@@ -33,14 +33,7 @@ class TestDistrictForm(ViewTestCase):
         )
 
     def test_post_edit_district_form(self):
-        district = District.objects.create(
-            district_code="1",
-            district_name="District1",
-            created_at="2021-04-20",
-            created_by="andrew",
-            updated_by="andrew",
-            updated_at="2021-04-20",
-        )
+        district = generate_district()
         response = self.client.post(
             reverse("school:edit_district", args=(district.district_code,)),
             data={

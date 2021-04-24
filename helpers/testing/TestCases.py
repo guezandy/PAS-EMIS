@@ -13,6 +13,7 @@ from authentication.models.users import (
     SupportServicesAdmin,
     ExternalAccessor,
 )
+from helpers.testing.mocks import generate_school
 
 _user_counter = 0
 
@@ -117,6 +118,7 @@ class ViewTestCase(TestCase):
         super(ViewTestCase, self).setUp()
         self._request_factory = RequestFactory()
         self.login_account("super_user_account")
+        self.school = generate_school()
 
     def ensure_accounts_exist(self, *args):
         for item in args:
@@ -128,6 +130,20 @@ class ViewTestCase(TestCase):
                 username=credentials["username"]
             )
             new_user.set_password(credentials["password"])
+
+            # Set school field if needed
+            if account_type in [
+                "school_admin_account",
+                "teacher_account",
+                "principal_account",
+                "school_superviser_account",
+                "early_childhood_education_account",
+            ]:
+                new_user.school = self.school
+            # set district field if needed
+            if account_type == "district_officer_account":
+                new_user.district = self.school.district_name
+
             new_user.save()
             setattr(self, f"_{account_type}", new_user)
 

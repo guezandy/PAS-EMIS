@@ -120,7 +120,7 @@ def build_user_values(user_list):
             "username": user.username,
             "id": user.id,
             "is_active": user.is_active,
-            "type": get_user_type(user),
+            "type": get_user_type(user)[0],
         }
         for user in user_list
     ]
@@ -161,6 +161,9 @@ def create_user(request, type):
                 + ".",
             )
             return HttpResponseRedirect(reverse("authentication:user-directory"))
+        else:
+            print(f.is_valid())
+            print(f.errors)
     else:
         f = Form()
 

@@ -50,7 +50,8 @@ from django.contrib.auth.decorators import user_passes_test
 
 
 @user_passes_test(
-    lambda u: u.has_perm(EmisPermission.SCHOOL_APP_ACCESS.get_view_code())
+    lambda u: u.is_superuser
+    or u.has_perm(EmisPermission.SCHOOL_APP_ACCESS.get_view_code())
 )
 def index(request):
     user_type, parent_user = get_user_type(request.user)
@@ -74,14 +75,18 @@ def index(request):
 def _can_access_all_districts_view(user):
     has_perm = user.has_perm(EmisPermission.SCHOOL_APP_ACCESS.get_view_code())
     user_type, parent_user = get_user_type(user)
-    return has_perm and user_type not in [
-        "district_officer",
-        "school_admin",
-        "principal",
-        "school_superviser",
-        "teacher",
-        "early_childhood_educator",
-    ]
+    return user.is_superuser or (
+        has_perm
+        and user_type
+        not in [
+            "district_officer",
+            "school_admin",
+            "principal",
+            "school_superviser",
+            "teacher",
+            "early_childhood_educator",
+        ]
+    )
 
 
 @user_passes_test(lambda u: _can_access_all_districts_view(u))
@@ -119,13 +124,17 @@ def all_districts_view(request):
 def _can_access_single_district_view(user):
     has_perm = user.has_perm(EmisPermission.SCHOOL_APP_ACCESS.get_view_code())
     user_type, parent_user = get_user_type(user)
-    return has_perm and user_type not in [
-        "school_admin",
-        "principal",
-        "school_superviser",
-        "teacher",
-        "early_childhood_educator",
-    ]
+    return user.is_superuser or (
+        has_perm
+        and user_type
+        not in [
+            "school_admin",
+            "principal",
+            "school_superviser",
+            "teacher",
+            "early_childhood_educator",
+        ]
+    )
 
 
 @user_passes_test(lambda u: _can_access_single_district_view(u))
@@ -170,7 +179,9 @@ def single_district_view(request, code):
 def _can_access_single_school_view(user):
     has_perm = user.has_perm(EmisPermission.SCHOOL_APP_ACCESS.get_view_code())
     user_type, parent_user = get_user_type(user)
-    return has_perm and user_type not in ["teacher", "early_childhood_educator"]
+    return user.is_superuser or (
+        has_perm and user_type not in ["teacher", "early_childhood_educator"]
+    )
 
 
 @user_passes_test(lambda u: _can_access_single_school_view(u))

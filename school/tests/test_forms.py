@@ -9,10 +9,6 @@ from school.models import Teacher, Student, Course, Subject, SubjectGroup, Cours
 from helpers.testing.mocks import generate_district, generate_school
 
 
-class TestSchoolPermissions(ViewTestCase):
-    pass
-
-
 class TestDistrictForm(ViewTestCase):
     def test_get_create_district_form(self):
         response = self.client.get(reverse("school:create_district"))
@@ -63,46 +59,60 @@ class TestDistrictForm(ViewTestCase):
         )
 
 
-# TODO add more tests
-# class TestSchoolForm(ViewTestCase):
-#     def setUp(self):
-#         super(TestSchoolForm, self).setUp()
-#         self.school = generate_school()
+class TestGetReturnCorrectForm(ViewTestCase):
+    def test_get_create_district_form(self):
+        response = self.client.get(reverse("school:create_district"))
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(response.context["form"].__class__.__name__, "DistrictForm")
 
-#     def test_get_create_school_form(self):
-#         response = self.client.get(reverse("school:create_school"))
-#         self.assertEqual(response.status_code, HTTPStatus.OK)
-#         self.assertEqual(response.context["form"].__class__.__name__, "SchoolForm")
+    def test_get_create_school_form(self):
+        response = self.client.get(reverse("school:create_school"))
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(response.context["form"].__class__.__name__, "SchoolForm")
 
-#     def test_post_create_school_form(self):
-#         district = generate_district()
-#         response = self.client.post(
-#             reverse("school:create_school"),
-#             data={
-#                 "created_at": "2021-04-02",
-#                 "created_by": "andrewr",
-#                 "school_code": "new code",
-#                 "school_name": "New district",
-#                 "updated_at": "2021-04-02",
-#                 "district_name_id": self.school.district_name.id,
-#             },
-#         )
+    def test_get_create_teacher_form(self):
+        response = self.client.get(reverse("school:create_teacher"))
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(response.context["form"].__class__.__name__, "TeacherForm")
 
-#         self.assertEqual(School.objects.filter(school_code="new code").exists(), True)
-#         self.assertEqual(response.status_code, HTTPStatus.FOUND)
+    def test_get_create_course_form(self):
+        response = self.client.get(reverse("school:create_course"))
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(response.context["form"].__class__.__name__, "CourseForm")
 
-#     def test_post_edit_school_form(self):
-#         response = self.client.post(
-#             reverse("school:edit_school", args=(self.school.school_code,)),
-#             data={
-#                 "school_code": "new code",
-#                 "school_name": "New school",
-#                 "district_name_id": self.school.district_name.id,
-#                 "created_at": self.school.created_at,
-#                 "created_by": self.school.created_by,
-#                 "updated_at": "2021-04-02",
-#                 "updated_by": "andrew",
-#             },
-#         )
-#         self.assertEqual(School.objects.filter(school_code="new code").exists(), True)
-#         self.assertEqual(response.status_code, HTTPStatus.FOUND)
+    def test_get_create_student_form(self):
+        response = self.client.get(reverse("school:create_student"))
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(response.context["form"].__class__.__name__, "StudentForm")
+
+    def test_get_create_subject_group_form(self):
+        response = self.client.get(reverse("school:create_subject_group"))
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(
+            response.context["form"].__class__.__name__, "SubjectGroupForm"
+        )
+
+    def test_get_create_subject_form(self):
+        response = self.client.get(reverse("school:create_subject"))
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(response.context["form"].__class__.__name__, "SubjectForm")
+
+    def test_get_create_principal_form(self):
+        response = self.client.get(reverse("school:create_principal"))
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(response.context["form"].__class__.__name__, "PrincipalForm")
+
+    def test_get_create_teacher_appraisal_form(self):
+        response = self.client.get(reverse("school:create_teacher_appraisal"))
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(
+            response.context["form"].__class__.__name__, "TeacherAppraisalForm"
+        )
+
+    def test_get_create_principal_appraisal_form(self):
+        response = self.client.get(reverse("school:create_principal_appraisal"))
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(
+            response.context["form"].__class__.__name__, "PrincipalAppraisalForm"
+        )
+

@@ -28,4 +28,4 @@ def generate_school():
         updated_by="andrew",
         updated_at="2021-04-20",
     )
-    return district
+    return school

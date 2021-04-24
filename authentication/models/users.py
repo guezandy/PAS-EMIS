@@ -119,11 +119,12 @@ def get_user_type(user):
     }
     for type in form_map:
         try:
-            if getattr(user, form_map[type]):
-                return type
+            parent_user = getattr(user, form_map[type])
+            if parent_user:
+                return (type, parent_user)
         except Exception:
             pass
-    return "custom"
+    return ("custom", user)
 
 
 """

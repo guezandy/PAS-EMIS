@@ -15,6 +15,7 @@ from authentication.models.users import (
     EarlyChildhoodEducator,
     SupportServicesAdmin,
     ExternalAccessor,
+    get_user_type,
 )
 from authentication.forms.users import TeacherForm
 from historical_surveillance.models import School
@@ -44,47 +45,46 @@ from .models import (
     PrincipalAppraisal,
     TeacherAppraisal,
 )
+from emis.permissions import EmisPermission
+from django.contrib.auth.decorators import user_passes_test
 
 
+@user_passes_test(
+    lambda u: u.has_perm(EmisPermission.SCHOOL_APP_ACCESS.get_view_code())
+)
 def index(request):
-    # Can only see the district they manage
-    district_officer = DistrictEducationOfficer.objects.filter(user_ptr=request.user)
+    user_type, parent_user = get_user_type(request.user)
+
+    # Every officer should have a district they belong too
+    if user_type == "district_officer":
+        return redirect(f"/school/district/{parent_user.district.district_code}")
 
     # Can only see the school they manage
-    school_admin = SchoolAdministrator.objects.filter(user_ptr=request.user)
-    principal = SchoolPrincipal.objects.filter(user_ptr=request.user)
-    school_supervisor = SchoolSuperviser.objects.filter(user_ptr=request.user)
+    if user_type in ["school_admin", "principal", "school_superviser"]:
+        return redirect(f"/school/school_details/{parent_user.school.school_code}")
 
     # Can only see their teacher profiles
-    teacher = Teacher.objects.filter(user_ptr=request.user)
-    early_childhood_education = EarlyChildhoodEducator.objects.filter(
-        user_ptr=request.user
-    )
-
-    # District officer - Can only see single district
-    if district_officer.exists():
-        # Every officer should have a district they belong too
-        district = district_officer.district
-        return redirect(f"/school/district/{district.district_code}")
-
-    if school_admin.exists():
-        return redirect(f"/school/school_details/{school_admin.school.school_code}")
-    if principal.exists():
-        return redirect(f"/school/school_details/{principal.school.school_code}")
-    if school_supervisor.exists():
-        return redirect(
-            f"/school/school_details/{school_supervisor.school.school_code}"
-        )
-
-    if teacher.exists():
-        return redirect(f"/school/teacher/{teacher.id}")
-    if early_childhood_education.exists():
-        return redirect(f"/school/teacher/{early_childhood_education.id}")
+    if user_type in ["early_childhood_educator", "teacher"]:
+        return redirect(f"/school/teacher/{parent_user.id}")
 
     # All other roles can access all parts of the school application
     return redirect("/school/districts")
 
 
+def _can_access_all_districts_view(user):
+    has_perm = user.has_perm(EmisPermission.SCHOOL_APP_ACCESS.get_view_code())
+    user_type, parent_user = get_user_type(user)
+    return has_perm and user_type not in [
+        "district_officer",
+        "school_admin",
+        "principal",
+        "school_superviser",
+        "teacher",
+        "early_childhood_educator",
+    ]
+
+
+@user_passes_test(lambda u: _can_access_all_districts_view(u))
 def all_districts_view(request):
     # check permission
     districts = District.objects.all()
@@ -112,10 +112,23 @@ def all_districts_view(request):
             ],
         }
     }
-    context = _add_side_navigation_context(context)
+    context = _add_side_navigation_context(request.user, context)
     return render(request, "all_districts.html", context)
 
 
+def _can_access_single_district_view(user):
+    has_perm = user.has_perm(EmisPermission.SCHOOL_APP_ACCESS.get_view_code())
+    user_type, parent_user = get_user_type(user)
+    return has_perm and user_type not in [
+        "school_admin",
+        "principal",
+        "school_superviser",
+        "teacher",
+        "early_childhood_educator",
+    ]
+
+
+@user_passes_test(lambda u: _can_access_single_district_view(u))
 def single_district_view(request, code):
     # check permission
     try:
@@ -150,10 +163,17 @@ def single_district_view(request, code):
             )
         ],
     }
-    context = _add_side_navigation_context(context)
+    context = _add_side_navigation_context(request.user, context)
     return render(request, "single_district.html", context)
 
 
+def _can_access_single_school_view(user):
+    has_perm = user.has_perm(EmisPermission.SCHOOL_APP_ACCESS.get_view_code())
+    user_type, parent_user = get_user_type(user)
+    return has_perm and user_type not in ["teacher", "early_childhood_educator"]
+
+
+@user_passes_test(lambda u: _can_access_single_school_view(u))
 def single_school_view(request, code):
     try:
         school = School.objects.get(school_code=code)
@@ -192,7 +212,7 @@ def single_school_view(request, code):
             "id", "first_name", "last_name", "graduation_year"
         ),
     }
-    context = _add_side_navigation_context(context)
+    context = _add_side_navigation_context(request.user, context)
     return render(request, "single_school.html", context)
 
 
@@ -215,7 +235,7 @@ def teacher_view(request, code):
             for course in teacher.course_set.all()
         ],
     }
-    context = _add_side_navigation_context(context)
+    context = _add_side_navigation_context(request.user, context)
     return render(request, "teacher.html", context)
 
 
@@ -255,8 +275,7 @@ def course_view(request, teacher_code, course_code):
         },
         "students": students,
     }
-    print(context)
-    context = _add_side_navigation_context(context)
+    context = _add_side_navigation_context(request.user, context)
     return render(request, "course.html", context)
 
 
@@ -279,7 +298,7 @@ def district_form(request, code=None):
             form.save()
             return redirect("/school/districts")
     context = {"header": "Edit District" if code else "Create District", "form": form}
-    context = _add_side_navigation_context(context)
+    context = _add_side_navigation_context(request.user, context)
     return render(request, "form.html", context)
 
 
@@ -304,7 +323,7 @@ def school_form(request, code=None):
                 f"/school/district/{new_instance.district_name.district_code}"
             )
     context = {"header": "Edit School" if code else "Create School", "form": form}
-    context = _add_side_navigation_context(context)
+    context = _add_side_navigation_context(request.user, context)
     return render(request, "form.html", context)
 
 
@@ -325,7 +344,7 @@ def teacher_form(request, code=None):
             new_instance = form.save()
             return redirect(f"/school/school_details/{new_instance.school.school_code}")
     context = {"header": "Edit Teacher" if code else "Create Teacher", "form": form}
-    context = _add_side_navigation_context(context)
+    context = _add_side_navigation_context(request.user, context)
     return render(request, "form.html", context)
 
 
@@ -346,7 +365,7 @@ def course_form(request, code=None):
             new_instance = form.save()
             return redirect(f"/school/school_details/{new_instance.school.school_code}")
     context = {"header": "Edit Course" if code else "Create Course", "form": form}
-    context = _add_side_navigation_context(context)
+    context = _add_side_navigation_context(request.user, context)
     return render(request, "form.html", context)
 
 
@@ -367,7 +386,7 @@ def student_form(request, code=None):
             new_instance = form.save()
             return redirect(f"/school/school_details/{new_instance.school.school_code}")
     context = {"header": "Edit Student" if code else "Student Enrollment", "form": form}
-    context = _add_side_navigation_context(context)
+    context = _add_side_navigation_context(request.user, context)
     return render(request, "form.html", context)
 
 
@@ -391,7 +410,7 @@ def subject_group_form(request, code=None):
         "header": "Edit Subject Group" if code else "Create Subject Group",
         "form": form,
     }
-    context = _add_side_navigation_context(context)
+    context = _add_side_navigation_context(request.user, context)
     return render(request, "form.html", context)
 
 
@@ -415,7 +434,7 @@ def subject_form(request, code=None):
         "header": "Edit Subject" if code else "Create Subject",
         "form": form,
     }
-    context = _add_side_navigation_context(context)
+    context = _add_side_navigation_context(request.user, context)
     return render(request, "form.html", context)
 
 
@@ -441,7 +460,7 @@ def assignment_form(request, code=None):
         "header": "Edit Assignment" if code else "Create Assignment",
         "form": form,
     }
-    context = _add_side_navigation_context(context)
+    context = _add_side_navigation_context(request.user, context)
     return render(request, "form.html", context)
 
 
@@ -480,7 +499,7 @@ def principal_form(request, code=None):
         "header": "Edit Principal" if code else "Create Principal",
         "form": form,
     }
-    context = _add_side_navigation_context(context)
+    context = _add_side_navigation_context(request.user, context)
     return render(request, "form.html", context)
 
 
@@ -506,7 +525,7 @@ def principal_appraisal_form(request, code=None):
         "header": "Edit Principal Appraisal" if code else "Create Principal Appraisal",
         "form": form,
     }
-    context = _add_side_navigation_context(context)
+    context = _add_side_navigation_context(request.user, context)
     return render(request, "form.html", context)
 
 
@@ -532,30 +551,79 @@ def teacher_appraisal_form(request, code=None):
         "header": "Edit Teacher Appraisal" if code else "Create Teacher Appraisal",
         "form": form,
     }
-    context = _add_side_navigation_context(context)
+    context = _add_side_navigation_context(request.user, context)
     return render(request, "form.html", context)
 
 
-def _add_side_navigation_context(context):
-    context["side_nav"] = [
-        {
-            "district_code": district.district_code,
-            "district_name": district.district_name,
-            "schools": [
-                {
-                    "school_code": school.school_code,
-                    "school_name": school.school_name,
-                    "teachers": [
-                        {
-                            "teacher_name": f"{teacher.first_name} {teacher.last_name}",
-                            "teacher_code": teacher.id,
-                        }
-                        for teacher in Teacher.objects.filter(school=school)
-                    ],
-                }
-                for school in School.objects.filter(district_name=district)
-            ],
-        }
-        for district in District.objects.all()
+def _add_side_navigation_context(user, context):
+    user_type, parent_user = get_user_type(user)
+
+    districts_to_render = District.objects.all()
+    schools_to_render = School.objects.all()
+    teachers_to_render = Teacher.objects.all()
+
+    if user_type == "district_officer":
+        districts_to_render = districts_to_render.filter(
+            district_code=parent_user.district.district_code
+        )
+    if user_type in ["school_admin", "principal", "school_superviser"]:
+        schools_to_render = schools_to_render.filter(id=parent_user.school.id)
+        districts_to_render = districts_to_render.filter(
+            id=parent_user.school.district_name.id
+        )
+    if user_type in ["teacher", "early_childhood_educator"]:
+        schools_to_render = schools_to_render.filter(id=parent_user.school.id)
+        districts_to_render = districts_to_render.filter(
+            id=parent_user.school.district_name.id
+        )
+        teachers_to_render = teachers_to_render.filter(id=parent_user.id)
+
+    show_all_districts = user_type not in [
+        "district_officer",
+        "school_admin",
+        "principal",
+        "school_superviser",
+        "teacher",
+        "early_childhood_educator",
     ]
+
+    show_district_summary = user_type not in [
+        "school_admin",
+        "principal",
+        "school_superviser",
+        "teacher",
+        "early_childhood_educator",
+    ]
+
+    show_school_summary = user_type not in [
+        "teacher",
+        "early_childhood_educator",
+    ]
+
+    context["side_nav"] = {
+        "show_all_districts": show_all_districts,
+        "show_district_summary": show_district_summary,
+        "show_school_summary": show_school_summary,
+        "districts": [
+            {
+                "district_code": district.district_code,
+                "district_name": district.district_name,
+                "schools": [
+                    {
+                        "school_code": school.school_code,
+                        "school_name": school.school_name,
+                        "teachers": [
+                            {
+                                "teacher_name": f"{teacher.first_name} {teacher.last_name}",
+                                "teacher_code": teacher.id,
+                            }
+                            for teacher in teachers_to_render.filter(school=school)
+                        ],
+                    }
+                    for school in schools_to_render.filter(district_name=district)
+                ],
+            }
+            for district in districts_to_render
+        ],
+    }
     return context

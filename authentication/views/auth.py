@@ -48,7 +48,7 @@ def index(request):
         "external_accessor": {"header": "", "content": ""},
     }
     if request.user and request.user.is_authenticated:
-        user_type = get_user_type(request.user)
+        user_type, parent_user = get_user_type(request.user)
         return render(request, "index.html", user_type_entry_message.get(user_type))
     return render(request, "authentication/index.html", {})
 

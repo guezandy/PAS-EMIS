@@ -5,8 +5,35 @@
 <div id="container-fluid bg-info">
     <main>
         <div class="container-fluid bg-transparent pt-3 text-dark">
-            <h3>Definition of terms and Interpretation of Results</h3>
-            <ol type="i" style='text-align: justify'>
+            <h3>Enrollment Summary</h3>
+                   <div class="row">
+   <div class="col-xl-5 col-md-5">
+                    <div class="card mb-4">
+                         <ol type="i" style='text-align: justify'>
+
+                    <li>
+                    <b>Gross Enrollment Rate(GER) : </b> Gross Enrolment Ratio (GER) or Gross Enrolment Index (GEI) is a statistical measure that is used to
+                        to determine the number of students enrolled in school at several
+                        different grade levels (like primary and secondary), and use it to show the ratio of the number of students
+                        who live in the country to those who qualify for the particular grade level.
+                        The GER can be over 100% as it includes students who may be older or younger than the official age group.
+                        the GER includes students who are repeating a grade, those who enrolled
+                        late and are older than their classmates, or those who have advanced quickly and are younger than their
+                        classmates. This allows the total enrolment to exceed the population that corresponds to that level of education.
+
+                    </li><br/>
+
+                    <form method = "POST" action="">
+                         {% csrf_token %}
+                        <input type="submit" name="ger_primary" class="btn btn-success" value="Get GER - Primary" />
+                        <br/><br/>
+
+                    </form>
+
+
+
+
+
                 <li><b>Net Enrollment Rate (NER): </b><br />The NER gives information on the extent of participation in
                     a given level of education of children belonging to the official age-group corresponding to the
                     given level of education.<br />
@@ -16,17 +43,7 @@
                     by relating the population in ages 12 to 16 to the enrolment in those forms.
                 </li>
 
-                <li>
-                    <b>Gross Enrollment Rate(GER) : </b><br />The GER gives information on the extent of participation
-                    of
-                    a specific school-going age group
-                    population in a specific level of education. <br />
-                    GER at primary level is calculated by relating population in age group 5 – 11 to the enrolment
-                    in primary schools. <br />
-                    GER at secondary level is calculated by relating population in age group 12 – 16 to
-                    the enrolment in secondary schools.<br />
 
-                </li>
 
                 <li>
                     <b>Repetition Rate : </b><br />  Repetition Rate is the number of students repeating from a
@@ -48,64 +65,57 @@
                     for two consecutive years.
                 </li>
             </ol>
-            <div class="row">
-                <div class="col-xl-3 col-md-3">
-                    <div class="card bg-primary text-white mb-4">
-                        <div class="card-body">Net Enrollment Rate</div>
-                        <div class="card-footer d-flex align-items-center justify-content-between">
-                            <p>Coming Soon....</p>
+                    </div>
+                  </div>
+                <div class="col-xl-7 col-md-7">
+            <div class="card bg-primary text-white mb-4">
+                        <div class="card-body">Enrollment and Education Census
+
+                             <div class="table-responsive card bg-body mb-4">
+                            <table class="table table-bordered" id="dataTable" max-width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Academic Year</th>
+                                        <th>Category of School</th>
+                                        <th>Sex</th>
+                                        <th>Total Enrollment</th>
+                                        <th>Population of Age 5 -11</th>
+                                        <th>Population of Age 12 -16</th>
+
+                                    </tr>
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                        <th>Academic Year</th>
+                                        <th>Category of School</th>
+                                        <th>Sex</th>
+                                        <th>Total Enrollment</th>
+                                        <th>Population of Age 5 -11</th>
+                                        <th>Population of Age 12 -16</th>
+                                    </tr>
+                                </tfoot>
+                                <tbody>
+                                    {% for row in d %}
+                                    <tr>
+                                        <td>{{ row.academic_year}}</td>
+                                        <td>{{ row.category_of_school }}</td>
+                                        <td>{{ row.sex }}</td>
+                                        <td>{{ row.enrollment }}</td>
+                                        <td>{{ row.age_5_to_11_years }}</td>
+                                        <td>{{ row.age_12_to_16_years }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-3 col-md-3">
-                    <div class="card bg-secondary text-white mb-4">
-                        <div class="card-body">Gross Enrollment Rate</div>
-                        <div class="card-footer d-flex align-items-center justify-content-between">
-
-                            <p> Coming Soon.... </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-md-3">
-                    <div class="card bg-primary text-white mb-4">
-                        <div class="card-body">Repetition Rate</div>
-                        <div class="card-footer d-flex align-items-center justify-content-between">
-
-                            <p> Coming Soon.... </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xl-3 col-md-3">
-                    <div class="card bg-secondary text-white mb-4">
-                        <div class="card-body">Dropout Rate</div>
-                        <div class="card-footer d-flex align-items-center justify-content-between">
-
-                            <p> Coming Soon.... </p>
-                        </div>
-                    </div>
                 </div>
 
 
-            </div>
-            <div class="row">
-                <div class="col-xl-3 col-md-3">
 
-                </div>
-                <div class="col-xl-6 col-md-6">
-                    <div class="card bg-primary text-white mb-4">
-                        <div class="card-body">Survival Ratio</div>
-                        <div class="card-footer d-flex align-items-center justify-content-between">
 
-                            <p> Coming Soon.... </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xl-3 col-md-3">
-
-                </div>
-            </div>
+</div>
         </div>
 
     </main>

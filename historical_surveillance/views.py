@@ -1,4 +1,5 @@
 import datetime
+import json
 from datetime import datetime
 import pandas as pd
 from django.contrib import messages
@@ -73,6 +74,7 @@ def create_institution(request):
             return redirect("/historical/create_institution")
     context = {"form": form, "name_of_school": data}
     return render(request, "create_school.html", context)
+
 
 # View for the update of a school
 # To-Do
@@ -528,9 +530,12 @@ def update_national_teacher_ratio(request, code=None):
             data_to_update.academic_year = form.cleaned_data['academic_year']
             data_to_update.total_enrollment = request.POST.get('total_enrollment', False)
             data_to_update.number_of_trained_male_teachers = request.POST.get('number_of_trained_male_teachers', False)
-            data_to_update.number_of_trained_female_teachers = request.POST.get('number_of_trained_female_teachers', False)
-            data_to_update.number_of_untrained_male_teachers = request.POST.get('number_of_untrained_male_teachers', False)
-            data_to_update.number_of_untrained_female_teachers = request.POST.get('number_of_untrained_female_teachers', False)
+            data_to_update.number_of_trained_female_teachers = request.POST.get('number_of_trained_female_teachers',
+                                                                                False)
+            data_to_update.number_of_untrained_male_teachers = request.POST.get('number_of_untrained_male_teachers',
+                                                                                False)
+            data_to_update.number_of_untrained_female_teachers = request.POST.get('number_of_untrained_female_teachers',
+                                                                                  False)
             data_to_update.total_number_of_teachers = request.POST.get('total_number_of_teachers', False)
             data_to_update.updated_at = date.today().strftime("%Y-%m-%d")
             data_to_update.updated_by = request.user.username
@@ -540,7 +545,24 @@ def update_national_teacher_ratio(request, code=None):
 
 
 def enrollment_summary(request):
-    return render(request, 'enrollment_summary.html', {})
+    enrollments = pd.DataFrame(NationalGenderEnrollment.objects.values().all())
+    census = pd.DataFrame(NationalEducationCensus.objects.
+                          values('academic_year', 'age_5_to_11_years', 'age_12_to_16_years').all())
+    df = pd.merge(left=enrollments, right=census, on='academic_year')
+    json_records = df.reset_index().to_json(orient='records')
+    data = json.loads(json_records)
+    context = {'d': data}
+    if 'ger_primary' in request.POST:
+        df1 = df.query("sex=='male' and category_of_school == 'primary'")
+        data_boys_primary = df1[['academic_year', 'enrollment', 'age_5_to_11_years']]
+        json_records = data_boys_primary.reset_index().to_json(orient='records')
+        data = json.loads(json_records)
+        # function to get the graph
+        graph = get_plot_boys_primary(data=data_boys_primary)
+        data_boys = {'d': data,
+                     'graph': graph}
+        return render(request, 'ger.html', data_boys)
+    return render(request, 'enrollment_summary.html', context)
 
 
 def special_ed_quest(request):

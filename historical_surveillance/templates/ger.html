@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+{% block page_content %}
+<!-- This form handles the creation of schools in each district.
+The error handling needs to be reviewed for now, it takes the error messaged passed as a dictionary
+from the school view and displays to the user preventing duplicate data entry.
+The form is redirected to the home page of the app when a data is inserted to prevent double insert
+of the same data which is also handled by the error message displayed.
+-->
+<main>
+    <div class="row">
+        <div class="col-xl-12 col-md-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3>Gross Enrollment Rate / Gross Enrollment Index for Boys in Primary Schools</h3>
+                          <div class="table-responsive card bg-body mb-4">
+                            <table class="table table-bordered" id="dataTable" max-width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Academic Year</th>
+                                        <th>Total Enrollment</th>
+                                        <th>Population of Age 5 -11</th>
+
+                                    </tr>
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                         <th>Academic Year</th>
+                                        <th>Total Enrollment</th>
+                                        <th>Population of Age 5 -11</th>
+                                    </tr>
+                                </tfoot>
+                                <tbody>
+                                    {% for row in d %}
+
+                                    <tr>
+                                        <td>{{ row.academic_year}}</td>
+                                        <td>{{ row.enrollment }}</td>
+                                        <td>{{ row.age_5_to_11_years }}</td>
+
+
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+
+                    GER = ( a / b ) * 100<br/>
+                        a = number of students in a given level of education<br/>
+                        b = population of the age group of students for the given level of education
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class ='row'>
+
+        <div class="col-xl-12 col-md-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    {% if request.POST %}
+                {% if graph %}
+                <img src="data:image/png;base64, {{ graph | safe}}" alt="analysis Image" />
+                {%endif%}
+                {% endif%}
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+
+</main>
+
+
+
+
+
+{% endblock%}

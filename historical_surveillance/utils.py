@@ -1,6 +1,8 @@
 import base64
 from io import BytesIO
 import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
 from .models import School
 
 
@@ -201,6 +203,37 @@ def get_plot(chart_type, **kwargs):
         plt.ylabel("Total Enrollment / Capacity")
         plt.xlabel("Academic Year")
         plt.legend()
+    plt.tight_layout()
+    graph = get_image()
+    return graph
+
+
+def get_plot_boys_primary(**kwargs):
+    plt.switch_backend('AGG')
+    data = kwargs.get('data')
+    for i in data.shape:
+        ger = (data['enrollment'] / data['age_5_to_11_years']) * 100
+        academic_year = data.academic_year
+    sns.set(font_scale=1.11)
+    sns.set_style("white")
+    ax = ger.plot.bar(figsize=(15, 6))
+    sns.despine(left=True, bottom=True)
+    # label and title
+
+    ax.set_title('Gross Enrollment Ratio for Boys in Primary School In St. Lucia', size=18)
+    ax.set_xticklabels(academic_year)
+    for tick in ax.get_xticklabels():
+        tick.set_rotation(-0)
+
+    # annotations
+    for p in ax.patches:
+        ax.annotate(format(p.get_height(), '.2f'),
+                    (p.get_x() + p.get_width() / 2., p.get_height()),
+                    ha='center', va='center',
+                    xytext=(0, 9),
+                    textcoords='offset points')
+    # adjust legend
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05))
     plt.tight_layout()
     graph = get_image()
     return graph

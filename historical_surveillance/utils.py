@@ -1,12 +1,13 @@
 import base64
 from io import BytesIO
+
 import matplotlib.pyplot as plt
 import seaborn as sns
-import numpy as np
+
 from .models import School
 
 
-def get_image():
+def get_image() -> object:
     # create a byte buffer for the image to save
     buffer = BytesIO()
     # create a plot with the use of bytesio object
@@ -31,7 +32,7 @@ def get_grade_plot(**kwargs):
     year = kwargs.get('academic_year')
     # the grade
     z = kwargs.get('z')
-    data = kwargs.get('data')
+
     school_name = kwargs.get('name_of_school')
     fig, ax = plt.subplots(figsize=(10, 8))
     ax.bar(z, x, width=0.40, color='g', label='if data exist by gender,bottom values ='
@@ -192,7 +193,6 @@ def get_plot(chart_type, **kwargs):
         ax.set_ylim([0, max(z) + 300])
         ax.legend()
 
-
     else:
         title = school_name
         plt.figure(figsize=(10, 8))
@@ -211,7 +211,7 @@ def get_plot(chart_type, **kwargs):
 def get_plot_boys_primary(**kwargs):
     plt.switch_backend('AGG')
     data = kwargs.get('data')
-    for i in data.shape:
+    for _ in data.shape:
         ger = (data['enrollment'] / data['age_5_to_11_years']) * 100
         academic_year = data.academic_year
     sns.set(font_scale=1.11)

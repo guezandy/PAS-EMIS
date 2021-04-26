@@ -3,6 +3,9 @@ from django.shortcuts import render
 def index(request):
     pass
 
+def service_form(request):
+    pass
+
 def district_schools(request, district_code):
     pass
 

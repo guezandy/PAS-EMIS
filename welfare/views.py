@@ -141,10 +141,10 @@ def index(request):
 
 # More specific user tests delegated to specific create/edit methods.
 @user_passes_test(lambda u: _can_view_welfare_app(u))
-def service_form(request, name=None):
-    if name:
+def service_form(request, code=None):
+    if code:
         try:
-            service = SupportService.objects.get(name=name)
+            service = SupportService.objects.get(id=code)
         except SupportService.DoesNotExist:
             return redirect("/welfare")
         else:

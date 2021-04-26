@@ -20,3 +20,4 @@ class StudentSupportAssocForm(forms.ModelForm):
     class Meta(TrackedUpdateForm.Meta):
         model = StudentSupportAssoc
         fields = "__all__"
+        exclude = [ "student" ]

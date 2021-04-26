@@ -64,6 +64,7 @@ SUPERVISOR_LIST = (
         EmisPermArea.SUPERVISION, EmisPermMode.CREATE | EmisPermMode.UPDATE
     )
     + get_raw_codes(EmisPermission.WELFARE_APP_ACCESS, EmisPermMode.VIEW)
+    + get_raw_codes(EmisPermission.SCHOOL_APP_ACCESS, EmisPermMode.VIEW)
 )
 
 STATISTICIAN_LIST = (

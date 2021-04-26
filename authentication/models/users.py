@@ -71,39 +71,60 @@ class DistrictEducationOfficer(User):
 
 
 class SchoolSuperviser(User):
-    # TODO
+    school = models.ForeignKey(School, on_delete=models.CASCADE, null=True)
+
     class Meta(CustomPermissionModel.Meta):
         verbose_name = "School Superviser"
 
 
 class StatisticianAdmin(User):
-    # TODO
     class Meta(CustomPermissionModel.Meta):
         verbose_name = "Stastician Admin"
 
 
 class EvaluationAdmin(User):
-    # TODO
     class Meta(CustomPermissionModel.Meta):
         verbose_name = "Evaluation Admin"
 
 
 class EarlyChildhoodEducator(User):
-    # TODO
+    school = models.ForeignKey(School, on_delete=models.CASCADE, null=True)
+
     class Meta(CustomPermissionModel.Meta):
         verbose_name = "Early Childhood"
 
 
 class SupportServicesAdmin(User):
-    # TODO
     class Meta(CustomPermissionModel.Meta):
         verbose_name = "Support Services Admin"
 
 
 class ExternalAccessor(User):
-    # TODO
     class Meta(CustomPermissionModel.Meta):
         verbose_name = "External Accessor"
+
+
+def get_user_type(user):
+    form_map = {
+        "teacher": "teacher",
+        "school_admin": "schooladministrator",
+        "principal": "schoolprincipal",
+        "district_officer": "districteducationofficer",
+        "school_superviser": "schoolsuperviser",
+        "stat_admin": "statisticianadmin",
+        "evaluation_admin": "evaluationadmin",
+        "early_childhood_educator": "earlychildhoodeducator",
+        "support_services_admin": "supportservicesadmin",
+        "external_accessor": "externalaccessor",
+    }
+    for type in form_map:
+        try:
+            parent_user = getattr(user, form_map[type])
+            if parent_user:
+                return (type, parent_user)
+        except Exception:
+            pass
+    return ("custom", user)
 
 
 """

@@ -13,6 +13,7 @@ from django.urls.base import reverse
 from django.core.exceptions import PermissionDenied
 from django.template.loader import get_template
 from django.conf import settings
+from authentication.models.users import get_user_type
 
 from authentication.forms.auth import (
     CustomSetPasswordForm,
@@ -33,8 +34,22 @@ LOGGER = logging.getLogger("emis-pas")
 
 
 def index(request):
+    user_type_entry_message = {
+        "custom": {"header": "Super user", "content": "Add content here"},
+        "teacher": {"header": "", "content": ""},
+        "school_admin": {"header": "", "content": ""},
+        "principal": {"header": "", "content": ""},
+        "district_officer": {"header": "", "content": ""},
+        "school_superviser": {"header": "", "content": ""},
+        "stat_admin": {"header": "", "content": ""},
+        "evaluation_admin": {"header": "", "content": ""},
+        "early_childhood_educator": {"header": "", "content": ""},
+        "support_services_admin": {"header": "", "content": ""},
+        "external_accessor": {"header": "", "content": ""},
+    }
     if request.user and request.user.is_authenticated:
-        return render(request, "index.html", {})
+        user_type, parent_user = get_user_type(request.user)
+        return render(request, "index.html", user_type_entry_message.get(user_type))
     return render(request, "authentication/index.html", {})
 
 

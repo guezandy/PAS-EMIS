@@ -19,9 +19,13 @@ urlpatterns = [
     path("forgot-password", auth.forgot_password_view, name="forgot-password"),
     path("reset-password/<str:code>", auth.reset_password_view, name="reset-password"),
     # System administration views
-    path("sysadmin/users/create/", sysadmin.create_user, name="create-user"),
+    # path("sysadmin/users/create/", sysadmin.create_user, name="create-user"),
     path(
         "sysadmin/users/<int:pk>/detail", sysadmin.user_detail, name="user-detail-admin"
     ),
     path("sysadmin/users", sysadmin.user_list, name="user-directory"),
+    path("sysadmin/users/create/<str:type>", sysadmin.create_user, name="create-user"),
+    path(
+        "sysadmin/users/edit/<str:type>/<int:pk>", sysadmin.edit_user, name="edit-user"
+    ),
 ]

@@ -1,5 +1,5 @@
 from django import template
-
+from emis.permissions import EmisPermission
 
 register = template.Library()
 
@@ -13,10 +13,14 @@ def _get_user_context(request):
 
     is_super_user = request.user.is_superuser
     can_access_auth_app = is_super_user
-    can_access_school_app = is_super_user or request.user.has_perm("view_school_app")
-    can_access_welfare_app = is_super_user or request.user.has_perm("view_welfare_app")
+    can_access_school_app = is_super_user or request.user.has_perm(
+        EmisPermission.SCHOOL_APP_ACCESS.get_view_code()
+    )
+    can_access_welfare_app = is_super_user or request.user.has_perm(
+        EmisPermission.WELFARE_APP_ACCESS.get_view_code()
+    )
     can_access_historical_app = is_super_user or request.user.has_perm(
-        "view_surveillance_app"
+        EmisPermission.SURVEILLANCE_APP_ACCESS.get_view_code()
     )
 
     apps_accessible = []

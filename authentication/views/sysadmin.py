@@ -5,8 +5,20 @@ from django.contrib.auth.models import User, Group
 from django.contrib import messages
 from django.urls import reverse
 from django.db.models import Q
-from authentication.forms.sysadmin import AdminUserCreationForm
-from authentication.forms.sysadmin import AdminEditUserForm
+from authentication.forms.sysadmin import (
+    AdminUserCreationForm,
+    AdminEditUserForm,
+    TeacherForm,
+    SchoolAdministratorForm,
+    PrincipalForm,
+    DistrictEducationOfficerForm,
+    SchoolSuperviserForm,
+    StatisticianAdminForm,
+    EvaluationAdminForm,
+    SupportServicesAdminForm,
+    EarlyChildhoodEducatorForm,
+    ExternalAccessorForm,
+)
 from django.core.mail import send_mail
 from django.core.signing import TimestampSigner
 from authentication.models.activation import Activation
@@ -15,6 +27,61 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
 from django.template import Context
 from django.contrib.auth.decorators import user_passes_test
+from authentication.models.users import (
+    SchoolAdministrator,
+    Teacher,
+    SchoolPrincipal,
+    DistrictEducationOfficer,
+    SchoolSuperviser,
+    StatisticianAdmin,
+    EvaluationAdmin,
+    EarlyChildhoodEducator,
+    SupportServicesAdmin,
+    ExternalAccessor,
+    get_user_type,
+)
+from django.contrib.auth.models import User
+
+
+form_map = {
+    "custom": AdminUserCreationForm,
+    "teacher": TeacherForm,
+    "school_admin": SchoolAdministratorForm,
+    "principal": PrincipalForm,
+    "district_officer": DistrictEducationOfficerForm,
+    "school_superviser": SchoolSuperviserForm,
+    "stat_admin": StatisticianAdminForm,
+    "evaluation_admin": EvaluationAdminForm,
+    "early_childhood_educator": EarlyChildhoodEducatorForm,
+    "support_services_admin": SupportServicesAdminForm,
+    "external_accessor": ExternalAccessorForm,
+}
+user_type_model_map = {
+    "custom": User,
+    "teacher": Teacher,
+    "school_admin": SchoolAdministrator,
+    "principal": SchoolPrincipal,
+    "district_officer": DistrictEducationOfficer,
+    "school_superviser": SchoolSuperviser,
+    "stat_admin": StatisticianAdmin,
+    "evaluation_admin": EvaluationAdmin,
+    "early_childhood_educator": EarlyChildhoodEducator,
+    "support_services_admin": SupportServicesAdmin,
+    "external_accessor": ExternalAccessor,
+}
+header_map = {
+    "custom": "User",
+    "teacher": "Teacher",
+    "school_admin": "School Admin",
+    "principal": "Principal",
+    "district_officer": "District Officer",
+    "school_superviser": "School Superviser",
+    "stat_admin": "Statistical Admin",
+    "evaluation_admin": "Evaluation Admin",
+    "early_childhood_educator": "Early childhood educator",
+    "support_services_admin": "Support Services Admin",
+    "external_accessor": "External Accessor",
+}
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -27,7 +94,7 @@ def user_list(request):
         user_list = User.objects.order_by("id")
         search_term = ""
 
-        paginator = Paginator(user_list, number_per_page)
+        paginator = Paginator(build_user_values(user_list), number_per_page)
         page_obj = paginator.get_page(page_number)
     else:
         user_list = User.objects.filter(
@@ -36,17 +103,37 @@ def user_list(request):
             | Q(first_name__icontains=search_term)
             | Q(last_name__icontains=search_term)
         ).order_by("id")
-        paginator = Paginator(user_list, number_per_page)
+        paginator = Paginator(build_user_values(user_list), number_per_page)
         page_obj = paginator.get_page(page_number)
 
     context = {"user_list": page_obj, "search_term": search_term}
     return render(request, "sysadmin/user_list.html", context)
 
 
+def build_user_values(user_list):
+    return [
+        {
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "is_superuser": user.is_superuser,
+            "email": user.email,
+            "username": user.username,
+            "id": user.id,
+            "is_active": user.is_active,
+            "type": get_user_type(user)[0],
+        }
+        for user in user_list
+    ]
+
+
 @user_passes_test(lambda u: u.is_superuser)
-def create_user(request):
+def create_user(request, type):
+
+    # Get form based on user type
+    Form = form_map.get(type, AdminUserCreationForm)
+
     if request.method == "POST":
-        f = AdminUserCreationForm(request.POST)
+        f = Form(request.POST)
 
         if f.is_valid():
             user = f.save()
@@ -73,11 +160,39 @@ def create_user(request):
                 + user.email
                 + ".",
             )
-            return HttpResponseRedirect(reverse("authentication:create-user"))
+            return HttpResponseRedirect(reverse("authentication:user-directory"))
     else:
-        f = AdminUserCreationForm()
+        f = Form()
 
-    return render(request, "sysadmin/user_create.html", {"form": f})
+    return render(
+        request,
+        "sysadmin/user_create.html",
+        {"form": f, "header": f"Create {header_map.get(type, 'User')}"},
+    )
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def edit_user(request, type, pk):
+    Model = user_type_model_map.get(type, User)
+    model_query = Model.objects.filter(id=pk)
+    if not model_query.exists():
+        return redirect("/authentication/sysadmin")
+
+    Form = form_map.get(type, AdminEditUserForm)
+
+    # We have a valid user
+    user_instance = model_query.first()
+    form = Form(request.POST or None, instance=user_instance)
+    if request.method == "POST":
+        if form.is_valid():
+            new_instance = form.save()
+            return HttpResponseRedirect(reverse("authentication:user-directory"))
+
+    return render(
+        request,
+        "sysadmin/user_create.html",
+        {"form": form, "header": f"Edit {header_map.get(type, 'User')}"},
+    )
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -114,3 +229,4 @@ def send_activation_email(request, user: User):
     msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
     msg.attach_alternative(html_content, "text/html")
     msg.send(fail_silently=False)
+

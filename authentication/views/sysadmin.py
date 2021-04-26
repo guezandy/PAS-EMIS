@@ -24,7 +24,7 @@ def user_list(request):
     number_per_page = 10  # Show 25 contacts per page.
 
     if search_term is None or search_term == "":
-        user_list = User.objects.all()
+        user_list = User.objects.order_by("id")
         search_term = ""
 
         paginator = Paginator(user_list, number_per_page)
@@ -35,7 +35,7 @@ def user_list(request):
             | Q(email__icontains=search_term)
             | Q(first_name__icontains=search_term)
             | Q(last_name__icontains=search_term)
-        )
+        ).order_by("id")
         paginator = Paginator(user_list, number_per_page)
         page_obj = paginator.get_page(page_number)
 

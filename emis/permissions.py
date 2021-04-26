@@ -255,15 +255,15 @@ class EmisPermission(Enum):
         EmisPermArea.EVALUATION,
     )
 
-    STUDENT_SUPPORT_FORM = (
-        "student_support_form",
-        "student support forms",
+    STUDENT_SUPPORT_DEFINITION = (
+        "student_support_definition",
+        "student support/service definitions",
         EmisPermArea.SUPPORT,
     )
 
-    STUDENT_RESOURCE_ALLOC = (
-        "student_resource_form",
-        "student resource allocation forms",
+    STUDENT_SUPPORT_ALLOC = (
+        "student_resource_alloc",
+        "student support/service allocations",
         EmisPermArea.SUPPORT,
     )
 

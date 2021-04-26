@@ -159,7 +159,7 @@ def view_services(request):
 
     }
     context = _add_side_navigation_context(request.user, context)
-    pass
+    return render(request, "services.html", context)
 
 
 @user_passes_test(lambda u: _can_create_service_definitions(u))
@@ -203,7 +203,7 @@ def all_districts(request):
         
     }
     context = _add_side_navigation_context(request.user, context)
-    pass
+    return render(request, "all_districts_welfare.html", context)
 
 
 @user_passes_test(lambda u: _can_access_district_view(u))
@@ -214,7 +214,7 @@ def district_schools(request, district_code):
         
     }
     context = _add_side_navigation_context(request.user, context)
-    pass
+    return render(request, "district_welfare.html", context)
 
 
 @user_passes_test(lambda u: _can_access_school_view(u))
@@ -225,7 +225,7 @@ def school_students(request, school_code):
         
     }
     context = _add_side_navigation_context(request.user, context)
-    pass
+    return render(request, "student_services.html", context)
 
 
 @user_passes_test(lambda u: _can_view_student_services(u))
@@ -236,7 +236,7 @@ def student_view(request, code):
         
     }
     context = _add_side_navigation_context(request.user, context)
-    pass
+    return render(request, "student_services.html", context)
 
 
 @user_passes_test(lambda u: _can_edit_student_services(u))

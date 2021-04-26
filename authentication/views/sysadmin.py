@@ -161,9 +161,6 @@ def create_user(request, type):
                 + ".",
             )
             return HttpResponseRedirect(reverse("authentication:user-directory"))
-        else:
-            print(f.is_valid())
-            print(f.errors)
     else:
         f = Form()
 

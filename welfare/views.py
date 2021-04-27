@@ -239,15 +239,49 @@ def school_students(request, school_code):
 def student_view(request, code):
     if not code:
         return redirect("/welfare")
+    student_query = Student.objects.filter(id=code)
+    if not student_query.exists():
+        return redirect("/welfare")
+
+    student = student_query.first()
+    service_assoc_query = StudentSupportAssoc.objects.filter(
+        student=student
+    )
+    if not service_assoc_query.exists():
+        service_assocs = []
+    else:
+        service_assocs = service_assoc_query.all()
+    
+    if student.school:
+        school_name = student.school.school_name
+    elif student.last_school_attended:
+        school_name = student.last_school_attended.school_name
+    else:
+        school_name = ""
+
     context = {
-        
+        "student_id": student.id,
+        "student_last_name": student.last_name,
+        "student_first_name": student.first_name,
+        "student_grad": student.graduation_year,
+        "school_name": school_name,
+        "service_assocs": [
+            {
+                "service_id": service_assoc.service.id,
+                "service_name": service_assoc.service.name,
+                "service_start": service_assoc.start,
+                "service_end": service_assoc.end,
+                "comment": service_assoc.comment,
+            }
+            for service_assoc in service_assocs
+        ],
     }
     context = _add_side_navigation_context(request.user, context)
     return render(request, "student_services.html", context)
 
 
 @user_passes_test(lambda u: _can_edit_student_services(u))
-def student_service_form(request, student_code, service_code):
+def student_service_form(request, student_code, service_code=None):
     if not student_code:
         return redirect("/welfare")
 
@@ -280,11 +314,11 @@ def student_service_form(request, student_code, service_code):
             updated_by=request.user.username
         )
     
-    form = SupportServiceForm(request.POST or None, instance=instance)
+    form = StudentSupportAssocForm(request.POST or None, instance=instance)
     if request.method == "POST":
         if form.is_valid():
             form.save()
-            return redirect("/welfare/view_services")
+            return redirect(f"/welfare/student/{student.id}")
     if service:
         header = f"Edit {service.name} for: {student.last_name}, {student.first_name}"
     else:

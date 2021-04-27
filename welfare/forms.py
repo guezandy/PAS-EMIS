@@ -14,7 +14,7 @@ class StudentSupportAssocForm(forms.ModelForm):
         cleaned = super().clean()
         start = cleaned.get("start")
         end = cleaned.get("end")
-        if end <= start:
+        if end and end <= start:
             raise forms.ValidationError("End date must be later than start date")
     
     class Meta(TrackedUpdateForm.Meta):

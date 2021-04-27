@@ -78,7 +78,7 @@
             {% endif %}
             {% if 'apps_permission' in user_context and 'welfare' in user_context.apps_permission %}
             <li class="nav-item">
-                <a class="nav-link {% if 'welfare' in request.path %} active {% endif %}" href="#">Welfare</a>
+                <a class="nav-link {% if 'welfare' in request.path %} active {% endif %}" href="/welfare">Welfare</a>
             </li>
             {% endif %}
             {% if 'apps_permission' in user_context and 'historical' in user_context.apps_permission %}

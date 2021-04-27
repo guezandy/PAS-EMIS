@@ -111,7 +111,7 @@
         <div id="layoutSidenav_nav">
             <nav class="sb-sidenav accordion sb-sidenav-light" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
-                    {% if 'school' in request.path %}
+                    {% if 'school' in request.path and not 'welfare' in request.path %}
                     <div class="nav">
                         <div class="sb-sidenav-menu-heading">Schools</div>
                         {% if side_nav.show_all_districts %}
@@ -152,6 +152,52 @@
                                         <a class="nav-link"
                                             href="/school/teacher/{{teacher.teacher_code}}">{{teacher.teacher_name}}</a>
                                         {% endfor %}
+                                    </nav>
+                                </div>
+                                {% endfor %}
+                            </nav>
+
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if 'welfare' in request.path %}
+                    <div class="nav">
+                        <div class="sb-sidenav-menu-heading">Welfare</div>
+                        {% if side_nav.show_all_districts %}
+                        <a class="nav-link" href="/welfare/districts">All Districts</a>
+                        {% endif %}
+                        {% for district in side_nav.districts %}
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse"
+                            data-target="#district{{district.district_code|remove_spaces}}" aria-expanded="false"
+                            aria-controls="collapsePages">
+                            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
+                            {{district.district_name}}
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i>
+                            </div>
+                        </a>
+                        <div class="collapse" id="district{{district.district_code|remove_spaces}}"
+                            aria-labelledby="headingTwo" data-parent="#sidenavAccordion">
+
+                            <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+                                {% if side_nav.show_district_summary %}
+                                <a class="nav-link" href="/welfare/district/{{district.district_code}}">District
+                                    Welfare Summary</a>
+                                {% endif %}
+                                {% for school in district.schools %}
+                                <a class="nav-link collapsed" href="#" data-toggle="collapse"
+                                    data-target="#school{{school.school_code|remove_spaces}}" aria-expanded="false"
+                                    aria-controls="pagesCollapseAuth">
+                                    {{school.school_name}}
+                                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                </a>
+                                <div class="collapse" id="school{{school.school_code|remove_spaces}}"
+                                    aria-labelledby="headingOne" data-parent="#sidenavAccordionPages">
+                                    <nav class="sb-sidenav-menu-nested nav">
+                                        {% if side_nav.show_school_summary %}
+                                        <a class="nav-link" href="/welfare/school/{{school.school_code}}">School
+                                            Welfare Summary</a>
+                                        {% endif %}
                                     </nav>
                                 </div>
                                 {% endfor %}

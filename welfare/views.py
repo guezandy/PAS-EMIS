@@ -70,8 +70,8 @@ def _can_access_multi_district_view(user: User):
 # ---------------- CONTEXT -----------------
 
 def _add_side_navigation_context(user, context):
-    school = getattr(user, "school")
-    district = getattr(user, "district")
+    school = getattr(user, "school", None)
+    district = getattr(user, "district", None)
     if isinstance(school, School):
         schools_to_render = [ school ]
         districts_to_render = District.objects.filter(
@@ -96,17 +96,17 @@ def _add_side_navigation_context(user, context):
         "show_school_summary": show_school_summary,
         "districts": [
             {
-                "district_code": district.district_code,
-                "district_name": district.district_name,
+                "district_code": d.district_code,
+                "district_name": d.district_name,
                 "schools": [
                     {
-                        "school_code": school.school_code,
-                        "school_name": school.school_name,
+                        "school_code": s.school_code,
+                        "school_name": s.school_name,
                     }
-                    for school in schools_to_render.filter(district_name=district)
+                    for s in schools_to_render.filter(district_name=d)
                 ],
             }
-            for district in districts_to_render
+            for d in districts_to_render
         ],
     }
     return context
@@ -120,21 +120,21 @@ def index(request):
     if not request or not request.user:
         return redirect("/")
     elif _can_access_multi_district_view(request.user):
-        return redirect("/welfare/all_districts")
+        return redirect("/welfare/districts")
     elif _can_access_district_view(request.user):
-        district = getattr(request.user, "district")
+        district = getattr(request.user, "district", None)
         if not district:
             return redirect("/")
         else:
-            code = getattr(district, "district_code")
+            code = getattr(district, "district_code", "")
             return redirect(f"/welfare/district/{code}")
     elif _can_access_school_view(request.user):
-        school = getattr(request.user, "school")
+        school = getattr(request.user, "school", None)
         if not school:
             return redirect("/")
         else:
-            code = getattr(school, "school_code")
-            return redirect(f"/welfare/schools/{code}")
+            code = getattr(school, "school_code", "")
+            return redirect(f"/welfare/school/{code}")
     else:
         return redirect("/")
 
@@ -156,7 +156,14 @@ def service_form(request, code=None):
 @user_passes_test(lambda u: _can_view_service_definitions(u))
 def view_services(request):
     context = {
-
+        "services": [
+            {
+                "id": service.id,
+                "name": service.name,
+                "description": service.description,
+            }
+            for service in SupportService.objects.all()
+        ],
     }
     context = _add_side_navigation_context(request.user, context)
     return render(request, "services.html", context)
@@ -173,7 +180,7 @@ def create_service(request):
             form.save()
             return redirect("/welfare/view_services")
     context = {
-        "header": "Create Service",
+        "header": "Define Service",
         "form": form,
     }
     context = _add_side_navigation_context(request.user, context)
@@ -190,7 +197,7 @@ def edit_service(request, service: SupportService):
             form.save()
             return redirect("/welfare/view_services")
     context = {
-        "header": "Edit Service",
+        "header": "Edit Service Definition",
         "form": form,
     }
     context = _add_side_navigation_context(request.user, context)

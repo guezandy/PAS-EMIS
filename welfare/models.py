@@ -29,34 +29,8 @@ class StudentSupportAssoc(TrackedUpdateModel):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, null=False)
     service = models.ForeignKey(SupportService, on_delete=models.CASCADE, null=False)
     comment = models.CharField(max_length=500, blank=True)
-    start_date = models.DateField(max_length=8)
-    end_date = models.DateField(max_length=8, blank=True, null=True)
+    start_date = models.DateField(max_length=8, default=datetime.date.today)
+    end_date = models.DateField(max_length=8, blank=True, null=True, default=datetime.date.today)
 
     class Meta(CustomPermissionModel.Meta):
         pass
-
-
-# class ReportType(models.Model):
-#     """
-#     Created/managed by system administrators.
-#     """
-#     name = models.CharField(max_length=100, unique=True)
-
-#     class Meta(CustomPermissionModel.Meta):
-#         pass
-
-
-# class Report(models.Model):
-#     """
-
-#     """
-#     title = models.CharField(max_length=100)
-#     report_type = models.ForeignKey(ReportType, on_delete=models.CASCADE, null=False)
-#     report_date = models.DateField(max_length=8)
-#     district = models.ForeignKey(District, on_delete=models.SET_NULL, null=True)
-#     school = models.ForeignKey(School, on_delete=models.SET_NULL, null=True)
-#     student = models.ForeignKey(Student, on_delete=models.SET_NULL, null=True)
-
-#     class Meta(CustomPermissionModel.Meta):
-#         pass
-

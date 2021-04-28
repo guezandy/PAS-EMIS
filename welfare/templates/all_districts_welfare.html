@@ -3,7 +3,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class='col-md-6'>
-            <h1>All Districts</h1>
+            <h1>Welfare - All Districts</h1>
         </div>
         {% if can_view_service_defs %}
         <div class="col-md-6 action-button-group">
@@ -12,8 +12,49 @@
         </div>
         {% endif %}
     </div>
-    
-
-
+    <div class="row">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body">
+                    <div class='stat'>{{student_service_count}}</div>
+                    <div class='stat-label'>Total Students with Services</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-warning text-white mb-4">
+                <div class="card-body">
+                    <div class='stat'>{{student_service_percent}}%</div>
+                    <div class='stat-label'>Percent Students with Services</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>District code</th>
+                            <th>District name</th>
+                            <th>Total students</th>
+                            <th>Students with services</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for district in districts %}
+                        <tr class='clickable-row' data-href="/welfare/district/{{district.district_code}}">
+                            <td>{{district.district_code}}</td>
+                            <td>{{district.district_name}}</td>
+                            <td>{{district.student_count}}</td>
+                            <td>{{district.student_service_count}} ({{district.student_service_percent}}%)</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock page_content %}

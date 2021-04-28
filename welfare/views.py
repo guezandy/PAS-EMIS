@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import user_passes_test
 from django.db.models import F
@@ -113,6 +114,46 @@ def _add_side_navigation_context(user, context):
     return context
 
 
+# ---------------- HELPERS -----------------
+def _student_has_services(student: Student) -> bool:
+    if not student:
+        return False
+    service_query = StudentSupportAssoc.objects.filter(
+        student=student
+    )
+    if not service_query.exists():
+        return False
+    service_assocs = service_query.all()
+    now = datetime.now().date()
+    return any(x.start_date <= now and 
+                (x.end_date is None or x.end_date >= now)
+                    for x in service_assocs)
+
+
+def _school_students_serv_and_total(school: School) -> tuple:
+    if not school:
+        return 0,0
+    students = Student.objects.filter(school=school).all()
+    denom = students.count()
+    num = len([ s for s in students if _student_has_services(s) ])
+    return num, denom
+
+
+def _district_students_serv_and_total(district: District) -> tuple:
+    if not district:
+        return 0,0
+
+    district_num = 0
+    district_denom = 0
+    
+    for school in School.objects.filter(district_name=district).all():
+        school_num, school_denom = _school_students_serv_and_total(school)
+        district_num += school_num
+        district_denom += school_denom
+    
+    return district_num, district_denom
+    
+
 
 # ---------------- VIEWS -----------------
 
@@ -207,8 +248,37 @@ def edit_service(request, service: SupportService):
 
 @user_passes_test(lambda u: _can_access_multi_district_view(u))
 def all_districts(request):
+    districts = District.objects.all()
+    students = Student.objects.all()
+    student_count = students.count()
+    students_with_services = [ s for s in students if _student_has_services(s) ]
+    students_with_service_count = len(students_with_services)
+    student_service_percent = (0.0 if student_count < 1
+                                else students_with_service_count/student_count * 100)
+
+    totals_by_district = {
+        district : _district_students_serv_and_total(district) for district in districts
+    }
+
     context = {
-        "can_view_service_defs": _can_view_service_definitions(request.user)
+        "can_view_service_defs": _can_view_service_definitions(request.user),
+        "student_service_count": students_with_service_count,
+        "student_service_percent": student_service_percent,
+        "districts": [
+            {
+                "district_code": district.district_code,
+                "district_name": district.district_name,
+                "student_count": Student.objects.filter(
+                    school__district_name=district
+                ).count(),
+                "student_service_count": totals_by_district[district][0],
+                "student_service_percent": (
+                    100 * totals_by_district[district][0] / totals_by_district[district][1]
+                    if totals_by_district[district][1] else 0.0
+                ),
+            }
+            for district in districts
+        ],
     }
     context = _add_side_navigation_context(request.user, context)
     return render(request, "all_districts_welfare.html", context)
@@ -218,8 +288,52 @@ def all_districts(request):
 def district_schools(request, district_code):
     if not district_code:
         return redirect("/welfare")
+    
+    district_query = District.objects.filter(
+        district_code=district_code
+    )
+
+    if not district_query.exists():
+        return redirect("/welfare/districts")
+
+    district = district_query.first()
+
+    schools = School.objects.filter(
+        district_name=district
+    )
+    students = Student.objects.filter(
+        school__district_name=district
+    )
+
+    student_count = students.count()
+    students_with_services = [ s for s in students if _student_has_services(s) ]
+    students_with_service_count = len(students_with_services)
+    student_service_percent = (0.0 if student_count < 1
+                                else students_with_service_count/student_count * 100)
+
+    totals_by_school = {
+        school : _school_students_serv_and_total(school) for school in schools
+    }
+
     context = {
-        "can_view_service_defs": _can_view_service_definitions(request.user)
+        "can_view_service_defs": _can_view_service_definitions(request.user),
+        "student_service_count": students_with_service_count,
+        "student_service_percent": student_service_percent,
+        "schools": [
+            {
+                "school_code": school.school_code,
+                "school_name": school.school_name,
+                "student_count": Student.objects.filter(
+                    school=school
+                ).count(),
+                "student_service_count": totals_by_school[school][0],
+                "student_service_percent": (
+                    100 * totals_by_school[school][0] / totals_by_school[school][1]
+                    if totals_by_school[school][1] else 0.0
+                ),
+            }
+            for school in schools
+        ],
     }
     context = _add_side_navigation_context(request.user, context)
     return render(request, "district_welfare.html", context)

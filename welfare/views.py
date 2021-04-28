@@ -251,7 +251,7 @@ def student_view(request, code):
     if not service_assoc_query.exists():
         service_assocs = []
     else:
-        service_assocs = service_assoc_query.all().order_by(F("end").desc(nulls_first=True))
+        service_assocs = service_assoc_query.all().order_by(F("end_date").desc(nulls_first=True))
     
     if student.school:
         school_name = student.school.school_name
@@ -270,8 +270,8 @@ def student_view(request, code):
             {
                 "service_id": service_assoc.service.id,
                 "service_name": service_assoc.service.name,
-                "service_start": service_assoc.start,
-                "service_end": service_assoc.end,
+                "service_start": service_assoc.start_date,
+                "service_end": service_assoc.end_date,
                 "comment": service_assoc.comment,
             }
             for service_assoc in service_assocs

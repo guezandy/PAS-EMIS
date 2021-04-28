@@ -4,16 +4,18 @@ from helpers.forms import TrackedUpdateForm
 from .models import StudentSupportAssoc, SupportService
 from school.models import Student
 
+
 class SupportServiceForm(forms.ModelForm):
     class Meta(TrackedUpdateForm.Meta):
         model = SupportService
         fields = "__all__"
 
+
 class StudentSupportAssocForm(forms.ModelForm):
     def clean(self):
         cleaned = super().clean()
-        start = cleaned.get("start")
-        end = cleaned.get("end")
+        start = cleaned.get("start_date")
+        end = cleaned.get("end_date")
         
         if end and end < start:
             raise forms.ValidationError("End date must be later than start date")
@@ -38,20 +40,20 @@ class StudentSupportAssocForm(forms.ModelForm):
             if other.id == self.instance.id:
                 continue
             elif end is None:
-                if other.end is None or start < other.end:
+                if other.end_date is None or start < other.end_date:
                     overlapping = other
                     break
-            elif other.end is None:
-                if other.start < end:
+            elif other.end_date is None:
+                if other.start_date < end:
                     overlapping = other
                     break
-            elif end > other.start and end < other.end:
+            elif end > other.start_date and end < other.end_date:
                 overlapping = other
                 break
-            elif start > other.start and start < other.end:
+            elif start > other.start_date and start < other.end_date:
                 overlapping = other
                 break
-            elif start == other.start or end == other.end:
+            elif start == other.start_date or end == other.end_date:
                 overlapping = other
                 break
             else:
@@ -63,7 +65,6 @@ class StudentSupportAssocForm(forms.ModelForm):
                f"\"{service.name}\" service for this student: "
                f"[{overlapping.start}, {overlapping.end}]"
             )
-
 
     
     class Meta(TrackedUpdateForm.Meta):

@@ -343,11 +343,40 @@ def district_schools(request, district_code):
 def school_students(request, school_code):
     if not school_code:
         return redirect("/welfare")
+
+    school_query = School.objects.filter(
+        school_code=school_code
+    )
+    if not school_query.exists():
+        return redirect("/welfare")
+
+    school = school_query.first()
+    students = Student.objects.filter(school=school)
+
+    student_count = students.count()
+    students_with_services = [ s for s in students if _student_has_services(s) ]
+    students_with_service_count = len(students_with_services)
+    student_service_percent = (0.0 if student_count < 1
+                                else students_with_service_count/student_count * 100)
+
     context = {
-        "can_view_service_defs": _can_view_service_definitions(request.user)
+        "can_view_service_defs": _can_view_service_definitions(request.user),
+        "student_service_count": students_with_service_count,
+        "student_service_percent": student_service_percent,
+        "students": [
+            {
+                "student_id": student.id,
+                "student_last_name": student.last_name,
+                "student_first_name": student.first_name,
+                "student_class": student.graduation_year,
+                "student_has_services": ("Yes" if _student_has_services(student)
+                else "No"),
+            }
+            for student in students
+        ],
     }
     context = _add_side_navigation_context(request.user, context)
-    return render(request, "student_services.html", context)
+    return render(request, "school_welfare.html", context)
 
 
 @user_passes_test(lambda u: _can_view_student_services(u))

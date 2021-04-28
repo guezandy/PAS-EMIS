@@ -5,6 +5,12 @@
         <div class='col-md-6'>
             <h1>{{district_name}}</h1>
         </div>
+        {% if can_view_service_defs %}
+        <div class="col-md-6 action-button-group">
+            <a href="{% url 'welfare:view_services' %}"><button type="button"
+                class="btn btn-success mb-2">View Service Definitions</button></a>
+        </div>
+        {% endif %}
     </div>
     
 

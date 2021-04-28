@@ -208,7 +208,7 @@ def edit_service(request, service: SupportService):
 @user_passes_test(lambda u: _can_access_multi_district_view(u))
 def all_districts(request):
     context = {
-        
+        "can_view_service_defs": _can_view_service_definitions(request.user)
     }
     context = _add_side_navigation_context(request.user, context)
     return render(request, "all_districts_welfare.html", context)
@@ -219,7 +219,7 @@ def district_schools(request, district_code):
     if not district_code:
         return redirect("/welfare")
     context = {
-        
+        "can_view_service_defs": _can_view_service_definitions(request.user)
     }
     context = _add_side_navigation_context(request.user, context)
     return render(request, "district_welfare.html", context)
@@ -230,7 +230,7 @@ def school_students(request, school_code):
     if not school_code:
         return redirect("/welfare")
     context = {
-        
+        "can_view_service_defs": _can_view_service_definitions(request.user)
     }
     context = _add_side_navigation_context(request.user, context)
     return render(request, "student_services.html", context)

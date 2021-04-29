@@ -30,7 +30,7 @@ class StudentSupportAssoc(TrackedUpdateModel):
     service = models.ForeignKey(SupportService, on_delete=models.CASCADE, null=False)
     comment = models.CharField(max_length=500, blank=True)
     start_date = models.DateField(max_length=8, default=datetime.date.today)
-    end_date = models.DateField(max_length=8, blank=True, null=True, default=datetime.date.today)
+    end_date = models.DateField(max_length=8, blank=True, null=True, default=None)
 
     class Meta(CustomPermissionModel.Meta):
         pass

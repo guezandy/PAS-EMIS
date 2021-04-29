@@ -13,7 +13,7 @@ class SupportServiceForm(forms.ModelForm):
 
 class StudentSupportAssocForm(forms.ModelForm):
     def clean(self):
-        cleaned = super().clean()
+        cleaned = super(StudentSupportAssocForm, self).clean()
         start = cleaned.get("start_date")
         end = cleaned.get("end_date")
         
@@ -66,7 +66,7 @@ class StudentSupportAssocForm(forms.ModelForm):
             raise forms.ValidationError(
                 "Date range overlaps with another indicated "
                f"\"{service.name}\" service for this student: "
-               f"[{overlapping.start}, {overlapping.end}]"
+               f"[{overlapping.start_date}, {overlapping.end_date}]"
             )
 
     
@@ -74,3 +74,7 @@ class StudentSupportAssocForm(forms.ModelForm):
         model = StudentSupportAssoc
         fields = "__all__"
         exclude = [ "student" ]
+        widgets = {
+            "start_date": forms.TextInput(attrs={"type": "date"}),
+            "end_date": forms.TextInput(attrs={"type": "date"})
+        }

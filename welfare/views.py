@@ -317,6 +317,7 @@ def district_schools(request, district_code):
 
     context = {
         "can_view_service_defs": _can_view_service_definitions(request.user),
+        "district_name": district.district_name,
         "student_service_count": students_with_service_count,
         "student_service_percent": student_service_percent,
         "schools": [

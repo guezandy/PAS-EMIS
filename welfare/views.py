@@ -361,6 +361,7 @@ def school_students(request, school_code):
 
     context = {
         "can_view_service_defs": _can_view_service_definitions(request.user),
+        "school_name": school.school_name,
         "student_service_count": students_with_service_count,
         "student_service_percent": student_service_percent,
         "students": [

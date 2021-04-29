@@ -3,7 +3,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class='col-md-6'>
-            <h1>Welfare - {{school_name}}</h1>
+            <h1>{{school_name}}</h1>
         </div>
         {% if can_view_service_defs %}
         <div class="col-md-6 action-button-group">
@@ -24,7 +24,7 @@
         <div class="col-xl-3 col-md-6">
             <div class="card bg-warning text-white mb-4">
                 <div class="card-body">
-                    <div class='stat'>{{student_service_percent}}%</div>
+                    <div class='stat'>{{student_service_percent|stringformat:".2f"}}%</div>
                     <div class='stat-label'>Percent Students with Services</div>
                 </div>
             </div>

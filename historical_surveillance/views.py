@@ -6,6 +6,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.template import RequestContext
 from django.utils.datetime_safe import date
 
+from django.http import HttpResponse
+
 from .forms import *
 from .models import *
 from .utils import *
@@ -558,3 +560,154 @@ def special_ed_quest(request):
     }
 
     return render(request, 'special_ed_quest.html', data_forms)
+
+
+#==============================================
+#View for outlier detection at district level
+#==============================================
+
+def outlier_district(request):
+    #return HttpResponse('In outlier detection at district level')
+
+    error_message = None
+    graph = None
+
+    districts_names = District.objects.values('id', 'district_name')
+    year_list = Enrollment.objects.distinct().values_list('year', flat=True)
+    school_categories = Enrollment.objects.distinct().values_list('category_of_school', flat=True)
+
+    if (len(districts_names) > 0 and len(school_categories)> 0):
+        if ((request.method) == 'POST'):
+
+            district_selected  = request.POST.get('district_name', False)
+            selected_year = request.POST.get('year', None)
+            selected_school_type = request.POST.get('school_type', None)
+
+            if (not district_selected or not selected_year or not selected_school_type):
+                error_message = "Please select all variables"
+            else:
+                #enrollment_df = pd.DataFrame(AggregateEnrollment.objects.values().filter(district_of_school=district_selected, academic_year = selected_year))
+                enrollment_df = pd.DataFrame(AggregateEnrollment.objects.all().filter(category_of_school = selected_school_type,
+                                                                                      district_of_school=district_selected, 
+                                                                                      academic_year=selected_year).values())
+
+                if (enrollment_df.empty):
+                    error_message = "No record was found for the selected district and academic year"
+
+                else:
+
+                    schools_df = pd.DataFrame(School.objects.all().values())
+                    final_df = pd.merge(left = enrollment_df, right = schools_df,
+                                        left_on='name_of_school_id', right_on='id')
+                    #graph = get_grade_plot(x = enrollment_df[''])
+                    enrollment_mean = final_df['total_enrollment'].mean()
+                    #print(enrollment_mean)
+                    enrollment_median = final_df['total_enrollment'].median()
+
+                    mean_list = []
+                    
+                    x = range(0,len(final_df['school_name']))
+
+                    for a in x:
+                        mean_list.append(enrollment_mean)
+
+                    data_mean = pd.DataFrame(mean_list, columns=['Mean'])
+
+                    graph = get_outlier_district_plot(x=final_df['total_enrollment'],
+                                                      y = final_df['school_name'],
+                                                      data = final_df,
+                                                      academic_year = selected_year,
+                                                      data_mean  = data_mean,   
+                                                      input_school_type = selected_school_type                                 
+                                                      )
+    else:
+        error_message = "No records found"
+
+        #return render(request, 'outlier_school_page.html', {})
+
+        #else:
+    
+    stu = {
+        "graph" : graph,
+        "error_message" : error_message,
+        "districts_name" : districts_names,
+        "year_list" : year_list,
+        "school_list" : school_categories
+
+    }
+    #return render(request, 'outlier_district_page.html', {"districts_names": districts_names})
+    return render(request, 'outlier_district_page.html', stu)
+    #return render(request, 'outlier_district_page.html', {})
+
+#==============================================
+#View for outlier detection at school level
+#==============================================
+
+def outlier_national(request):
+    #return HttpResponse('In outlier detection at school level')
+    error_message = None
+    graph = None
+    selected_school_type = ''
+    selected_year = ''
+
+    year_list = Enrollment.objects.distinct().values_list('year', flat=True)
+    school_categories = Enrollment.objects.distinct().values_list('category_of_school', flat=True)
+
+    if (len(year_list) > 0 and len(school_categories) > 0):
+        if ((request.method) == 'POST'):
+            
+            selected_school_type = request.POST.get('school_type', None)
+            selected_year = request.POST.get('year', None)
+
+            if (not selected_year or not selected_school_type):
+                error_message = "Please select an academic year"
+            else:
+                #enrollment_df = pd.DataFrame(AggregateEnrollment.objects.values().filter(district_of_school=district_selected, academic_year = selected_year))
+                enrollment_df = pd.DataFrame(AggregateEnrollment.objects.all().filter(category_of_school = selected_school_type, academic_year=selected_year).values())
+
+                if (enrollment_df.empty):
+                    error_message = "No record was found for the academic year"
+
+                else:
+                    schools_df = pd.DataFrame(School.objects.all().values())
+                    final_df = pd.merge(left = enrollment_df, right = schools_df,
+                                        left_on='name_of_school_id', right_on='id')
+                    #graph = get_grade_plot(x = enrollment_df[''])
+
+                    
+                    enrollment_mean = final_df['total_enrollment'].mean()
+                    #print(enrollment_mean)
+
+                    mean_list = []
+                    
+                    x = range(0,len(final_df['school_name']))
+
+                    for a in x:
+                        mean_list.append(enrollment_mean)
+
+                    data_mean = pd.DataFrame(mean_list, columns=['Mean'])
+                    graph = get_outlier_national_plot(x=final_df['total_enrollment'],
+                                                      y = final_df['school_name'],
+                                                      data = final_df,
+                                                      academic_year = selected_year,
+                                                      data_mean  = data_mean, 
+                                                      input_school_type = selected_school_type
+                                                                                        
+                                                      )
+    else:
+        error_message = "No records found"
+
+        #return render(request, 'outlier_school_page.html', {})
+
+        #else:
+    
+    stu = {
+        "graph" : graph,
+        "error_message" : error_message,
+        "year_list" : year_list,
+        "school_list" : school_categories
+
+    }
+
+
+    return render(request, 'outlier_national_page.html', stu)

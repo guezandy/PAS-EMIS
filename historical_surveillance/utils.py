@@ -3,6 +3,8 @@ from io import BytesIO
 import matplotlib.pyplot as plt
 from .models import School
 
+import numpy as np
+import pandas as pd
 
 def get_image():
     # create a byte buffer for the image to save
@@ -204,3 +206,111 @@ def get_plot(chart_type, **kwargs):
     plt.tight_layout()
     graph = get_image()
     return graph
+
+
+
+#===========================================================
+#Outlier detection plot at district level
+#===========================================================
+
+def get_outlier_district_plot(**kwargs):
+
+    plt.switch_backend('AGG')
+
+    #school_capacity = kwargs.get('x')
+    school_enrollment = kwargs.get('x')
+    school_name = kwargs.get('y')
+    #school_name = school_name.str.slice(0,8)
+    datamean = kwargs.get('data_mean')
+    input_school_type = kwargs.get('input_school_type')
+    academic_year = kwargs.get('academic_year')
+
+    #school_enrollment = kwargs.get('y')
+    #mean_list = []
+    #median_list = []
+    #x = range(0,len(school_name))
+
+    #for a in x:
+    #    mean_list.append(datamean)
+
+    #for b in x:
+    #    median_list.append(datamedian)
+    #mean_array = datamean.repeat(school_enrollment.mean(), len(school_enrollment))
+    #mean_array_df = pd.DataFrame(mean_array, columns = ['Mean'])
+
+    #median_array = datamedian.repeat(datamedian, len(school_enrollment))
+    #median_array_df = pd.DataFrame(median_array, columns = ['Median'])
+
+    fig, ax1 = plt.subplots(figsize=(10,6))
+
+    #fig = plt.figure(figsize=(10,8))
+    #plt.plot(school_capacity, school_enrollment, 'b-')
+    #ax =fig.add_axes([0,0,1,1])
+    #ax.bar(school_name, school_enrollment, color='b')
+    ax1.set_title('Enrollment for District')
+    ax1.set_xlabel('School_Name')
+    ax1.set_ylabel('School_Scores')
+
+    ax1.bar(school_name, school_enrollment, color='#7CFC00', edgecolor='#000000')#, width=-0.10, align = 'edge')
+    #plt.plot(school_name, mean_array_df, linewidth = 5, ls = 'dashed', color='#FFA500')
+    #plt.plot(school_name, pd.DataFrame(mean_list, columns=['Mean']), linewidth = 5, ls='dashed', color='#FFA500')
+    for tick in ax1.xaxis.get_major_ticks():
+            tick.label.set_fontsize(14)
+            # specify integer or one of preset strings, e.g.
+            # tick.label.set_fontsize('x-small')
+            tick.label.set_rotation('vertical')
+    plt.plot(school_name, datamean, linewidth = 5, ls = 'solid', color = '#4B0082' )
+    #plt.plot(school_name, pd.DataFrame(median_list, columns=['Median']), linewidth=5)
+
+    plt.xlabel("School Name")
+    plt.ylabel("Enrollment") 
+    #plt.title("Number of schools" + str(len(school_name)) +"again length" + str(len(school_enrollment)))   
+    plt.title("Enrollment for " + input_school_type +" schools for year " + academic_year)
+    plt.tight_layout()
+    graph = get_image()
+    return graph
+
+
+#==========================================================================
+#Outlier detection at national level
+#==========================================================================
+
+def get_outlier_national_plot(**kwargs):
+
+    plt.switch_backend('AGG')
+
+    #school_capacity = kwargs.get('x')
+    school_enrollment = kwargs.get('x')
+    school_name = kwargs.get('y')
+    #school_name = school_name.str.slice(0,1)
+    datamean = kwargs.get('data_mean')
+    input_school_type = kwargs.get('input_school_type')
+    academic_year = kwargs.get('academic_year')
+    #datamedian = kwargs.get('data_median')
+
+    fig, ax1 = plt.subplots(figsize=(11,6))
+
+
+
+    ax1.set_title('Enrollment for Selected Year')
+    ax1.set_xlabel('School_Name')
+    #ax1.set_ylabel('School_Scores')
+
+    ax1.bar(school_name, school_enrollment, color='#7CFC00', edgecolor='#000000')#, width=-0.10, align='edge')
+    for tick in ax1.xaxis.get_major_ticks():
+            tick.label.set_fontsize(14)
+            # specify integer or one of preset strings, e.g.
+            # tick.label.set_fontsize('x-small')
+            tick.label.set_rotation('vertical')
+    plt.plot(school_name, datamean, linewidth = 5, ls = 'solid', color = '#4B0082')
+    #plt.plot(school_name, pd.DataFrame(median_list, columns=['Median']), linewidth=5)
+
+    plt.xlabel("School Name")
+    plt.ylabel("Enrollment")    
+    plt.title("Enrollment for " + input_school_type +" schools for year " + academic_year)
+
+    plt.tight_layout()
+    graph = get_image()
+    return graph
+
+

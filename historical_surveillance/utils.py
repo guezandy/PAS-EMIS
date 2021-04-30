@@ -7,6 +7,8 @@ import seaborn as sns
 from sklearn.linear_model import LinearRegression
 from .models import School
 
+import numpy as np
+import pandas as pd
 
 def get_image() -> object:
     # create a byte buffer for the image to save
@@ -209,6 +211,43 @@ def get_plot(chart_type, **kwargs):
     return graph
 
 
+
+def get_outlier_district_plot(**kwargs):
+
+    plt.switch_backend('AGG')
+
+    
+    school_enrollment = kwargs.get('x')
+    school_name = kwargs.get('y')
+    
+    datamean = kwargs.get('data_mean')
+    input_school_type = kwargs.get('input_school_type')
+    academic_year = kwargs.get('academic_year')
+    district_input = kwargs.get('input_district')
+    
+
+
+
+    fig, ax1 = plt.subplots(figsize=(10,6))
+
+    
+    ax1.set_title('Enrollment for District')
+    ax1.set_xlabel('School_Name')
+    ax1.set_ylabel('School_Scores')
+
+    ax1.bar(school_name, school_enrollment, color='#7CFC00', edgecolor='#000000')
+
+    for tick in ax1.xaxis.get_major_ticks():
+            tick.label.set_fontsize(14)
+            tick.label.set_rotation('vertical')
+    plt.plot(school_name, datamean, linewidth = 5, ls = 'solid', color = '#4B0082' )
+    
+
+    plt.xlabel("School Name")
+    plt.ylabel("Enrollment") 
+      
+    plt.title("Enrollment for " + input_school_type +" schools for district " + district_input + " and "+  academic_year +  " academic year ")
+
 def get_plot_boys_primary(**kwargs):
     plt.switch_backend('AGG')
     data = kwargs.get('data')
@@ -268,10 +307,47 @@ def get_plot_girls_primary(**kwargs):
                     textcoords='offset points')
     # adjust legend
 
+
     plt.tight_layout()
     graph = get_image()
     return graph
 
+
+#==========================================================================
+#Outlier detection at national level
+#==========================================================================
+
+def get_outlier_national_plot(**kwargs):
+
+    plt.switch_backend('AGG')
+
+    
+    school_enrollment = kwargs.get('x')
+    school_name = kwargs.get('y')
+    
+    datamean = kwargs.get('data_mean')
+    input_school_type = kwargs.get('input_school_type')
+    academic_year = kwargs.get('academic_year')
+    
+
+    fig, ax1 = plt.subplots(figsize=(11,6))
+
+
+
+    ax1.set_title('Enrollment for Selected Year')
+    ax1.set_xlabel('School_Name')
+    
+
+    ax1.bar(school_name, school_enrollment, color='#7CFC00', edgecolor='#000000')
+    for tick in ax1.xaxis.get_major_ticks():
+            tick.label.set_fontsize(14)
+            tick.label.set_rotation('vertical')
+    plt.plot(school_name, datamean, linewidth = 5, ls = 'solid', color = '#4B0082')
+    
+
+    plt.xlabel("School Name")
+    plt.ylabel("Enrollment")    
+    plt.title("Enrollment for " + input_school_type +" schools for year " + academic_year)
 
 def get_plot_primary(**kwargs):
     plt.switch_backend('AGG')
@@ -384,9 +460,11 @@ def get_plot_secondary(**kwargs):
         plt.xlabel("Academic Year")
         plt.legend()
         plt.grid()
+
     plt.tight_layout()
     graph = get_image()
     return graph
+
 
 
 def get_plot_regression(**kwargs):

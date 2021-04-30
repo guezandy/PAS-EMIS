@@ -1,5 +1,7 @@
-import datetime
-from datetime import datetime
+
+import json
+
+
 import pandas as pd
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
@@ -75,6 +77,7 @@ def create_institution(request):
             return redirect("/historical/create_institution")
     context = {"form": form, "name_of_school": data}
     return render(request, "create_school.html", context)
+
 
 # View for the update of a school
 # To-Do
@@ -530,9 +533,12 @@ def update_national_teacher_ratio(request, code=None):
             data_to_update.academic_year = form.cleaned_data['academic_year']
             data_to_update.total_enrollment = request.POST.get('total_enrollment', False)
             data_to_update.number_of_trained_male_teachers = request.POST.get('number_of_trained_male_teachers', False)
-            data_to_update.number_of_trained_female_teachers = request.POST.get('number_of_trained_female_teachers', False)
-            data_to_update.number_of_untrained_male_teachers = request.POST.get('number_of_untrained_male_teachers', False)
-            data_to_update.number_of_untrained_female_teachers = request.POST.get('number_of_untrained_female_teachers', False)
+            data_to_update.number_of_trained_female_teachers = request.POST.get('number_of_trained_female_teachers',
+                                                                                False)
+            data_to_update.number_of_untrained_male_teachers = request.POST.get('number_of_untrained_male_teachers',
+                                                                                False)
+            data_to_update.number_of_untrained_female_teachers = request.POST.get('number_of_untrained_female_teachers',
+                                                                                  False)
             data_to_update.total_number_of_teachers = request.POST.get('total_number_of_teachers', False)
             data_to_update.updated_at = date.today().strftime("%Y-%m-%d")
             data_to_update.updated_by = request.user.username
@@ -542,7 +548,122 @@ def update_national_teacher_ratio(request, code=None):
 
 
 def enrollment_summary(request):
-    return render(request, 'enrollment_summary.html', {})
+    enrollments = pd.DataFrame(NationalGenderEnrollment.objects.values().all())
+    census = pd.DataFrame(NationalEducationCensus.objects.
+                          values('academic_year', 'age_5_to_11_years', 'age_12_to_16_years').all())
+    df = pd.merge(left=enrollments, right=census, on='academic_year')
+    json_records = df.reset_index().to_json(orient='records')
+    data = json.loads(json_records)
+    context = {'d': data}
+    if 'ger_primary' in request.POST:
+        df1 = df.query("sex=='male' and category_of_school == 'primary'")
+        data_boys_1 = df1[['academic_year', 'sex', 'enrollment', 'age_5_to_11_years']]
+        json_records = data_boys_1.reset_index().to_json(orient='records')
+        data_boys_primary = json.loads(json_records)
+        # function to get the graph
+        graph_boys_primary = get_plot_boys_primary(data=data_boys_1)
+
+        df2 = df.query("sex=='female' and category_of_school == 'primary'")
+        data_girls_1 = df2[['academic_year', 'sex', 'enrollment', 'age_5_to_11_years']]
+        json_records = data_girls_1.reset_index().to_json(orient='records')
+        data_girls_primary = json.loads(json_records)
+        # function to get the graph
+        graph_girls_primary = get_plot_girls_primary(data=data_girls_1)
+
+        df3 = df.query("category_of_school == 'primary'")
+        data_both_primary = df3[['academic_year', 'sex', 'enrollment', 'age_5_to_11_years']]
+        json_records = data_both_primary.reset_index().to_json(orient='records')
+        all_data_primary = json.loads(json_records)
+        graph_all_primary = get_plot_primary(data=data_both_primary,
+                                             data_boys=data_boys_1,
+                                             data_girls=data_girls_1)
+        data_all_primary = {'d_boys': data_boys_primary,
+                            'd_primary': all_data_primary,
+                            'd_girls_primary': data_girls_primary,
+                            'graph_boys_primary': graph_boys_primary,
+                            'graph_all_primary': graph_all_primary,
+                            'graph_girls_primary': graph_girls_primary}
+        return render(request, 'ger.html', data_all_primary)
+    if 'ger_secondary' in request.POST:
+        df1 = df.query("sex=='male' and category_of_school == 'secondary'")
+        data_boys_1 = df1[['academic_year', 'sex', 'enrollment', 'age_12_to_16_years']]
+        json_records = data_boys_1.reset_index().to_json(orient='records')
+        data_boys_secondary = json.loads(json_records)
+        # function to get the graph
+        graph_boys_secondary = get_plot_boys_secondary(data=data_boys_1)
+
+        df2 = df.query("sex=='female' and category_of_school == 'secondary'")
+        data_girls_1 = df2[['academic_year', 'sex', 'enrollment', 'age_12_to_16_years']]
+        json_records = data_girls_1.reset_index().to_json(orient='records')
+        data_girls_secondary = json.loads(json_records)
+        # function to get the graph
+        graph_girls_secondary = get_plot_girls_secondary(data=data_girls_1)
+
+        df3 = df.query("category_of_school == 'secondary'")
+        data_both_secondary = df3[['academic_year', 'sex', 'enrollment', 'age_12_to_16_years']]
+        json_records = data_both_secondary.reset_index().to_json(orient='records')
+        all_data_secondary = json.loads(json_records)
+        graph_all_secondary = get_plot_secondary(data=data_both_secondary,
+                                                 data_boys=data_boys_1,
+                                                 data_girls=data_girls_1)
+        data_all_secondary = {'d_boys': data_boys_secondary,
+                              'd_secondary': all_data_secondary,
+                              'd_girls_secondary': data_girls_secondary,
+                              'graph_boys_secondary': graph_boys_secondary,
+                              'graph_all_secondary': graph_all_secondary,
+                              'graph_girls_secondary': graph_girls_secondary}
+        return render(request, 'ger_secondary.html', data_all_secondary)
+    if 'ger_gdp' in request.POST:
+        expenditure = pd.DataFrame(NationalExpenditure.objects.
+                                   values('academic_year', 'gdp_millions').all())
+        df_regression = pd.merge(left=df, right=expenditure, on='academic_year')
+        json_records = df_regression.reset_index().to_json(orient='records')
+        data_regression = json.loads(json_records)
+
+        df1 = df_regression.query("sex=='male' and category_of_school == 'primary'")
+        data_boys_1 = df1[['academic_year', 'sex', 'enrollment', 'age_5_to_11_years', 'gdp_millions']]
+        data_boys_1 = data_boys_1[(data_boys_1[['age_5_to_11_years', 'gdp_millions']] != 0).all(axis=1)]
+        data_boys_1['ger'] = (data_boys_1['enrollment'] / data_boys_1['age_5_to_11_years']) * 100
+        data_boys_1['ger'] = data_boys_1['ger'].replace(np.inf, 0)
+        data_boys_1['ger'].astype(float)
+        json_records = data_boys_1.reset_index().to_json(orient='records')
+        data_boys_primary = json.loads(json_records)
+
+        df2 = df_regression.query("sex=='female' and category_of_school == 'primary'")
+        data_girls_1 = df2[['academic_year', 'sex', 'enrollment', 'age_5_to_11_years', 'gdp_millions']]
+        json_records = data_girls_1.reset_index().to_json(orient='records')
+        data_girls_primary = json.loads(json_records)
+
+        df1 = df_regression.query("sex=='male' and category_of_school == 'secondary'")
+        data_boys_1_secondary = df1[['academic_year', 'sex', 'enrollment', 'age_12_to_16_years', 'gdp_millions']]
+        json_records = data_boys_1_secondary.reset_index().to_json(orient='records')
+        data_boys_secondary = json.loads(json_records)
+        # function to get the graph
+
+        df2 = df_regression.query("sex=='female' and category_of_school == 'secondary'")
+        data_girls_1_secondary = df2[['academic_year', 'sex', 'enrollment', 'age_12_to_16_years', 'gdp_millions']]
+        json_records = data_girls_1_secondary.reset_index().to_json(orient='records')
+        data_girls_secondary = json.loads(json_records)
+        # function to get the graph
+
+        graph_all = get_plot_regression(data=df_regression,
+                                        data_boys_primary=data_boys_1,
+                                        data_girls_primary=data_girls_1,
+                                        data_boys_secondary=data_boys_1_secondary,
+                                        data_girls_secondary=data_girls_1_secondary
+                                        )
+        context = {'d_boys': data_boys_primary,
+                   'd': data_regression,
+                   'd_girls_primary': data_girls_primary,
+                   'd_girls_secondary': data_girls_secondary,
+                   'd_boys_primary': data_boys_secondary,
+                   'd_boys_secondary': data_girls_secondary,
+                   'graph_all': graph_all
+                   }
+
+        return render(request, 'ger_regression.html', context)
+
+    return render(request, 'enrollment_summary.html', context)
 
 
 def special_ed_quest(request):

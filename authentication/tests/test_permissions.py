@@ -14,6 +14,7 @@ from emis.permissions import (
 from emis.groups import PERMISSIONS_BY_GROUP, TEACHERS_GROUP, build_groups
 from helpers.testing.TestCases import create_user_in_group, ViewTestCase
 from authentication.views.sysadmin import create_user
+from helpers.testing.mocks import generate_school
 
 
 class GroupPermissionTests(ViewTestCase):
@@ -38,6 +39,7 @@ class GroupPermissionTests(ViewTestCase):
     def setUp(self):
         super(GroupPermissionTests, self).setUp()
         build_groups()
+        self.school = generate_school()
 
     def test_perm_access_for_groups(self):
         """
@@ -70,13 +72,14 @@ class GroupPermissionTests(ViewTestCase):
         teacher_group_pos = list(PERMISSIONS_BY_GROUP.keys()).index(TEACHERS_GROUP) + 1
 
         response = self.client.post(
-            reverse("authentication:create-user"),
+            "/auth/sysadmin/users/create/teacher",
             data={
                 "username": user_name,
                 "first_name": "teacher",
                 "last_name": "test",
                 "email": "teacher@test.com",
                 "groups": [str(teacher_group_pos)],
+                "school": self.school.id,
             },
         )
 

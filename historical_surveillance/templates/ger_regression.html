@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+{% block page_content %}
+<!-- This form handles the creation of schools in each district.
+The error handling needs to be reviewed for now, it takes the error messaged passed as a dictionary
+from the school view and displays to the user preventing duplicate data entry.
+The form is redirected to the home page of the app when a data is inserted to prevent double insert
+of the same data which is also handled by the error message displayed.
+-->
+<main>
+    <div class="row">
+        <div class="col-xl-12 col-md-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3>Regression-Plots between GDP Per Capita and GER</h3>
+                          <div class="table-responsive card bg-body mb-4">
+                            <table class="table table-bordered" id="dataTable" max-width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Academic Year</th>
+                                        <th>Total Enrollment</th>
+                                        <th>Sex</th>
+                                        <th>Population of Age 5 -11</th>
+                                        <th>Population of Age 12 -16</th>
+                                         <th>Category of Schools</th>
+                                        <th>GDP (Million XCD)</th>
+
+                                    </tr>
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                        <th>Academic Year</th>
+                                        <th>Total Enrollment</th>
+                                        <th>Sex</th>
+                                        <th>Population of Age 5 -11</th>
+                                        <th>Population of Age 12 -16</th>
+                                         <th>Category of Schools</th>
+                                        <th>GDP (Million XCD)</th>
+                                    </tr>
+                                </tfoot>
+                                <tbody>
+                                    {% for row in d %}
+
+                                    <tr>
+                                        <td>{{ row.academic_year}}</td>
+                                        <td>{{ row.enrollment }}</td>
+                                         <td>{{ row.sex }}</td>
+                                        <td>{{ row.age_5_to_11_years }}</td>
+                                        <td>{{ row.age_12_to_16_years }}</td>
+                                        <td>{{ row.category_of_school }}</td>
+                                        <td>{{ row.gdp_millions }}</td>
+
+
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+<div class ='row'>
+
+        <div class="col-xl-12 col-md-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    {% if request.POST %}
+                {% if graph_all %}
+                <img src="data:image/png;base64, {{ graph_all | safe}}" alt="analysis Image" />
+                {%endif%}
+                {% endif%}
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+
+
+</main>
+
+
+
+
+
+{% endblock%}

@@ -1,12 +1,16 @@
 import base64
 from io import BytesIO
+
 import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
+from sklearn.linear_model import LinearRegression
 from .models import School
 
 import numpy as np
 import pandas as pd
 
-def get_image():
+def get_image() -> object:
     # create a byte buffer for the image to save
     buffer = BytesIO()
     # create a plot with the use of bytesio object
@@ -31,7 +35,7 @@ def get_grade_plot(**kwargs):
     year = kwargs.get('academic_year')
     # the grade
     z = kwargs.get('z')
-    data = kwargs.get('data')
+
     school_name = kwargs.get('name_of_school')
     fig, ax = plt.subplots(figsize=(10, 8))
     ax.bar(z, x, width=0.40, color='g', label='if data exist by gender,bottom values ='
@@ -192,7 +196,6 @@ def get_plot(chart_type, **kwargs):
         ax.set_ylim([0, max(z) + 300])
         ax.legend()
 
-
     else:
         title = school_name
         plt.figure(figsize=(10, 8))
@@ -208,10 +211,6 @@ def get_plot(chart_type, **kwargs):
     return graph
 
 
-
-#===========================================================
-#Outlier detection plot at district level
-#===========================================================
 
 def get_outlier_district_plot(**kwargs):
 
@@ -248,6 +247,67 @@ def get_outlier_district_plot(**kwargs):
     plt.ylabel("Enrollment") 
       
     plt.title("Enrollment for " + input_school_type +" schools for district " + district_input + " and "+  academic_year +  " academic year ")
+
+def get_plot_boys_primary(**kwargs):
+    plt.switch_backend('AGG')
+    data = kwargs.get('data')
+    for _ in data.shape:
+        ger = (data['enrollment'] / data['age_5_to_11_years']) * 100
+        academic_year = data.academic_year
+    sns.set(font_scale=1)
+    sns.set_style("white")
+    ax = ger.plot.bar(figsize=(15, 6))
+    sns.despine(left=True, bottom=True)
+    # label and title
+    ax.set_xticklabels(np.arange(len(academic_year)))
+    ax.set_title('Gross Enrollment Ratio (%) for Boys in Primary School In St. Lucia', size=18)
+    ax.set_xticklabels(academic_year)
+    for tick in ax.get_xticklabels():
+        tick.set_rotation(-30)
+    ax.set(xlabel='Academic Year', ylabel='Gross enrollment rate (%)')
+
+    # annotations
+    for p in ax.patches:
+        ax.annotate(format(p.get_height(), '.2f'),
+                    (p.get_x() + p.get_width() / 2., p.get_height()),
+                    ha='center', va='center',
+                    xytext=(0, 9),
+                    textcoords='offset points')
+    # adjust legend
+
+    plt.tight_layout()
+    graph = get_image()
+    return graph
+
+
+def get_plot_girls_primary(**kwargs):
+    plt.switch_backend('AGG')
+    data = kwargs.get('data')
+    for _ in data.shape:
+        ger = (data['enrollment'] / data['age_5_to_11_years']) * 100
+        academic_year = data.academic_year
+    sns.set(font_scale=1)
+    sns.set_style("white")
+    ax = ger.plot.bar(figsize=(15, 6), color='green')
+    sns.despine(left=True, bottom=True)
+    # label and title
+    ax.set_xticklabels(np.arange(len(academic_year)))
+    ax.set_title('Gross Enrollment Ratio (%) for Girls in Primary School In St. Lucia', size=18)
+    ax.set_xticklabels(academic_year)
+    for tick in ax.get_xticklabels():
+        tick.set_rotation(-30)
+    ax.set(xlabel='Academic Year', ylabel='Gross enrollment rate (%)')
+
+    # annotations
+    for p in ax.patches:
+        ax.annotate(format(p.get_height(), '.2f'),
+                    (p.get_x() + p.get_width() / 2., p.get_height()),
+                    ha='center', va='center',
+                    xytext=(0, 9),
+                    textcoords='offset points')
+    # adjust legend
+
+
     plt.tight_layout()
     graph = get_image()
     return graph
@@ -289,8 +349,129 @@ def get_outlier_national_plot(**kwargs):
     plt.ylabel("Enrollment")    
     plt.title("Enrollment for " + input_school_type +" schools for year " + academic_year)
 
+def get_plot_primary(**kwargs):
+    plt.switch_backend('AGG')
+    data = kwargs.get('data')
+    data_boys = kwargs.get('data_boys')
+    data_girls = kwargs.get('data_girls')
+
+    for _ in data.shape:
+        ger_boys = (data_boys['enrollment'] / data_boys['age_5_to_11_years']) * 100
+        ger_girls = (data_girls['enrollment'] / data_girls['age_5_to_11_years']) * 100
+        academic_year = data_girls.academic_year
+        title = 'Trend of GER for Primary Schools in St. Lucia'
+        plt.figure(figsize=(10, 8))
+        plt.title(title)
+        plt.plot(academic_year, ger_boys, 'b-', label='boys')
+        plt.plot(academic_year, ger_girls, 'g-', label='girls')
+        plt.xticks(rotation=60)
+        # plt.ylim(0, max(y) + 100)
+        plt.ylabel("Gross Enrollment Ratio for boys and girls in St. Lucia")
+        plt.xlabel("Academic Year")
+        plt.legend()
+        plt.grid()
     plt.tight_layout()
     graph = get_image()
     return graph
 
+
+def get_plot_boys_secondary(**kwargs):
+    plt.switch_backend('AGG')
+    data = kwargs.get('data')
+    for _ in data.shape:
+        ger = (data['enrollment'] / data['age_12_to_16_years']) * 100
+        academic_year = data.academic_year
+    sns.set(font_scale=1)
+    sns.set_style("white")
+    ax = ger.plot.bar(figsize=(15, 6))
+    sns.despine(left=True, bottom=True)
+    # label and title
+    ax.set_xticklabels(np.arange(len(academic_year)))
+    ax.set_title('Gross Enrollment Ratio (%) for Boys in Secondary School In St. Lucia', size=18)
+    ax.set_xticklabels(academic_year)
+    for tick in ax.get_xticklabels():
+        tick.set_rotation(-30)
+    ax.set(xlabel='Academic Year', ylabel='Gross enrollment rate (%)')
+
+    # annotations
+    for p in ax.patches:
+        ax.annotate(format(p.get_height(), '.2f'),
+                    (p.get_x() + p.get_width() / 2., p.get_height()),
+                    ha='center', va='center',
+                    xytext=(0, 9),
+                    textcoords='offset points')
+    # adjust legend
+
+    plt.tight_layout()
+    graph = get_image()
+    return graph
+
+
+def get_plot_girls_secondary(**kwargs):
+    plt.switch_backend('AGG')
+    data = kwargs.get('data')
+    for _ in data.shape:
+        ger = (data['enrollment'] / data['age_12_to_16_years']) * 100
+        academic_year = data.academic_year
+    sns.set(font_scale=1)
+    sns.set_style("white")
+    ax = ger.plot.bar(figsize=(15, 6), color='green')
+    sns.despine(left=True, bottom=True)
+    # label and title
+    ax.set_xticklabels(np.arange(len(academic_year)))
+    ax.set_title('Gross Enrollment Ratio (%) for Girls in secondary School In St. Lucia', size=18)
+    ax.set_xticklabels(academic_year)
+    for tick in ax.get_xticklabels():
+        tick.set_rotation(-30)
+    ax.set(xlabel='Academic Year', ylabel='Gross enrollment rate (%)')
+
+    # annotations
+    for p in ax.patches:
+        ax.annotate(format(p.get_height(), '.2f'),
+                    (p.get_x() + p.get_width() / 2., p.get_height()),
+                    ha='center', va='center',
+                    xytext=(0, 9),
+                    textcoords='offset points')
+    # adjust legend
+
+    plt.tight_layout()
+    graph = get_image()
+    return graph
+
+
+def get_plot_secondary(**kwargs):
+    plt.switch_backend('AGG')
+    data = kwargs.get('data')
+    data_boys = kwargs.get('data_boys')
+    data_girls = kwargs.get('data_girls')
+
+    for _ in data.shape:
+        ger_boys = (data_boys['enrollment'] / data_boys['age_12_to_16_years']) * 100
+        ger_girls = (data_girls['enrollment'] / data_girls['age_12_to_16_years']) * 100
+        academic_year = data_girls.academic_year
+        title = 'Trend of GER for Primary Schools in St. Lucia'
+        plt.figure(figsize=(10, 8))
+        plt.title(title)
+        plt.plot(academic_year, ger_boys, 'b-', label='boys')
+        plt.plot(academic_year, ger_girls, 'g-', label='girls')
+        plt.xticks(rotation=60)
+        # plt.ylim(0, max(y) + 100)
+        plt.ylabel("Gross Enrollment Ratio for boys and girls in Secondary School")
+        plt.xlabel("Academic Year")
+        plt.legend()
+        plt.grid()
+
+    plt.tight_layout()
+    graph = get_image()
+    return graph
+
+
+
+def get_plot_regression(**kwargs):
+    plt.switch_backend('AGG')
+    data = kwargs.get('data')
+    data_boys_primary = kwargs.get('data_boys_primary')
+    data_girls_primary = kwargs.get('data_girls_primary')
+    data_boys_secondary = kwargs.get('data_boys_secondary')
+    data_girls_secondary = kwargs.get('data_girls_secondary')
 

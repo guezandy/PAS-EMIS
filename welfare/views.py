@@ -468,7 +468,7 @@ def student_service_form(request, student_code, service_code=None):
     if service:
         header = f"Edit {service.name} for: {student.last_name}, {student.first_name}"
     else:
-        header = f"Create support/service for: {student.last_name}, {student.first_name}"
+        header = f"Assign service to: {student.last_name}, {student.first_name}"
     context = {
         "header": header,
         "form": form,

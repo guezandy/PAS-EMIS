@@ -579,7 +579,7 @@ def outlier_district(request):
     if (len(districts_names) > 0 and len(school_categories)> 0):
         if ((request.method) == 'POST'):
 
-            district_selected  = request.POST.get('district_name', False)
+            district_selected  = request.POST.get('district_name', None)
             selected_year = request.POST.get('year', None)
             selected_school_type = request.POST.get('school_type', None)
 
@@ -599,9 +599,9 @@ def outlier_district(request):
                     schools_df = pd.DataFrame(School.objects.all().values())
                     final_df = pd.merge(left = enrollment_df, right = schools_df,
                                         left_on='name_of_school_id', right_on='id')
-                    #graph = get_grade_plot(x = enrollment_df[''])
+                    
                     enrollment_mean = final_df['total_enrollment'].mean()
-                    #print(enrollment_mean)
+                    
                     enrollment_median = final_df['total_enrollment'].median()
 
                     mean_list = []
@@ -618,14 +618,13 @@ def outlier_district(request):
                                                       data = final_df,
                                                       academic_year = selected_year,
                                                       data_mean  = data_mean,   
-                                                      input_school_type = selected_school_type                                 
+                                                      input_school_type = selected_school_type, 
+                                                      input_district = district_selected                             
                                                       )
     else:
         error_message = "No records found"
 
-        #return render(request, 'outlier_school_page.html', {})
-
-        #else:
+        
     
     stu = {
         "graph" : graph,
@@ -635,16 +634,16 @@ def outlier_district(request):
         "school_list" : school_categories
 
     }
-    #return render(request, 'outlier_district_page.html', {"districts_names": districts_names})
+    
     return render(request, 'outlier_district_page.html', stu)
-    #return render(request, 'outlier_district_page.html', {})
+    
 
 #==============================================
-#View for outlier detection at school level
+#View for outlier detection at national level
 #==============================================
 
 def outlier_national(request):
-    #return HttpResponse('In outlier detection at school level')
+    
     error_message = None
     graph = None
     selected_school_type = ''
@@ -672,11 +671,11 @@ def outlier_national(request):
                     schools_df = pd.DataFrame(School.objects.all().values())
                     final_df = pd.merge(left = enrollment_df, right = schools_df,
                                         left_on='name_of_school_id', right_on='id')
-                    #graph = get_grade_plot(x = enrollment_df[''])
+                    
 
                     
                     enrollment_mean = final_df['total_enrollment'].mean()
-                    #print(enrollment_mean)
+                    
 
                     mean_list = []
                     
@@ -697,9 +696,7 @@ def outlier_national(request):
     else:
         error_message = "No records found"
 
-        #return render(request, 'outlier_school_page.html', {})
-
-        #else:
+       
     
     stu = {
         "graph" : graph,

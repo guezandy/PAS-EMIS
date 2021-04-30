@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block page_content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class='col-8'>
+            <h1>{{student_last_name}}, {{student_first_name}}</h1>
+            {% if school_name %}
+            <h4>{{school_name}}, Class of {{student_grad}}</h4>
+            {% endif %}
+        </div>
+        <div class="col action-button-group">
+            <a href="/welfare/student/{{student_id}}/add_service"><button type="button"
+                class="btn btn-success mb-2">Add Service</button></a>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%">Service name</th>
+                            <th style="width: 15%">Start</th>
+                            <th style="width: 15%">End</th>
+                            <th style="width: 45%">Comments</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for service_assoc in service_assocs %}
+                        <tr class='clickable-row' data-href="/welfare/student/{{student_id}}/edit_service/{{service_assoc.service_id}}">
+                            <td style="width: 25%">{{service_assoc.service_name}}</td>
+                            <td style="width: 15%">{{service_assoc.service_start}}</td>
+                            <td style="width: 15%">{{service_assoc.service_end}}</td>
+                            <td style="width: 45%">{{service_assoc.comment}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock page_content %}

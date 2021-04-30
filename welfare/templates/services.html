@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block page_content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class='col-md-6'>
+            <h1>Service Definitions</h1>
+        </div>
+        <div class="col-md-6 action-button-group">
+            <a href="{% url 'welfare:create_service' %}"><button type="button"
+                class="btn btn-success mb-2">Define New Service</button></a>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%">Service name</th>
+                            <th style="width: 70%">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for service in services %}
+                        <tr class='clickable-row' data-href="/welfare/edit_service/{{service.id}}">
+                            <td style="width: 30%">{{service.name}}</td>
+                            <td style="width: 70%">{{service.description}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock page_content %}

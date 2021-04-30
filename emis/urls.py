@@ -25,5 +25,6 @@ urlpatterns = [
     path("auth/", include("authentication.urls")),
     path("historical/", include("historical_surveillance.urls")),
     path("school/", include("school.urls")),
+    path("welfare/", include("welfare.urls")),
     path("admin/", admin.site.urls),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

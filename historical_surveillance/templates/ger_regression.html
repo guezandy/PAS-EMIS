@@ -13,7 +13,7 @@ of the same data which is also handled by the error message displayed.
         <div class="col-xl-12 col-md-12">
             <div class="card mb-4">
                 <div class="card-body">
-                    <h3>Census Versus Enrollment for Boys & Girls in Primary School </h3>
+                    <h3>Regression-Plots between GDP Per Capita and GER</h3>
                           <div class="table-responsive card bg-body mb-4">
                             <table class="table table-bordered" id="dataTable" max-width="100%">
                                 <thead>
@@ -22,6 +22,9 @@ of the same data which is also handled by the error message displayed.
                                         <th>Total Enrollment</th>
                                         <th>Sex</th>
                                         <th>Population of Age 5 -11</th>
+                                        <th>Population of Age 12 -16</th>
+                                         <th>Category of Schools</th>
+                                        <th>GDP (Million XCD)</th>
 
                                     </tr>
                                 </thead>
@@ -31,16 +34,22 @@ of the same data which is also handled by the error message displayed.
                                         <th>Total Enrollment</th>
                                         <th>Sex</th>
                                         <th>Population of Age 5 -11</th>
+                                        <th>Population of Age 12 -16</th>
+                                         <th>Category of Schools</th>
+                                        <th>GDP (Million XCD)</th>
                                     </tr>
                                 </tfoot>
                                 <tbody>
-                                    {% for row in d_primary %}
+                                    {% for row in d %}
 
                                     <tr>
                                         <td>{{ row.academic_year}}</td>
                                         <td>{{ row.enrollment }}</td>
                                          <td>{{ row.sex }}</td>
                                         <td>{{ row.age_5_to_11_years }}</td>
+                                        <td>{{ row.age_12_to_16_years }}</td>
+                                        <td>{{ row.category_of_school }}</td>
+                                        <td>{{ row.gdp_millions }}</td>
 
 
                                     </tr>
@@ -62,8 +71,8 @@ of the same data which is also handled by the error message displayed.
             <div class="card mb-4">
                 <div class="card-body">
                     {% if request.POST %}
-                {% if graph_all_primary %}
-                <img src="data:image/png;base64, {{ graph_all_primary | safe}}" alt="analysis Image" />
+                {% if graph_all %}
+                <img src="data:image/png;base64, {{ graph_all | safe}}" alt="analysis Image" />
                 {%endif%}
                 {% endif%}
                 </div>
@@ -74,41 +83,6 @@ of the same data which is also handled by the error message displayed.
 
     </div>
 
-<div class ='row'>
-
-        <div class="col-xl-12 col-md-12">
-            <div class="card mb-4">
-                <div class="card-body">
-                    {% if request.POST %}
-                {% if graph_boys_primary %}
-                <img src="data:image/png;base64, {{ graph_boys_primary | safe}}" alt="analysis Image" />
-                {%endif%}
-                {% endif%}
-                </div>
-            </div>
-        </div>
-
-
-
-    </div>
-
-<div class ='row'>
-
-        <div class="col-xl-12 col-md-12">
-            <div class="card mb-4">
-                <div class="card-body">
-                    {% if request.POST %}
-                {% if graph_girls_primary %}
-                <img src="data:image/png;base64, {{ graph_girls_primary | safe}}" alt="analysis Image" />
-                {%endif%}
-                {% endif%}
-                </div>
-            </div>
-        </div>
-
-
-
-    </div>
 
 
 </main>

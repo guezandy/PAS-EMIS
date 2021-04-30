@@ -30,6 +30,20 @@
 
                     </form>
 
+                     <form method = "POST" action="">
+                         {% csrf_token %}
+                        <input type="submit" name="ger_secondary" class="btn btn-info" value="Get GER - Secondary" />
+                        <br/><br/>
+
+                    </form>
+
+                    <form method = "POST" action="">
+                         {% csrf_token %}
+                        <input type="submit" name="ger_gdp" class="btn btn-secondary" value="Get GER - Regression" />
+                        <br/><br/>
+
+                    </form>
+
 
 
 

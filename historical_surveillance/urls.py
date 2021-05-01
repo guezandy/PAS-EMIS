@@ -21,10 +21,12 @@ urlpatterns = [
         views.update_enroll_class,
         name="update-enroll-class",
     ),
-    # for the create district page
+    # for the viewing districts
     path("district", views.district, name="district"),
+    # for creating districts
+    path("district/create", views.edit_district, name="create-district"),
     # to update the created district
-    path("update_district/<int:code>", views.update_district, name="update-district"),
+    path("update_district/<int:code>", views.edit_district, name="update-district"),
     # for the create schools page
     path("create_institution", views.create_institution, name="create-school"),
     # to update the created schools

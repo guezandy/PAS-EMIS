@@ -63,12 +63,11 @@ PLAYING_FIELD_CHOICES = [
 
 class District(models.Model):
     objects = None
-    # created_at = models.DateField(auto_now_add=True)
-    created_at = models.DateField()
+    created_at = models.DateField(auto_now_add=True)
     created_by = models.CharField(max_length=255, blank=True)
     district_code = models.CharField(max_length=50, blank=True, unique=True)
     district_name = models.CharField(max_length=50)
-    updated_at = models.DateField()
+    updated_at = models.DateField(auto_now=True)
     updated_by = models.CharField(max_length=255, blank=True)
 
     class Meta(CustomPermissionModel.Meta):

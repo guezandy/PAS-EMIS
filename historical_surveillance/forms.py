@@ -8,10 +8,6 @@ class DistrictForms(forms.ModelForm):
     class Meta:
         model = District
         fields = ["district_name", "district_code"]
-        widgets = {
-            "created_by": TextInput(attrs={"readonly": "readonly"}),
-            "updated_by": TextInput(attrs={"readonly": "readonly"}),
-        }
 
 
 class AggregateEnrollmentForms(forms.ModelForm):

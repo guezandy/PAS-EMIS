@@ -22,44 +22,25 @@ def index(request):
 
 def district(request, code=None):
     data = District.objects.all()
-    if code:
-        district_query = District.objects.filter(district_code=code)
-        # Invalid district code
-        if not district_query.exists():
-            return redirect("/historical/district")
-        instance = district_query.first()
-    else:
-        instance = District(
-            created_by=request.user.username,
-            updated_by=request.user.username,
-            created_at=date.today().strftime("%Y-%m-%d"),
-            updated_at=date.today().strftime("%Y-%m-%d")
-        )
-    form = DistrictForms(request.POST or None, instance=instance)
-    if request.method == "POST":
-        if form.is_valid():
-            # check if the district name already exist, then don't insert into the database
-            district_name = form.cleaned_data['district_name']
-            if not District.objects.filter(district_name=district_name).exists():
-                form.save()
-            return redirect("/historical/district")
-    context = {"form": form, "district_created": data}
+    context = {"district_created": data}
     return render(request, "district.html", context)
 
-
-def update_district(request, code=None):
-    district_to_update = get_object_or_404(District, pk=code)
-    if request.method == 'POST':
-        form = DistrictForms(request.POST)
+def edit_district(request, code=None):
+    # Render edit form
+    if code:
+        instance = get_object_or_404(District, pk=code)
+    # Render create form
+    else:
+        instance = District(created_by=request.user.username, updated_by=request.user.username)
+    form = DistrictForms(request.POST or None, instance=instance)
+    # Process submit
+    if request.method == "POST":
         if form.is_valid():
-            district_to_update.district_name = form.cleaned_data['district_name']
-            district_to_update.district_code = form.cleaned_data['district_code']
-            district_to_update.updated_at = date.today().strftime("%Y-%m-%d")
-            district_to_update.updated_by = request.user.username
-            district_to_update.save()
-        return redirect("/historical/district")
-    return render(request, 'edit_district.html', {'district_to_update': district_to_update})
-
+            form.save()
+            return redirect("/historical/district")
+    context = {"header": "Edit District" if code else "Create District", "form": form}
+    #context = _add_side_navigation_context(request.user, context)
+    return render(request, "form.html", context)
 
 # This function controls the schools creation form view and process form data for save into the database
 def create_institution(request):

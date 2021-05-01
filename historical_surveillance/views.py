@@ -901,6 +901,9 @@ def upload_scores(request):
     context['cee_field_names'] = cee_field_names
     context['csec_field_names'] = csec_field_names
 
+    context['cee_count'] = CEEResults.objects.count()
+    context['csec_count'] = CSECResults.objects.count()
+
     if "GET" == request.method:
         return render(request, "upload_scores.html", context)
     type = "CEE"
@@ -932,9 +935,13 @@ def upload_scores(request):
     result = store_scores(scores, field_names, user_data, type)
     if 'error_message' in result:
         context['error_message'] = result['error_message']
+    if 'missing_fields' in result:
+        context['missing_fields'] = result['missing_fields']
     n_scores = 0
     if 'n_scores' in result:
         context['n_scores'] = result['n_scores']
     if 'failed' in result:
         context['failed'] = result['failed']
+    context['cee_count'] = CEEResults.objects.count()
+    context['csec_count'] = CSECResults.objects.count()
     return render(request, "upload_scores.html", context)

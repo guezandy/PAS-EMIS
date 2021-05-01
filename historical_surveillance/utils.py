@@ -542,7 +542,12 @@ def store_scores(data, required_fields, user_data, type):
     lines = data.replace("\r", "").split("\n")
     field_names = lines[0].split(",")
     if not set(required_fields).issubset(set(field_names)):
-        result['error_message'] = 'Check all required fields are present in CSV file.'
+        diff = set(required_fields) - set(field_names)
+        missing_fields = []
+        for d in diff:
+            missing_fields.append(d)
+        result['missing_fields'] = missing_fields
+        result['error_message'] = 'The following fields are missing:\n'
         result['n_scores'] = 0
     else:
         succeeded = 0

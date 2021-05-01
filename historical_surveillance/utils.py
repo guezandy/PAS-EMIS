@@ -217,6 +217,10 @@ def get_plot(chart_type, **kwargs):
 
 
 
+
+#===================================================================
+#Outlier detection at district level
+#===================================================================
 def get_outlier_district_plot(**kwargs):
 
     plt.switch_backend('AGG')
@@ -252,6 +256,11 @@ def get_outlier_district_plot(**kwargs):
     plt.ylabel("Enrollment") 
       
     plt.title("Enrollment for " + input_school_type +" schools for district " + district_input + " and "+  academic_year +  " academic year ")
+
+    plt.tight_layout()
+    graph = get_image()
+    return graph
+
 
 def get_plot_boys_primary(**kwargs):
     plt.switch_backend('AGG')
@@ -353,6 +362,12 @@ def get_outlier_national_plot(**kwargs):
     plt.xlabel("School Name")
     plt.ylabel("Enrollment")    
     plt.title("Enrollment for " + input_school_type +" schools for year " + academic_year)
+    
+    plt.tight_layout()
+    graph = get_image()
+    return graph
+
+
 
 def get_plot_primary(**kwargs):
     plt.switch_backend('AGG')

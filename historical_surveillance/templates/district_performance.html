@@ -1,0 +1,125 @@
+﻿{% extends "base.html" %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+{% block page_content %}
+<main>
+    <div class="row">
+        <div class="col-xl-4 col-md-4">
+            <div class="card bg-secondary text-white mb-4">
+                <div class="card-body">
+                    Compare CEE Results<br />
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <form action="" method="POST">
+                        {% csrf_token %}
+
+                        <label class="small mb-1" for="district"> District 1</label>
+                        <select name="district_1_name" id="district">
+                            <option value="" selected>[Choose Here]</option>
+                            {% for item in districts_names %}
+                            <option value={{ item.id }}> {{ item.district_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <br />
+                        <label class="small mb-1" for="district"> District 2</label>
+                        <select name="district_2_name" id="district">
+                            <option value="" selected>[Choose Here]</option>
+                            {% for item in districts_names %}
+                            <option value={{ item.id }}> {{ item.district_name }}</option>
+                            {% endfor %}
+                        </select>
+
+
+                        <br /><input type="submit" name="submit" class="btn btn-primary" value="Compare CEE Results" />
+                    </form>
+                </div>
+                <br />
+                <div class="card bg-secondary text-white mb-4">
+                    <div class="card-body">
+                        Compare All Districts<br />
+                    </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between">
+                        <form action="" method="POST">
+                            {% csrf_token %}
+                            <input type="submit" name="submit" class="btn btn-primary" value="Compare All Districts (CEE)" />
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-secondary text-white mb-4">
+                <div class="card-body">
+                    Compare CSEC Results<br />
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <form action="" method="POST">
+                        {% csrf_token %}
+
+                        <label class="small mb-1" for="district"> District 1</label>
+                        <select name="district_3_name" id="district">
+                            <option value="" selected>[Choose Here]</option>
+                            {% for item in districts_names %}
+                            <option value={{ item.id }}> {{ item.district_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <br />
+                        <label class="small mb-1" for="district"> District 2</label>
+                        <select name="district_4_name" id="district">
+                            <option value="" selected>[Choose Here]</option>
+                            {% for item in districts_names %}
+                            <option value={{ item.id }}> {{ item.district_name }}</option>
+                            {% endfor %}
+                        </select>
+
+
+                        <br /><input type="submit" name="submit" class="btn btn-primary" value="Compare CSEC Results" />
+                    </form>
+                </div>
+                <br />
+                <div class="card bg-secondary text-white mb-4">
+                    <div class="card-body">
+                        Compare All Districts<br />
+                    </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between">
+                        <form action="" method="POST">
+                            {% csrf_token %}
+                            <input type="submit" name="submit" class="btn btn-primary" value="Compare All Districts (CSEC)" />
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-xl-8 col-md-8">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body">
+                    <h1>{% if error_message %} {{ error_message }} </h1>
+                    {% else %}
+                    <h2>Historical Comparison of District Performance</h2>
+                    {% endif %}
+                    {% if chart_title %}
+                    <h3>{{chart_title }}</h3>
+                    {% endif %}
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    {% if request.POST and graph %}
+                    <img src="data:image/png;base64, {{ graph | safe}}" alt="analysis Image" />
+                    {% else %}
+                    Select two districts to compare, or select all districts at once.
+                    {% endif %}
+                </div>
+                {% if request.POST %}
+                {% if heatmap %}
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <img src="data:image/png;base64, {{ heatmap | safe}}" alt="analysis Image" />
+                </div>
+                {%endif%}
+                {% endif%}
+            </div>
+        </div>
+    </div>
+
+
+</main>
+{% endblock page_content %}

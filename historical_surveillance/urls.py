@@ -21,18 +21,26 @@ urlpatterns = [
         views.update_enroll_class,
         name="update-enroll-class",
     ),
+
+    # District urls
     # for the viewing districts
-    path("district", views.district, name="district"),
+    path("districts", views.district, name="district"),
     # for creating districts
     path("district/create", views.edit_district, name="create-district"),
     # to update the created district
     path("update_district/<int:code>", views.edit_district, name="update-district"),
-    # for the create schools page
-    path("create_institution", views.create_institution, name="create-school"),
+
+
+    # School urls
+    # for viewing schools
+    path("schools", views.school, name="create-school"),
+    #for creating schools
+     path("schools/create", views.edit_school, name="create-school"),
     # to update the created schools
     path(
-        "update_institution/<int:code>", views.update_institution, name="update-school"
+        "update_institution/<int:code>", views.edit_school, name="update-school"
     ),
+
     # enrollment/capacity table by district view
     path("enrolled_district", views.enrolled_district, name="enrolled_district"),
     # Visualization of enrollment / Capacity

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+{% block page_content %}
+<main>
+    <div class="row">
+        {% if error_message or n_scores %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            {% if error_message %}
+            Error: {{ error_message }}
+            <br />
+            {% endif %}
+            {% if n_scores %}
+            {{ n_scores }} records were successfully added.
+            {% endif %}
+            {% if failed %}
+            {{ failed }} records could not be added.
+            {% endif %}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
+        </div>
+        {% endif%}
+        <div class="col-xl-7 col-md-7">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <div class="card mb-4">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-7 col-md-7">
+            <div class="card bg-primary text-white mb-4">
+                <h4>Upload CEE file. </h4>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="file" name="cee_file">
+                    <input type="submit" name="submit" value="Upload CEE Scores">
+                </form>
+                File must contain the following fields:
+                <div>
+                    <ul>
+                        {%for f in cee_field_names %}
+                        <li>{{f}}</li>
+                        {%endfor%}
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-xl-7 col-md-7">
+            <div class="card bg-primary text-white mb-4">
+                <h4>Upload CSEC file. </h4>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="file" name="csec_file">
+                    <input type="submit" name="submit" value="Upload CSEC Scores" />
+                </form>
+
+                File must contain the following fields:
+                <div>
+                    <ul>
+                        {%for f in csec_field_names %}
+                        <li>{{f}}</li>
+                        {%endfor%}
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</main>
+
+
+
+
+
+{% endblock%}

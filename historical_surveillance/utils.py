@@ -6,6 +6,11 @@ import numpy as np
 import seaborn as sns
 from sklearn.linear_model import LinearRegression
 from .models import School
+from .models import District
+from .models import CSECResults
+
+from .forms import CSECForm
+from .forms import CEEForm
 
 import numpy as np
 import pandas as pd
@@ -475,3 +480,89 @@ def get_plot_regression(**kwargs):
     data_boys_secondary = kwargs.get('data_boys_secondary')
     data_girls_secondary = kwargs.get('data_girls_secondary')
 
+
+def primary_performance_plot(data, district_1, district_2):
+    df = pd.DataFrame(data.values())
+    plt.switch_backend('AGG')
+    years = df['academic_year'].drop_duplicates().str.split("/")
+    years = [int(y[1]) for y in years]
+    min_year = min(years)
+
+    N_DISTRICTS=District.objects.count()
+
+    tests = np.zeros((len(years), N_DISTRICTS), dtype=int)
+    above_avg = np.zeros((len(years), N_DISTRICTS), dtype=int)
+    performance = np.zeros((len(years), N_DISTRICTS), dtype=float)
+    
+    for index, row in df.iterrows():
+        year = int(row['academic_year'].split('/')[1])
+        school_code = row['school_id']
+        school = School.objects.get(school_code=school_code)
+        district = getattr(school, 'district_name_id')
+        n_tests = int(row['tests_sat'])
+        n_above_avg = int(row['above_average_scores'])
+        if np.isnan(n_tests) or np.isnan(n_above_avg):
+            continue
+        tests[year-min_year][district-1] += n_tests
+        above_avg[year-min_year][district-1] += n_above_avg
+
+    for y in range(len(years)):
+        performance[y] = 100 * above_avg[y]/tests[y]
+    performance = pd.DataFrame(performance)
+    labels = ['District ' + str(d+1) for d in range(N_DISTRICTS)]
+    if not (district_1 and district_2):
+        for d in range(N_DISTRICTS):
+            plt.plot(years, performance[d])
+    else:
+        plt.plot(years, performance[district_1-1])
+        plt.plot(years, performance[district_2-1])
+        labels = ['District '+ str(district_1), 'District' + str(district_2)]
+    plt.xticks([min(years), max(years)])
+    plt.legend(labels, loc = 'upper left', bbox_to_anchor=(1, 1.05))
+    plt.title("Percentage of Students Scoring Above Mean (CEE)")
+    plt.tight_layout()
+    graph = get_image()
+
+    plt.clf()
+    performance = performance.T
+    performance.columns = np.arange(1999, 2018, step=1)
+    performance.index = ['District ' + str(d+1) for d in range(N_DISTRICTS)]
+    ax = sns.heatmap(performance, annot=True)
+    ax.set_title("Percentage of Students Scoring above Mean (CEE)")
+    plt.tight_layout()
+    heatmap = get_image()
+    return [graph, heatmap]
+
+def extract_year(period):
+    year_string = re.findall(r'\d+', period)
+    return year_string[0]
+
+def store_scores(data, required_fields, user_data, type):
+    result = {}
+    lines = data.replace("\r", "").split("\n")
+    field_names = lines[0].split(",")
+    if not set(required_fields).issubset(set(field_names)):
+        result['error_message'] = 'Check all required fields are present in CSV file.'
+        result['n_scores'] = 0
+    else:
+        succeeded = 0
+        failed = 0
+        for line in lines[1:]:
+            if line:
+                fields = line.split(",")
+                data = {}
+                for required_field in required_fields:
+                    data[required_field] = fields[field_names.index(required_field)]
+                data = {**data, **user_data}
+                if type == "CEE":
+                    form = CEEForm(data)
+                if type == "CSEC":
+                    form = CSECForm(data)
+                if form.is_valid():
+                    form.save()
+                    succeeded += 1
+                else:
+                    failed += 1
+        result['n_scores'] = succeeded
+        result['failed'] = failed
+    return result

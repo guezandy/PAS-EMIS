@@ -76,5 +76,6 @@ class StudentSupportAssocForm(forms.ModelForm):
         exclude = [ "student" ]
         widgets = {
             "start_date": forms.TextInput(attrs={"type": "date"}),
-            "end_date": forms.TextInput(attrs={"type": "date"})
+            "end_date": forms.TextInput(attrs={"type": "date"}),
+            "comment": forms.Textarea(attrs={"rows": 3, "cols": 20}),
         }

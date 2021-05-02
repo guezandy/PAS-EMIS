@@ -1,15 +1,6 @@
-
 import json
-
-
-import pandas as pd
-from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from django.template import RequestContext
 from django.utils.datetime_safe import date
-
-from django.http import HttpResponse
-
 from .forms import *
 from .models import *
 from .utils import *
@@ -88,7 +79,7 @@ def update_institution(request, code=None):
         form = SchoolForms(request.POST)
         if not form.is_valid():
             school_to_update.school_name = form.cleaned_data['school_name']
-            school_to_update.school_code = form.cleaned_data['school_code']
+            school_to_update.school_code = request.POST.get('school_code', False)
             school_to_update.category_of_school = form.cleaned_data['category_of_school']
             school_to_update.updated_at = date.today().strftime("%Y-%m-%d")
             school_to_update.updated_by = request.user.username

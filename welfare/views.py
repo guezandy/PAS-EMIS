@@ -385,7 +385,7 @@ def school_students(request, school_code):
                 "student_id": student.id,
                 "student_last_name": student.last_name,
                 "student_first_name": student.first_name,
-                "student_sex": student.sex.lower(),
+                "student_sex": student.sex.title(),
                 "student_class": student.graduation_year,
                 "student_has_services": ("Yes" if _student_has_services(student)
                 else "No"),

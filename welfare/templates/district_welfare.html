@@ -16,7 +16,7 @@
         <div class="col-xl-3 col-md-6">
             <div class="card bg-primary text-white mb-4">
                 <div class="card-body">
-                    <div class='stat'>{{student_service_count}}</div>
+                    <div class='stat'>{{students_with_services_count}}</div>
                     <div class='stat-label'>Total Students with Services</div>
                 </div>
             </div>
@@ -24,7 +24,7 @@
         <div class="col-xl-3 col-md-6">
             <div class="card bg-warning text-white mb-4">
                 <div class="card-body">
-                    <div class='stat'>{{student_service_percent|stringformat:".2f"}}%</div>
+                    <div class='stat'>{{students_with_services_percent|stringformat:".2f"}}%</div>
                     <div class='stat-label'>Percent Students with Services</div>
                 </div>
             </div>
@@ -48,7 +48,7 @@
                             <td>{{school.school_code}}</td>
                             <td>{{school.school_name}}</td>
                             <td>{{school.student_count}}</td>
-                            <td>{{school.student_service_count}} ({{school.student_service_percent|stringformat:".2f"}}%)</td>
+                            <td>{{school.students_with_services_count}} ({{school.students_with_services_percent|stringformat:".2f"}}%)</td>
                         </tr>
                         {% endfor %}
                     </tbody>

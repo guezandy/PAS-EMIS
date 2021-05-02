@@ -1,14 +1,17 @@
 from django import forms
-from helpers.forms import TrackedUpdateForm
 
 from .models import StudentSupportAssoc, SupportService
 from school.models import Student
 
 
 class SupportServiceForm(forms.ModelForm):
-    class Meta(TrackedUpdateForm.Meta):
+    class Meta:
         model = SupportService
         fields = "__all__"
+        widgets = {
+            "created_by": forms.TextInput(attrs={"readonly": "readonly"}),
+            "updated_by": forms.TextInput(attrs={"readonly": "readonly"}),
+        }
 
 
 class StudentSupportAssocForm(forms.ModelForm):
@@ -68,13 +71,14 @@ class StudentSupportAssocForm(forms.ModelForm):
                f"\"{service.name}\" service for this student: "
                f"[{overlapping.start_date}, {overlapping.end_date}]"
             )
-
     
-    class Meta(TrackedUpdateForm.Meta):
+    class Meta:
         model = StudentSupportAssoc
         fields = "__all__"
         exclude = [ "student" ]
         widgets = {
+            "created_by": forms.TextInput(attrs={"readonly": "readonly"}),
+            "updated_by": forms.TextInput(attrs={"readonly": "readonly"}),
             "start_date": forms.TextInput(attrs={"type": "date"}),
             "end_date": forms.TextInput(attrs={"type": "date"}),
             "comment": forms.Textarea(attrs={"rows": 3, "cols": 20}),

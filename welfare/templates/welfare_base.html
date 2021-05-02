@@ -8,24 +8,44 @@
         {% if can_view_service_defs %}
         <div class="col-md-6 action-button-group">
             <a href="{% url 'welfare:view_services' %}"><button type="button"
-                class="btn btn-success mb-2">View Service Definitions</button></a>
+                class="btn btn-dark mb-2">View Service Definitions</button></a>
         </div>
         {% endif %}
     </div>
     <div class="row">
         <div class="col-xl-3 col-md-6">
-            <div class="card bg-primary text-white mb-4">
+            <div class="card text-center bg-primary text-white mb-4">
                 <div class="card-body">
-                    <div class='stat'>{{students_with_services_count}}</div>
-                    <div class='stat-label'>Total Students with Services</div>
+                    <h5 class='card-header'>Girls: {{girl_count}}, Boys: {{boy_count}}</h5>
+                    <div class='stat'>{{student_count}}</div>
+                    <div class='stat-label'>Total Students</div>
                 </div>
             </div>
         </div>
         <div class="col-xl-3 col-md-6">
-            <div class="card bg-warning text-white mb-4">
+            <div class="card text-center bg-success text-white mb-4">
                 <div class="card-body">
-                    <div class='stat'>{{students_with_services_percent|stringformat:".2f"}}%</div>
-                    <div class='stat-label'>Percent Students with Services</div>
+                    <h5 class='card-header'>{{students_with_services_percent|stringformat:".2f"}}%</h5>
+                    <div class='stat'>{{students_with_services_count}}</div>
+                    <div class='stat-label'>Students with Services</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card text-center bg-warning text-white mb-4">
+                <div class="card-body">
+                    <h5 class='card-header'>{{girls_with_services_percent|stringformat:".2f"}}%</h5>
+                    <div class='stat'>{{girls_with_services_count}}</div>
+                    <div class='stat-label'>Girls with Services</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card text-center bg-info text-white mb-4">
+                <div class="card-body">
+                    <h5 class='card-header'>{{boys_with_services_percent|stringformat:".2f"}}%</h5>
+                    <div class='stat'>{{boys_with_services_count}}</div>
+                    <div class='stat-label'>Boys with Services</div>
                 </div>
             </div>
         </div>

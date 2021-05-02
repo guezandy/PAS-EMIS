@@ -19,11 +19,7 @@ from django.forms import TextInput, Textarea
 class DistrictForm(forms.ModelForm):
     class Meta:
         model = District
-        fields = "__all__"
-        widgets = {
-            "created_by": TextInput(attrs={"readonly": "readonly"}),
-            "updated_by": TextInput(attrs={"readonly": "readonly"}),
-        }
+        fields = ["district_name", "district_code"]
 
 
 class SchoolForm(forms.ModelForm):

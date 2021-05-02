@@ -152,7 +152,62 @@ def _district_students_serv_and_total(district: District) -> tuple:
         district_denom += school_denom
     
     return district_num, district_denom
+
+
+def _get_percent(with_services: list, total: list) -> float:
+    if not total or not with_services:
+        return 0.0
+    return with_services / total * 100
+
+
+def _get_basic_stats_dict(students, other_properties: dict = None) -> dict:
+    if not students:
+        return {}
+
+    student_count = students.count()
+    students_with_services = [ s for s in students if _student_has_services(s) ]
     
+    all_girls = [ s for s in students if s.sex.upper() == "FEMALE" ]
+    all_boys = [ s for s in students if s.sex.upper() == "MALE" ]
+    
+    girl_count = len(all_girls)
+    boy_count = len(all_boys)
+
+    girls_with_services = [ s for s in all_girls if _student_has_services(s) ]
+    boys_with_services = [ s for s in all_boys if _student_has_services(s) ]
+    
+    students_with_service_count = len(students_with_services)
+    girls_with_services_count = len(girls_with_services)
+    boys_with_services_count = len(boys_with_services)
+
+    student_service_percent = _get_percent(students_with_service_count, student_count)
+    girls_service_percent = _get_percent(girls_with_services_count, girl_count)
+    boys_service_percent = _get_percent(boys_with_services_count, boy_count)
+
+    props = {
+        "student_count": student_count,
+        "students_with_services_count": students_with_service_count,
+        "girl_count": girl_count,
+        "boy_count": boy_count,
+        "girls_with_services_count": girls_with_services_count,
+        "boys_with_services_count": boys_with_services_count,
+        "students_with_services_percent": student_service_percent,
+        "girls_with_services_percent": girls_service_percent,
+        "boys_with_services_percent": boys_service_percent,
+    }
+    if other_properties:
+        props.update(other_properties)
+
+    return props
+
+
+
+def _add_basic_stats_dict(context, students):
+    if not context:
+        return {}
+    props = _get_basic_stats_dict(students)
+    props.update(context)
+    return props
 
 
 # ---------------- VIEWS -----------------
@@ -250,36 +305,21 @@ def edit_service(request, service: SupportService):
 def all_districts(request):
     districts = District.objects.all()
     students = Student.objects.all()
-    student_count = students.count()
-    students_with_services = [ s for s in students if _student_has_services(s) ]
-    students_with_service_count = len(students_with_services)
-    student_service_percent = (0.0 if student_count < 1
-                                else students_with_service_count/student_count * 100)
-
-    totals_by_district = {
-        district : _district_students_serv_and_total(district) for district in districts
-    }
 
     context = {
         "can_view_service_defs": _can_view_service_definitions(request.user),
-        "student_service_count": students_with_service_count,
-        "student_service_percent": student_service_percent,
         "districts": [
-            {
-                "district_code": district.district_code,
-                "district_name": district.district_name,
-                "student_count": Student.objects.filter(
-                    school__district_name=district
-                ).count(),
-                "student_service_count": totals_by_district[district][0],
-                "student_service_percent": (
-                    100 * totals_by_district[district][0] / totals_by_district[district][1]
-                    if totals_by_district[district][1] else 0.0
-                ),
-            }
+            _get_basic_stats_dict(
+                Student.objects.filter(school__district_name=district),
+                {
+                    "district_code": district.district_code,
+                    "district_name": district.district_name,
+                }
+            )
             for district in districts
         ],
     }
+    context = _add_basic_stats_dict(context, students)
     context = _add_side_navigation_context(request.user, context)
     return render(request, "all_districts_welfare.html", context)
 
@@ -305,37 +345,20 @@ def district_schools(request, district_code):
         school__district_name=district
     )
 
-    student_count = students.count()
-    students_with_services = [ s for s in students if _student_has_services(s) ]
-    students_with_service_count = len(students_with_services)
-    student_service_percent = (0.0 if student_count < 1
-                                else students_with_service_count/student_count * 100)
-
-    totals_by_school = {
-        school : _school_students_serv_and_total(school) for school in schools
-    }
-
     context = {
         "can_view_service_defs": _can_view_service_definitions(request.user),
         "district_name": district.district_name,
-        "student_service_count": students_with_service_count,
-        "student_service_percent": student_service_percent,
         "schools": [
-            {
-                "school_code": school.school_code,
-                "school_name": school.school_name,
-                "student_count": Student.objects.filter(
-                    school=school
-                ).count(),
-                "student_service_count": totals_by_school[school][0],
-                "student_service_percent": (
-                    100 * totals_by_school[school][0] / totals_by_school[school][1]
-                    if totals_by_school[school][1] else 0.0
-                ),
-            }
+            _get_basic_stats_dict(
+                Student.objects.filter(school=school),
+                {
+                    "school_code": school.school_code,
+                    "school_name": school.school_name,
+                })
             for school in schools
         ],
     }
+    context = _add_basic_stats_dict(context, students)
     context = _add_side_navigation_context(request.user, context)
     return render(request, "district_welfare.html", context)
 
@@ -354,22 +377,15 @@ def school_students(request, school_code):
     school = school_query.first()
     students = Student.objects.filter(school=school)
 
-    student_count = students.count()
-    students_with_services = [ s for s in students if _student_has_services(s) ]
-    students_with_service_count = len(students_with_services)
-    student_service_percent = (0.0 if student_count < 1
-                                else students_with_service_count/student_count * 100)
-
     context = {
         "can_view_service_defs": _can_view_service_definitions(request.user),
         "school_name": school.school_name,
-        "student_service_count": students_with_service_count,
-        "student_service_percent": student_service_percent,
         "students": [
             {
                 "student_id": student.id,
                 "student_last_name": student.last_name,
                 "student_first_name": student.first_name,
+                "student_sex": student.sex.title(),
                 "student_class": student.graduation_year,
                 "student_has_services": ("Yes" if _student_has_services(student)
                 else "No"),
@@ -377,6 +393,7 @@ def school_students(request, school_code):
             for student in students
         ],
     }
+    context = _add_basic_stats_dict(context, students)
     context = _add_side_navigation_context(request.user, context)
     return render(request, "school_welfare.html", context)
 
@@ -468,7 +485,7 @@ def student_service_form(request, student_code, service_code=None):
     if service:
         header = f"Edit {service.name} for: {student.last_name}, {student.first_name}"
     else:
-        header = f"Create support/service for: {student.last_name}, {student.first_name}"
+        header = f"Assign service to: {student.last_name}, {student.first_name}"
     context = {
         "header": header,
         "form": form,

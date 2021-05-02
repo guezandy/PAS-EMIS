@@ -167,8 +167,8 @@ def _get_basic_stats_dict(students, other_properties: dict = None) -> dict:
     student_count = students.count()
     students_with_services = [ s for s in students if _student_has_services(s) ]
     
-    all_girls = [ s for s in students_with_services if upper(s.sex) == "FEMALE" ]
-    all_boys = [ s for s in students_with_services if upper(s.sex) == "MALE" ]
+    all_girls = [ s for s in students_with_services if s.sex.upper() == "FEMALE" ]
+    all_boys = [ s for s in students_with_services if s.sex.upper() == "MALE" ]
     
     girl_count = len(all_girls)
     boy_count = len(all_boys)
@@ -385,6 +385,7 @@ def school_students(request, school_code):
                 "student_id": student.id,
                 "student_last_name": student.last_name,
                 "student_first_name": student.first_name,
+                "student_sex": student.sex.lower(),
                 "student_class": student.graduation_year,
                 "student_has_services": ("Yes" if _student_has_services(student)
                 else "No"),

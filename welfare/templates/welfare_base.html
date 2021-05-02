@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block page_content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class='col-md-6'>
+            {% block page_title %}{% endblock %}
+        </div>
+        {% if can_view_service_defs %}
+        <div class="col-md-6 action-button-group">
+            <a href="{% url 'welfare:view_services' %}"><button type="button"
+                class="btn btn-success mb-2">View Service Definitions</button></a>
+        </div>
+        {% endif %}
+    </div>
+    <div class="row">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body">
+                    <div class='stat'>{{students_with_services_count}}</div>
+                    <div class='stat-label'>Total Students with Services</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-warning text-white mb-4">
+                <div class="card-body">
+                    <div class='stat'>{{students_with_services_percent|stringformat:".2f"}}%</div>
+                    <div class='stat-label'>Percent Students with Services</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+            {% block table_details %}{% endblock %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock page_content %}

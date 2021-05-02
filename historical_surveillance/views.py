@@ -843,4 +843,122 @@ def outlier_national(request):
 
     }
 
+
+
     return render(request, 'outlier_national_page.html', stu)
+
+
+def district_performance(request):
+    graph = None
+    error_message = None
+    districts_names = District.objects.values('id', 'district_name')
+    context = {"districts_names": districts_names}
+
+    districts_names = District.objects.values('id', 'district_name')
+
+    if len(districts_names) > 0:
+        if request.method == 'POST':
+            # Compare all districts
+            if request.POST['submit']=='Compare All Districts (CEE)':
+                chart_title = "CEE Comparison, All Districts"
+                context['chart_title'] = chart_title
+                data = PrimaryPerformance.objects.all()
+                [graph, heatmap] = primary_performance_plot(data, None, None)
+                context['graph'] = graph
+                context['heatmap'] = heatmap
+                return render(request, 'district_performance.html', context)
+            if request.POST['submit']=='Compare All Districts (CSEC)':
+                chart_title = "CSEC Comparison, All Districts"
+                context['chart_title'] = chart_title
+                return render(request, 'district_performance.html', context)
+
+            # Compare CEE between 2 districts
+            district_1 = request.POST.get('district_1_name', False)
+            district_2 = request.POST.get('district_2_name', False)
+            if not (district_1 and district_2) or district_1 == district_2:
+                error_message = "Please select 2 different districts to compare."
+                context['error_message'] = error_message
+                return render(request, 'district_performance.html', context)
+            if request.POST['submit']=='Compare CEE Results':
+                chart_title = "CEE Comparison, Districts " + district_1 + " and " + district_2
+                context['chart_title'] = chart_title
+                data = PrimaryPerformance.objects.all()
+                [graph, heatmap] = primary_performance_plot(data, int(district_1), int(district_2))
+                context['graph'] = graph
+                context['heatmap'] = heatmap
+                return render(request, 'district_performance.html', context)
+
+            # Compare CSEC between 2 districts
+            district_3 = request.POST.get('district_3_name', False)
+            district_4 = request.POST.get('district_4_name', False)
+            if not (district_3 and district_4) or district_3 == district_4:
+                error_message = "Please select 2 different districts to compare."
+                context['error_message'] = error_message
+                return render(request, 'district_performance.html', context)
+            if request.POST['submit']=='Compare CSEC Results':
+                chart_title = "CSEC Comparison, Districts " + district_3 + " and " + district_4
+                context['chart_title'] = chart_title
+                return render(request, 'district_performance.html', context)
+        else:
+            return render(request, 'district_performance.html', context)
+
+UNIVERSAL_FIELDS = {'id', 'created_at', 'created_by', 'updated_at', 'updated_by'}
+
+def upload_scores(request):
+    context = {}
+    cee_field_names = CEEResults._meta.get_fields()
+    cee_field_names = [str(f).split('.')[-1] for f in cee_field_names] 
+    cee_field_names = list(set(cee_field_names) - UNIVERSAL_FIELDS)
+    cee_field_names.sort()
+
+    csec_field_names = CSECResults._meta.get_fields()
+    csec_field_names = [str(f).split('.')[-1] for f in csec_field_names] 
+    csec_field_names = list(set(csec_field_names) - UNIVERSAL_FIELDS)
+    csec_field_names.sort()
+    context['cee_field_names'] = cee_field_names
+    context['csec_field_names'] = csec_field_names
+
+    context['cee_count'] = CEEResults.objects.count()
+    context['csec_count'] = CSECResults.objects.count()
+
+    if "GET" == request.method:
+        return render(request, "upload_scores.html", context)
+    type = "CEE"
+    field_names = []
+    csv_file = None
+    if request.POST['submit']=='Upload CSEC Scores':
+        field_names = csec_field_names
+        if not "csec_file" in request.FILES:
+            context['error_message'] = 'Please select a file to upload.'
+            return render(request, "upload_scores.html", context)
+        csv_file = request.FILES["csec_file"]
+        type = "CSEC"
+    elif request.POST['submit']=='Upload CEE Scores':
+        field_names = cee_field_names
+        if not "cee_file" in request.FILES:
+            context['error_message'] = 'Please select a file to upload.'
+            return render(request, "upload_scores.html", context)
+        csv_file = request.FILES["cee_file"]
+
+
+    if not csv_file.name.endswith('.csv'):
+        context['error_message'] = 'Could not upload file. File must be CSV type.'
+        return render(request, "upload_scores.html", context)
+    scores = csv_file.read().decode("utf-8", 'ignore')
+    user_data = {'created_by': request.user.username,
+                'updated_by': request.user.username,
+                'created_at': date.today().strftime("%Y-%m-%d"),
+                'updated_at': date.today().strftime("%Y-%m-%d")}
+    result = store_scores(scores, field_names, user_data, type)
+    if 'error_message' in result:
+        context['error_message'] = result['error_message']
+    if 'missing_fields' in result:
+        context['missing_fields'] = result['missing_fields']
+    n_scores = 0
+    if 'n_scores' in result:
+        context['n_scores'] = result['n_scores']
+    if 'failed' in result:
+        context['failed'] = result['failed']
+    context['cee_count'] = CEEResults.objects.count()
+    context['csec_count'] = CSECResults.objects.count()
+    return render(request, "upload_scores.html", context)

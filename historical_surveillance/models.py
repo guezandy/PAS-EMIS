@@ -272,3 +272,85 @@ class SpecialEdQuest(models.Model):
 
     class Meta(CustomPermissionModel.Meta):
         pass
+
+class PrimaryPerformance(models.Model):
+    objects = None
+    created_at = models.DateField(auto_now_add=True)
+    created_by = models.CharField(max_length=255, blank=True)
+    school = models.ForeignKey(School, on_delete=models.CASCADE, null=True)
+    academic_year = models.CharField(max_length=30, null=True)
+    tests_sat = models.CharField(max_length=20, null=True)
+    above_average_scores = models.CharField(max_length=20, null=True)
+    updated_at = models.DateField(auto_now_add=True, null=True)
+    updated_by = models.CharField(max_length=255, null=True)
+
+    class Meta(CustomPermissionModel.Meta):
+        pass
+
+    def __str__(self):
+        return str(self.academic_year)
+
+class CSECResults(models.Model):
+    objects = None
+    created_at = models.DateField(auto_now_add=True)
+    created_by = models.CharField(max_length=255, blank=True)
+    EXAM_PERIOD = models.CharField(max_length=255, null=True)
+    TERRITORY = models.CharField(max_length=255, null=True)
+    SCHOOL = models.CharField(max_length=255, null=True)
+    CANDIDATE_NBR = models.CharField(max_length=30, null=True)
+    SEX = models.CharField(max_length=30, null=True)
+    SUBJECT = models.CharField(max_length=255, null=True)
+    PROFICIENCY = models.CharField(max_length=30, null=True)
+    PROFILE1_GRADE = models.CharField(max_length=30, null=True)
+    PROFILE2_GRADE = models.CharField(max_length=30, null=True)
+    PROFILE3_GRADE = models.CharField(max_length=30, null=True)
+    PROFILE4_GRADE = models.CharField(max_length=30, null=True)
+    OVERALL_GRADE = models.CharField(max_length=30, null=True)
+    updated_at = models.DateField(auto_now_add=True, null=True)
+    updated_by = models.CharField(max_length=255, null=True)
+    class Meta(CustomPermissionModel.Meta):
+        pass
+
+    def __str__(self):
+        return str(self.SCHOOL)
+
+
+class CEEResults(models.Model):
+    objects = None
+    created_at = models.DateField(auto_now_add=True, null=True)
+    created_by = models.CharField(max_length=255, blank=True)
+    stud_id	= models.CharField(max_length=255, null=True)
+    schcode	= models.CharField(max_length=255, null=True)
+    engb1 = models.CharField(max_length=255, null=True)
+    engb2 = models.CharField(max_length=255, null=True)
+    mathsb1	= models.CharField(max_length=255, null=True)
+    mathsb2	= models.CharField(max_length=255, null=True)
+    test_yr	= models.CharField(max_length=255, null=True)
+    sex	= models.CharField(max_length=255, null=True)
+    form = models.CharField(max_length=255, null=True)
+    genparaw = models.CharField(max_length=255, null=True)
+    genpbraw = models.CharField(max_length=255, null=True)
+    genpcraw = models.CharField(max_length=255, null=True)
+    genpdraw = models.CharField(max_length=255, null=True)
+    mathsa_raw = models.CharField(max_length=255, null=True)
+    mathsb_raw = models.CharField(max_length=255, null=True)
+    mathsc_raw = models.CharField(max_length=255, null=True)
+    mathsd_raw = models.CharField(max_length=255, null=True)
+    spell_raw = models.CharField(max_length=255, null=True)
+    word_raw = models.CharField(max_length=255, null=True)
+    punct_raw = models.CharField(max_length=255, null=True)
+    vocab_raw = models.CharField(max_length=255, null=True)
+    read_raw = models.CharField(max_length=255, null=True)
+    sent_raw = models.CharField(max_length=255, null=True)
+    engcomp	= models.CharField(max_length=255, null=True)
+    mathcomp = models.CharField(max_length=255, null=True)
+    gpcomp = models.CharField(max_length=255, null=True)
+    totcomp	= models.CharField(max_length=255, null=True)
+    updated_at = models.DateField(auto_now_add=True, null=True)
+    updated_by = models.CharField(max_length=255, null=True)
+
+    class Meta(CustomPermissionModel.Meta):
+        pass
+
+    def __str__(self):
+        return str(self.schcode)

@@ -103,6 +103,15 @@ urlpatterns = [
         views.update_national_teacher_ratio,
         name="update-national-teacher-ratio",
     ),
+    path(
+        "district_performance",
+        views.district_performance,
+        name ="district_performance")
+    ,
+    path(
+        "upload_scores",
+        views.upload_scores,
+        name ="upload_scores"),
     # enrollment analysis summary
     path("enrollment_summary", views.enrollment_summary, name="enrollment_summary"),
     # Annual special education questionnaire

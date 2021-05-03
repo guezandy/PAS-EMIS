@@ -945,3 +945,126 @@ def upload_scores(request):
     context['cee_count'] = CEEResults.objects.count()
     context['csec_count'] = CSECResults.objects.count()
     return render(request, "upload_scores.html", context)
+
+
+#======================================================================
+#View for box plots at district level
+#======================================================================
+
+def boxplot_district(request):
+    
+    error_message = None
+    graph = None
+
+    districts_names = District.objects.values('id', 'district_name')
+    year_list = Enrollment.objects.distinct().values_list('year', flat=True)
+    school_categories = Enrollment.objects.distinct().values_list('category_of_school', flat=True)
+
+    if (len(districts_names) > 0 and len(school_categories)> 0):
+
+        if (request.method == 'POST'):
+
+            district_selected  = request.POST.get('district_name', None)
+            selected_year = request.POST.get('year', None)
+            selected_school_type = request.POST.get('school_type', None)
+    
+            if (not district_selected or not selected_year or not selected_school_type):
+                error_message = "Please select all variables"
+            else:
+                enrollment_df = pd.DataFrame(AggregateEnrollment.objects.all().filter(category_of_school = selected_school_type,
+                                                                                      district_of_school=district_selected, 
+                                                                                      academic_year=selected_year).values())
+
+                if (enrollment_df.empty):
+                    error_message = "No record was found for the selected district and academic year"
+
+                else:
+
+                    schools_df = pd.DataFrame(School.objects.all().values())
+                    final_df = pd.merge(left = enrollment_df, right = schools_df,
+                                        left_on='name_of_school_id', right_on='id')
+
+                    graph = get_boxplot_district_plot(x=final_df['total_enrollment'],
+                                                      y = final_df['school_name'],
+                                                      data = final_df,
+                                                      academic_year = selected_year,   
+                                                      input_school_type = selected_school_type, 
+                                                      input_district = district_selected                             
+                                                      )
+
+    else:
+        error_message = "No records found"
+
+        
+    
+    stu = {
+        "graph" : graph,
+        "error_message" : error_message,
+        "districts_name" : districts_names,
+        "year_list" : year_list,
+        "school_list" : school_categories
+
+    }
+    
+    return render(request, 'boxplots_district_page.html', stu)
+
+
+
+
+#====================================================================
+#View for box plots at national level
+#====================================================================
+
+def boxplot_national(request):
+
+    error_message = None
+    graph = None
+
+
+    year_list = Enrollment.objects.distinct().values_list('year', flat=True)
+    school_categories = Enrollment.objects.distinct().values_list('category_of_school', flat=True)
+
+
+
+    if (len(year_list) > 0 and len(school_categories) > 0):
+        if (request.method == 'POST'):
+            
+            selected_school_type = request.POST.get('school_type', None)
+            selected_year = request.POST.get('year', None)
+
+            if (not selected_year or not selected_school_type):
+                error_message = "Please select an academic year"
+            else:
+
+                enrollment_df = pd.DataFrame(AggregateEnrollment.objects.all().filter(category_of_school = selected_school_type, academic_year=selected_year).values())
+
+                if (enrollment_df.empty):
+                    error_message = "No record was found for the academic year"
+
+                else:
+                    schools_df = pd.DataFrame(School.objects.all().values())
+                    final_df = pd.merge(left = enrollment_df, right = schools_df,
+                                        left_on='name_of_school_id', right_on='id')
+
+                    graph = get_boxplot_national_plot(x=final_df['total_enrollment'],
+                                                      y = final_df['school_name'],
+                                                      data = final_df,
+                                                      academic_year = selected_year, 
+                                                      input_school_type = selected_school_type
+                                                                                        
+                                                      )
+    else:
+        error_message = "No records found"
+
+       
+    
+    stu = {
+        "graph" : graph,
+        "error_message" : error_message,
+        "year_list" : year_list,
+        "school_list" : school_categories
+
+    }
+
+
+    return render(request, 'boxplots_national_page.html', stu)

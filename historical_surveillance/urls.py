@@ -115,7 +115,7 @@ urlpatterns = [
     # enrollment analysis summary
     path("enrollment_summary", views.enrollment_summary, name="enrollment_summary"),
     # Annual special education questionnaire
-    path("special_ed_quest", views.special_ed_quest, name="special_ed_quest"),
+    #path("special_ed_quest", views.special_ed_quest, name="special_ed_quest"),
 
     #========================================
     #For outlier detection at district level

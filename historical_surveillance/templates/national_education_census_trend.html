@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+{% block page_content %}
+<!-- This form handles the creation of schools in each district.
+The error handling needs to be reviewed for now, it takes the error messaged passed as a dictionary
+from the school view and displays to the user preventing duplicate data entry.
+The form is redirected to the home page of the app when a data is inserted to prevent double insert
+of the same data which is also handled by the error message displayed.
+-->
+<main>
+
+<div class="row">
+  <div class="col-xl-8 col-md-8">
+     <div class="card mb-4">
+                <div class="card-body">
+                    {% if request.POST %}
+                {% if graph %}
+                <img src="data:image/png;base64, {{ graph | safe}}" alt="analysis Image" />
+                {%endif%}
+                {% endif%}
+                </div>
+            </div>
+        </div>
+<div class="col-xl-4 col-md-4">
+     <div class="card mb-4">
+                <div class="card-body">
+                    <label><strong> Summary Statistics for education census for the years recorded: </strong></label>
+                    <p><i>Average Age 3-4: </i><strong>{{ data.age_3_to_4_years.mean | floatformat}}</strong></p>
+                    <p><i>Average age > 5 and less than 12: </i><strong>{{ data.age_5_to_11_years.mean | floatformat}}</strong></p>
+                    <p><i>Average age >= 12 : </i><strong>{{ data.age_12_to_16_years.mean | floatformat}}</strong></p>
+
+                    <p><i>Median Age 3-4: </i><strong>{{ data.age_3_to_4_years.median | floatformat}}</strong></p>
+                    <p><i>Median age > 5 and less than 12: </i><strong>{{ data.age_3_to_4_years.median | floatformat}}</strong></p>
+                    <p><i>Median age >= 12 : </i><strong>{{ data.age_12_to_16_years.median | floatformat}}</strong></p>
+
+                    <p><i>Standard Deviation Age 3-4: </i><strong>{{ data.age_3_to_4_years.std | floatformat}}</strong></p>
+                    <p><i>Standard Deviation age > 5 and less than 12: </i><strong>{{ data.age_3_to_4_years.std | floatformat}}</strong></p>
+                    <p><i>Standard Deviation age >= 12 : </i><strong>{{ data.age_12_to_16_years.std | floatformat}}</strong></p>
+
+
+
+
+                </div>
+            </div>
+        </div>
+</div>
+
+
+<div class="row">
+  <div class="col-xl-12 col-md-12">
+     <div class="card mb-4">
+                <div class="card-body">
+                    {% if request.POST %}
+                {% if graph_hist %}
+                <img src="data:image/png;base64, {{ graph_hist | safe}}" alt="analysis Image" />
+                {%endif%}
+                {% endif%}
+                </div>
+            </div>
+        </div>
+</div>
+
+
+
+</main>
+
+
+
+
+
+{% endblock%}

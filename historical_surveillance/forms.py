@@ -1,5 +1,7 @@
 from django import forms
 from django.forms import TextInput
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Submit, Row, Column
 
 from .models import *
 
@@ -7,7 +9,12 @@ from .models import *
 class DistrictForms(forms.ModelForm):
     class Meta:
         model = District
-        fields = ["district_name", "district_code",  "updated_by", "created_by",]
+        fields = [
+            "district_name",
+            "district_code",
+            "updated_by",
+            "created_by",
+        ]
         widgets = {
             "created_by": TextInput(attrs={"readonly": "readonly"}),
             "updated_by": TextInput(attrs={"readonly": "readonly"}),
@@ -35,7 +42,14 @@ class AggregateEnrollmentForms(forms.ModelForm):
 class SchoolForms(forms.ModelForm):
     class Meta:
         model = School
-        fields = ["school_code", "school_name",  "district_name", "category_of_school","updated_by", "created_by"]
+        fields = [
+            "school_code",
+            "school_name",
+            "district_name",
+            "category_of_school",
+            "updated_by",
+            "created_by",
+        ]
         # fields = "__all__"
         widgets = {
             "created_by": TextInput(attrs={"readonly": "readonly"}),
@@ -156,6 +170,7 @@ class SpecialEdForms4(forms.ModelForm):
         # 'specify_other_disability_name' : Textarea(attrs={'cols':80, 'rows' : 20}),
         # }
 
+
 class CSECForm(forms.ModelForm):
     class Meta:
         model = CSECResults
@@ -171,14 +186,16 @@ class CSECForm(forms.ModelForm):
             "SCHOOL",
             "SEX",
             "SUBJECT",
-            "TERRITORY"
+            "TERRITORY",
         ]
+
     def __init__(self, *args, **kwargs):
         super(CSECForm, self).__init__(*args, **kwargs)
-        self.fields['PROFILE1_GRADE'].required = False
-        self.fields['PROFILE2_GRADE'].required = False
-        self.fields['PROFILE3_GRADE'].required = False
-        self.fields['PROFILE4_GRADE'].required = False
+        self.fields["PROFILE1_GRADE"].required = False
+        self.fields["PROFILE2_GRADE"].required = False
+        self.fields["PROFILE3_GRADE"].required = False
+        self.fields["PROFILE4_GRADE"].required = False
+
 
 class CEEForm(forms.ModelForm):
     class Meta:
@@ -210,5 +227,6 @@ class CEEForm(forms.ModelForm):
             "engcomp",
             "mathcomp",
             "gpcomp",
-            "totcomp"
+            "totcomp",
         ]
+

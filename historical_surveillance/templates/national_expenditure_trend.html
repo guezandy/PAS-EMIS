@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+{% block page_content %}
+<!-- This form handles the creation of schools in each district.
+The error handling needs to be reviewed for now, it takes the error messaged passed as a dictionary
+from the school view and displays to the user preventing duplicate data entry.
+The form is redirected to the home page of the app when a data is inserted to prevent double insert
+of the same data which is also handled by the error message displayed.
+-->
+<main>
+
+<div class="row">
+  <div class="col-xl-8 col-md-8">
+     <div class="card mb-4">
+                <div class="card-body">
+                    {% if request.POST %}
+                {% if graph %}
+                <img src="data:image/png;base64, {{ graph | safe}}" alt="analysis Image" />
+                {%endif%}
+                {% endif%}
+                </div>
+            </div>
+        </div>
+<div class="col-xl-4 col-md-4">
+     <div class="card mb-4">
+                <div class="card-body">
+                    <label><strong> Summary Statistics for education census for the years recorded: </strong></label>
+                    <p><i>Average Educational Expenditure: </i><strong>{{ data.educational_expenditure.mean | floatformat}}</strong></p>
+                    <p><i>Average GDP (Million XCD): </i><strong>{{ data.gdp_millions.mean | floatformat}}</strong></p>
+                    <p><i>Average Government Expenditure : </i><strong>{{ data.government_expenditure.mean | floatformat}}</strong></p>
+                    <p><i>Average Primary School Expenditure: </i><strong>{{ data.primary_school_expenditure.mean | floatformat}}</strong></p>
+                    <p><i>Average Secondary School Expenditure : </i><strong>{{ data.secondary_school_expenditure.mean | floatformat}}</strong></p>
+
+                    <p><i>Median Educational Expenditure: </i><strong>{{ data.educational_expenditure.median | floatformat}}</strong></p>
+                    <p><i>Median GDP (Million XCD): </i><strong>{{ data.gdp_millions.median | floatformat}}</strong></p>
+                    <p><i>Median Government Expenditure : </i><strong>{{ data.government_expenditure.median | floatformat}}</strong></p>
+                    <p><i>Median Primary School Expenditure: </i><strong>{{ data.primary_school_expenditure.median | floatformat}}</strong></p>
+                    <p><i>Median Secondary School Expenditure : </i><strong>{{ data.secondary_school_expenditure.median | floatformat}}</strong></p>
+
+                    <p><i>Standard Deviation Educational Expenditure: </i><strong>{{ data.educational_expenditure.std | floatformat}}</strong></p>
+                    <p><i>Standard Deviation GDP (Million XCD): </i><strong>{{ data.gdp_millions.std | floatformat}}</strong></p>
+                    <p><i>Standard Deviation Government Expenditure : </i><strong>{{ data.government_expenditure.std | floatformat}}</strong></p>
+                    <p><i>Standard Deviation Primary School Expenditure: </i><strong>{{ data.primary_school_expenditure.std | floatformat}}</strong></p>
+                    <p><i>Standard Deviation Secondary School Expenditure : </i><strong>{{ data.secondary_school_expenditure.std | floatformat}}</strong></p>
+
+
+
+
+                </div>
+            </div>
+        </div>
+</div>
+
+
+<div class="row">
+  <div class="col-xl-12 col-md-12">
+     <div class="card mb-4">
+                <div class="card-body">
+                    {% if request.POST %}
+                {% if graph_hist %}
+                <img src="data:image/png;base64, {{ graph_hist | safe}}" alt="analysis Image" />
+                {%endif%}
+                {% endif%}
+                </div>
+            </div>
+        </div>
+</div>
+
+
+
+</main>
+
+
+
+
+
+{% endblock%}

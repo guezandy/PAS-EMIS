@@ -116,11 +116,22 @@ def _add_side_navigation_context(user, context):
 
 # ---------------- HELPERS -----------------
 def _student_has_services(student: Student) -> bool:
+    return _student_has_service(student, None)
+
+
+def _student_has_service(student: Student, service: SupportService = None) -> bool:
     if not student:
         return False
-    service_query = StudentSupportAssoc.objects.filter(
-        student=student
-    )
+
+    if service:
+        service_query = StudentSupportAssoc.objects.filter(
+            student=student,
+            service=service,
+        )
+    else:
+        service_query = StudentSupportAssoc.objects.filter(
+            student=student
+        )
     if not service_query.exists():
         return False
     service_assocs = service_query.all()
@@ -160,6 +171,44 @@ def _get_percent(with_services: list, total: list) -> float:
     return with_services / total * 100
 
 
+def _get_service_detail_list(students) -> list:
+    if not students:
+        return []
+    results = list()
+
+    all_students_count = len(students)
+    all_girls_count = len([ s for s in students if s.sex.upper() == "FEMALE" ])
+    all_boys_count = len([ s for s in students if s.sex.upper() == "MALE" ])
+
+    for service in SupportService.objects.all():
+        total_count = 0
+        girl_count = 0
+        boy_count = 0
+        
+        for student in students:
+            if _student_has_service(student, service):
+                total_count += 1
+                if student.sex.upper() == "FEMALE":
+                    girl_count += 1
+                elif student.sex.upper() == "MALE":
+                    boy_count += 1
+                else:
+                    continue
+
+        results.append(
+            {
+                "service_name": service.name,
+                "students_with_services_count": total_count,
+                "girls_with_services_count": girl_count,
+                "boys_with_services_count": boy_count,
+                "students_with_services_percent": _get_percent(total_count, all_students_count),
+                "girls_with_services_percent": _get_percent(girl_count, all_girls_count),
+                "boys_with_services_percent": _get_percent(boy_count, all_boys_count),
+            }
+        )
+    return results
+            
+
 def _get_basic_stats_dict(students, other_properties: dict = None) -> dict:
     if not students:
         return {}
@@ -194,6 +243,7 @@ def _get_basic_stats_dict(students, other_properties: dict = None) -> dict:
         "students_with_services_percent": student_service_percent,
         "girls_with_services_percent": girls_service_percent,
         "boys_with_services_percent": boys_service_percent,
+        "services_info": _get_service_detail_list(students),
     }
     if other_properties:
         props.update(other_properties)
@@ -308,6 +358,7 @@ def all_districts(request):
 
     context = {
         "can_view_service_defs": _can_view_service_definitions(request.user),
+        "breakdown_topic": "District",
         "districts": [
             _get_basic_stats_dict(
                 Student.objects.filter(school__district_name=district),
@@ -347,6 +398,7 @@ def district_schools(request, district_code):
 
     context = {
         "can_view_service_defs": _can_view_service_definitions(request.user),
+        "breakdown_topic": "School",
         "district_name": district.district_name,
         "schools": [
             _get_basic_stats_dict(
@@ -379,6 +431,7 @@ def school_students(request, school_code):
 
     context = {
         "can_view_service_defs": _can_view_service_definitions(request.user),
+        "breakdown_topic": "Student",
         "school_name": school.school_name,
         "students": [
             {

@@ -65,7 +65,7 @@ class District(models.Model):
     objects = None
     created_at = models.DateField(auto_now_add=True)
     created_by = models.CharField(max_length=255, blank=True)
-    district_code = models.CharField(max_length=50, blank=True, unique=True)
+    district_code = models.CharField(max_length=50, unique=True)
     district_name = models.CharField(max_length=50)
     updated_at = models.DateField(auto_now=True)
     updated_by = models.CharField(max_length=255, blank=True)
@@ -81,7 +81,7 @@ class School(models.Model):
     objects = None
     created_at = models.DateField(auto_now_add=True)
     created_by = models.CharField(max_length=255, blank=True)
-    school_code = models.CharField(max_length=50, blank=True, unique=True)
+    school_code = models.CharField(max_length=50, unique=True)
     school_name = models.CharField(max_length=100)
     district_name = models.ForeignKey(District, on_delete=models.CASCADE)
     category_of_school = models.CharField(max_length=50, choices=CATEGORY_CHOICES)

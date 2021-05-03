@@ -165,6 +165,91 @@ class PrincipalAppraisal(models.Model):
     ensure_teacher_comply_time_table = models.IntegerField(choices=APPRAISAL_CHOICES)
     prepare_annual_report = models.IntegerField(choices=APPRAISAL_CHOICES)
 
+    # leadership
+    involves_staff = models.IntegerField(choices=APPRAISAL_CHOICES)
+    facilitates_parental = models.IntegerField(choices=APPRAISAL_CHOICES)
+    inspires_and_motivates = models.IntegerField(choices=APPRAISAL_CHOICES)
+    uses_variety_of_interpersonal = models.IntegerField(choices=APPRAISAL_CHOICES)
+    advises_staff = models.IntegerField(choices=APPRAISAL_CHOICES)
+    provies_pastoral_care = models.IntegerField(choices=APPRAISAL_CHOICES)
+
+    # management
+    employs_suitable_procedures = models.IntegerField(choices=APPRAISAL_CHOICES)
+    solicits_staff_input = models.IntegerField(choices=APPRAISAL_CHOICES)
+    deploys_teachers = models.IntegerField(choices=APPRAISAL_CHOICES)
+    provides_a_working_atmosphere = models.IntegerField(choices=APPRAISAL_CHOICES)
+    system_of_incentives = models.IntegerField(choices=APPRAISAL_CHOICES)
+    regular_meetings_for_staff = models.IntegerField(choices=APPRAISAL_CHOICES)
+    regular_assembles = models.IntegerField(choices=APPRAISAL_CHOICES)
+    timely_info = models.IntegerField(choices=APPRAISAL_CHOICES)
+
+    # Curriculum
+    ensure_curriculum_guides = models.IntegerField(choices=APPRAISAL_CHOICES)
+    ensures_consistent_instruction = models.IntegerField(choices=APPRAISAL_CHOICES)
+    prescribed_subjects = models.IntegerField(choices=APPRAISAL_CHOICES)
+    ensure_all_aspects = models.IntegerField(choices=APPRAISAL_CHOICES)
+    promotes_participation = models.IntegerField(choices=APPRAISAL_CHOICES)
+    ensure_curriculum_modifications = models.IntegerField(choices=APPRAISAL_CHOICES)
+
+    # Student Assessment
+    regular_student_assessment = models.IntegerField(choices=APPRAISAL_CHOICES)
+    analyses_students = models.IntegerField(choices=APPRAISAL_CHOICES)
+    institutes_practices = models.IntegerField(choices=APPRAISAL_CHOICES)
+    ensures_teachers_eqipped = models.IntegerField(choices=APPRAISAL_CHOICES)
+
+    # Teachers
+    conducts_periodic_appraisals = models.IntegerField(choices=APPRAISAL_CHOICES)
+    provides_relevant_feedback = models.IntegerField(choices=APPRAISAL_CHOICES)
+    provides_support_to_teachers = models.IntegerField(choices=APPRAISAL_CHOICES)
+
+    # Discipline
+    clear_guidelines_student_behaviour = models.IntegerField(choices=APPRAISAL_CHOICES)
+    maintains_roster = models.IntegerField(choices=APPRAISAL_CHOICES)
+    order_and_discipline = models.IntegerField(choices=APPRAISAL_CHOICES)
+    uses_appropriate_sanctions = models.IntegerField(choices=APPRAISAL_CHOICES)
+    ensures_staff_observes_standards = models.IntegerField(choices=APPRAISAL_CHOICES)
+    reports_all_incidents = models.IntegerField(choices=APPRAISAL_CHOICES)
+    maintains_accurate_documentation = models.IntegerField(choices=APPRAISAL_CHOICES)
+
+    # Staff devvelopment
+    conducts_needs_assessment = models.IntegerField(choices=APPRAISAL_CHOICES)
+    organizes_staff_training = models.IntegerField(choices=APPRAISAL_CHOICES)
+    facilitate_staff_attendance = models.IntegerField(choices=APPRAISAL_CHOICES)
+    staff_training = models.IntegerField(choices=APPRAISAL_CHOICES)
+
+    # Physical plant
+    maintenance = models.IntegerField(choices=APPRAISAL_CHOICES)
+    resources_on_time = models.IntegerField(choices=APPRAISAL_CHOICES)
+    distributes_resources = models.IntegerField(choices=APPRAISAL_CHOICES)
+    safe_environment = models.IntegerField(choices=APPRAISAL_CHOICES)
+    emergency_plan = models.IntegerField(choices=APPRAISAL_CHOICES)
+    inventory_of_supplies = models.IntegerField(choices=APPRAISAL_CHOICES)
+
+    # Financial management
+    annual_budget = models.IntegerField(choices=APPRAISAL_CHOICES)
+    school_revenue = models.IntegerField(choices=APPRAISAL_CHOICES)
+    annual_financial_report = models.IntegerField(choices=APPRAISAL_CHOICES)
+    report_on_time = models.IntegerField(choices=APPRAISAL_CHOICES)
+
+    # Interpersonal relations
+    healthy_workplace = models.IntegerField(choices=APPRAISAL_CHOICES)
+    respect_ideas = models.IntegerField(choices=APPRAISAL_CHOICES)
+    cares_for_staff = models.IntegerField(choices=APPRAISAL_CHOICES)
+    manages_conflict = models.IntegerField(choices=APPRAISAL_CHOICES)
+    resolves_conflict = models.IntegerField(choices=APPRAISAL_CHOICES)
+    work_and_dignity = models.IntegerField(choices=APPRAISAL_CHOICES)
+    demonstrates_sensitivity = models.IntegerField(choices=APPRAISAL_CHOICES)
+    maintains_confidentiality = models.IntegerField(choices=APPRAISAL_CHOICES)
+
+    # Personal growth
+    education_and_research = models.IntegerField(choices=APPRAISAL_CHOICES)
+    supervisory_suggestions = models.IntegerField(choices=APPRAISAL_CHOICES)
+    professional_training = models.IntegerField(choices=APPRAISAL_CHOICES)
+    ministry_standards = models.IntegerField(choices=APPRAISAL_CHOICES)
+    school_related_activities = models.IntegerField(choices=APPRAISAL_CHOICES)
+    school_activities_puncutality = models.IntegerField(choices=APPRAISAL_CHOICES)
+    participates_organized_development = models.IntegerField(choices=APPRAISAL_CHOICES)
+
     # Comments
     principals_comments = models.CharField(max_length=1024)
     district_education_officer_comments = models.CharField(max_length=1024)

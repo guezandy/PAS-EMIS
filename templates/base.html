@@ -73,7 +73,7 @@
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             {% if 'apps_permission' in user_context and 'school' in user_context.apps_permission %}
             <li class="nav-item">
-                <a class="nav-link {% if 'school' in request.path %} active {% endif %}" href="/school">Schools</a>
+                <a class="nav-link {% if 'school' in request.path and not 'historical' in request.path %} active {% endif %}" href="/school">Schools</a>
             </li>
             {% endif %}
             {% if 'apps_permission' in user_context and 'welfare' in user_context.apps_permission %}
@@ -111,7 +111,7 @@
         <div id="layoutSidenav_nav">
             <nav class="sb-sidenav accordion sb-sidenav-light" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
-                    {% if 'school' in request.path and not 'welfare' in request.path %}
+                    {% if 'school' in request.path and not 'welfare' in request.path and not 'historical' in request.path %}
                     <div class="nav">
                         <div class="sb-sidenav-menu-heading">Schools</div>
                         {% if side_nav.show_all_districts %}
@@ -219,15 +219,13 @@
                         <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne"
                             data-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav_link" href="/historical/district">Create / Edit Districts</a><br />
-                                <a class="nav_link" href="/historical/create_institution">Create / Edit
-                                    Schools</a><br />
-                                <a class="nav_link" href="/historical/enrollment">National Enrollment by grade and
+                                <a class="nav-link" href="/historical/districts">Districts</a>
+                                <a class="nav-link" href="/historical/schools">Schools</a>
+                                <a class="nav-link" href="/historical/enrollment">National Enrollment by grade and
                                     Sex</a><br />
-                                <a class="nav_link" href="/historical/enroll_class">National Enrollment / School
+                                <a class="nav-link" href="/historical/enroll_class">National Enrollment / School
                                     Capacity</a><br />
-                                <a class="nav_link" href="/historical/special_ed_quest">Special education schools annual
-                                    questionnaire</a><br />
+
                             </nav>
                         </div>
                         <div class="sb-sidenav-menu-heading">Data</div>
@@ -241,11 +239,13 @@
                         <div class="collapse" id="collapseExams" aria-labelledby="headingOne"
                             data-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
+
                                 <a class="nav_link" href="/historical/#">Common Entrance Examination</a><br />
                                 <a class="nav_link" href="/historical/#">CXC / CSEC</a><br />
                                 <a class="nav_link" href="/historical/#">Examination Summary</a><br />
                                 <a class="nav_link" href="/historical/upload_scores">Upload Exam Scores</a><br />
                                 <a class="nav_link" href="/historical/district_performance">District Comparison</a><br />
+
                             </nav>
                         </div>
                         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
@@ -266,11 +266,11 @@
                                 <div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne"
                                     data-parent="#sidenavAccordionPages">
                                     <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav_link" href="/historical/enrolled_district">
+                                        <a class="nav-link" href="/historical/enrolled_district">
                                             District Enrollment / Capacity</a><br />
-                                        <a class="nav_link" href="/historical/district_trend">
+                                        <a class="nav-link" href="/historical/district_trend">
                                             Enrollment / Capacity by School Trend </a><br />
-                                        <a class="nav_link" href="/historical/compare_trends">
+                                        <a class="nav-link" href="/historical/compare_trends">
                                             Enrollment / Capacity by District Trend </a><br />
 
                                     </nav>
@@ -284,11 +284,11 @@
                                 <div class="collapse" id="pagesCollapseError" aria-labelledby="headingOne"
                                     data-parent="#sidenavAccordionPages">
                                     <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav_link" href="/historical/district_grade">
+                                        <a class="nav-link" href="/historical/district_grade">
                                             District Enrollment / Grade </a><br />
-                                        <a class="nav_link" href="/historical/district_grade_school">
+                                        <a class="nav-link" href="/historical/district_grade_school">
                                             Enrollment / Grade by School </a><br />
-                                        <a class="nav_link" href="/historical/district_category_school">
+                                        <a class="nav-link" href="/historical/district_category_school">
                                             Enrollment / Grade by District Trend </a><br />
 
                                     </nav>
@@ -302,17 +302,17 @@
                                 <div class="collapse" id="pagesCollapseNational" aria-labelledby="headingOne"
                                     data-parent="#sidenavAccordionPages">
                                     <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav_link" href="/historical/national_gender_enrollment">
+                                        <a class="nav-link" href="/historical/national_gender_enrollment">
                                             National Gender Based Enrollments </a><br />
-                                        <a class="nav_link" href="/historical/national_education_census">
+                                        <a class="nav-link" href="/historical/national_education_census">
                                             Education Census </a><br />
-                                        <a class="nav_link" href="/historical/national_education_expenditure">
+                                        <a class="nav-link" href="/historical/national_education_expenditure">
                                             Expenditure per Student </a><br />
-                                        <a class="nav_link" href="/historical/national_teacher_ratio">
+                                        <a class="nav-link" href="/historical/national_teacher_ratio">
                                             National Teacher / Student Ratio </a><br />
-                                        <a class="nav_link" href="/historical/#">
+                                        <a class="nav-link" href="/historical/#">
                                             Teacher / Student Ratio per School </a><br />
-                                        <a class="nav_link" href="/historical/enrollment_summary"><br />
+                                        <a class="nav-link" href="/historical/enrollment_summary"><br />
                                             Enrollment Summary</a>
                                     </nav>
                                 </div>
@@ -325,12 +325,10 @@
                                 <div class="collapse" id="pagesCollapseOutlier" aria-labelledby="headingOne"
                                     data-parent="#sidenavAccordionPages">
                                     <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav_link" href="/historical/outlier_district">
+                                        <a class="nav-link" href="/historical/outlier_district">
                                             District Level </a><br />
-                                        <a class="nav_link" href="/historical/outlier_national">
-                                            National Level </a><br />
-                                            Education Summary</a>
-
+                                        <a class="nav-link" href="/historical/outlier_national">
+                                            National Level </a>
                                     </nav>
                                 </div>
                                 <a class="nav-link collapsed" href="#" data-toggle="collapse"
@@ -371,31 +369,31 @@
                         <div class="collapse" id="createUsers" aria-labelledby="headingOne"
                             data-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav_link" href="/auth/sysadmin/users/create/school_admin">Create School
+                                <a class="nav-link" href="/auth/sysadmin/users/create/school_admin">Create School
                                     Administrator</a>
-                                <a class="nav_link" href="/auth/sysadmin/users/create/teacher">Create
+                                <a class="nav-link" href="/auth/sysadmin/users/create/teacher">Create
                                     Teacher</a>
-                                <a class="nav_link" href="/auth/sysadmin/users/create/principal">Create
+                                <a class="nav-link" href="/auth/sysadmin/users/create/principal">Create
                                     Principal</a>
-                                <a class="nav_link" href="/auth/sysadmin/users/create/district_officer">Create District
+                                <a class="nav-link" href="/auth/sysadmin/users/create/district_officer">Create District
                                     Education Officer</a>
-                                <a class="nav_link" href="/auth/sysadmin/users/create/school_superviser">Create School
+                                <a class="nav-link" href="/auth/sysadmin/users/create/school_superviser">Create School
                                     Superviser</a>
-                                <a class="nav_link" href="/auth/sysadmin/users/create/stat_admin">Create
+                                <a class="nav-link" href="/auth/sysadmin/users/create/stat_admin">Create
                                     Statistician
                                     Admin</a>
-                                <a class="nav_link" href="/auth/sysadmin/users/create/evaluation_admin">Create
+                                <a class="nav-link" href="/auth/sysadmin/users/create/evaluation_admin">Create
                                     Evaluation
                                     Admin</a>
-                                <a class="nav_link" href="/auth/sysadmin/users/create/early_childhood_educator">Create
+                                <a class="nav-link" href="/auth/sysadmin/users/create/early_childhood_educator">Create
                                     Early
                                     Childhood Educator</a>
-                                <a class="nav_link" href="/auth/sysadmin/users/create/support_services_admin">Create
+                                <a class="nav-link" href="/auth/sysadmin/users/create/support_services_admin">Create
                                     Support
                                     Services Admin</a>
-                                <a class="nav_link" href="/auth/sysadmin/users/create/external_accessor">Create External
+                                <a class="nav-link" href="/auth/sysadmin/users/create/external_accessor">Create External
                                     Accessor</a>
-                                <a class="nav_link" href="/auth/sysadmin/users/create/custom_user">Create Custom
+                                <a class="nav-link" href="/auth/sysadmin/users/create/custom_user">Create Custom
                                     User</a>
                             </nav>
                         </div>

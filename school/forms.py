@@ -2,11 +2,9 @@ from django import forms
 
 from .models import (
     Course,
+    CourseOutcome,
     Subject,
     SubjectGroup,
-    Assignment,
-    AssignmentGrade,
-    CourseGrade,
     Student,
     TeacherAppraisal,
     PrincipalAppraisal,
@@ -19,11 +17,7 @@ from django.forms import TextInput, Textarea
 class DistrictForm(forms.ModelForm):
     class Meta:
         model = District
-        fields = "__all__"
-        widgets = {
-            "created_by": TextInput(attrs={"readonly": "readonly"}),
-            "updated_by": TextInput(attrs={"readonly": "readonly"}),
-        }
+        fields = ["district_name", "district_code"]
 
 
 class SchoolForm(forms.ModelForm):
@@ -74,13 +68,15 @@ class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
         fields = "__all__"
-        # fields = ["school", "subject", "teachers"]
 
 
-class CourseGradeForm(forms.ModelForm):
+class CourseOutcomeForm(forms.ModelForm):
     class Meta:
-        model = CourseGrade
+        model = CourseOutcome
         fields = "__all__"
+        widgets = {
+            "notes": Textarea(attrs={"rows": 3, "cols": 20}),
+        }
 
 
 class SubjectForm(forms.ModelForm):
@@ -92,18 +88,6 @@ class SubjectForm(forms.ModelForm):
 class SubjectGroupForm(forms.ModelForm):
     class Meta:
         model = SubjectGroup
-        fields = "__all__"
-
-
-class AssignmentForm(forms.ModelForm):
-    class Meta:
-        model = Assignment
-        fields = "__all__"
-
-
-class AssignmentGradeForm(forms.ModelForm):
-    class Meta:
-        model = AssignmentGrade
         fields = "__all__"
 
 

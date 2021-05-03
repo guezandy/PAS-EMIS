@@ -1,15 +1,8 @@
-
 import json
 
-
 import pandas as pd
-from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from django.template import RequestContext
 from django.utils.datetime_safe import date
-
-from django.http import HttpResponse
-
 from .forms import *
 from .models import *
 from .utils import *
@@ -20,81 +13,69 @@ def index(request):
     return render(request, 'surv_home.html', {})
 
 
-def district(request, code=None):
+# This is for showing a list of all districts
+
+def district(request):
     data = District.objects.all()
+    context = {"district_created": data}
+    return render(request, "districts.html", context)
+
+
+# This is for creating and editing a district
+
+
+def edit_district(request, code=None):
+    # Render edit form
     if code:
-        district_query = District.objects.filter(district_code=code)
-        # Invalid district code
-        if not district_query.exists():
-            return redirect("/historical/district")
-        instance = district_query.first()
+        instance = get_object_or_404(District, pk=code)
+    # Render create form
     else:
-        instance = District(
-            created_by=request.user.username,
-            updated_by=request.user.username,
-            created_at=date.today().strftime("%Y-%m-%d"),
-            updated_at=date.today().strftime("%Y-%m-%d")
-        )
+        instance = District(created_by=request.user.username,
+                            updated_by=request.user.username)
     form = DistrictForms(request.POST or None, instance=instance)
+    # Process submit
     if request.method == "POST":
         if form.is_valid():
-            # check if the district name already exist, then don't insert into the database
-            district_name = form.cleaned_data['district_name']
-            if not District.objects.filter(district_name=district_name).exists():
-                form.save()
-            return redirect("/historical/district")
-    context = {"form": form, "district_created": data}
-    return render(request, "district.html", context)
+            model_instance = form.save(commit=False)
+            model_instance.updated_by = request.user.username
+            model_instance.save()
+            return redirect("/historical/districts")
+    context = {
+        "header": "Edit District" if code else "Create District", "form": form}
+    # context = _add_side_navigation_context(request.user, context)
+    return render(request, "form.html", context)
 
 
-def update_district(request, code=None):
-    district_to_update = get_object_or_404(District, pk=code)
-    if request.method == 'POST':
-        form = DistrictForms(request.POST)
-        if form.is_valid():
-            district_to_update.district_name = form.cleaned_data['district_name']
-            district_to_update.district_code = form.cleaned_data['district_code']
-            district_to_update.updated_at = date.today().strftime("%Y-%m-%d")
-            district_to_update.updated_by = request.user.username
-            district_to_update.save()
-        return redirect("/historical/district")
-    return render(request, 'edit_district.html', {'district_to_update': district_to_update})
+# This is for showing a list of all schools
 
 
-# This function controls the schools creation form view and process form data for save into the database
-def create_institution(request):
+def school(request):
     data = School.objects.all()
-    instance = School(
-        created_by=request.user.username,
-        updated_by=request.user.username
-    )
+    context = {"schools": data}
+    return render(request, "schools.html", context)
+
+
+# This is for creating and editing a district
+
+def edit_school(request, code=None):
+    # Render edit form
+    if code:
+        instance = get_object_or_404(School, pk=code)
+    # Render create form
+    else:
+        instance = School(created_by=request.user.username,
+                          updated_by=request.user.username)
     form = SchoolForms(request.POST or None, instance=instance)
-    if request.method == "POST":
-        if form.is_valid():
-            school_name = form.cleaned_data['school_name']
-            if not School.objects.filter(school_name=school_name).exists():
-                form.save()
-            return redirect("/historical/create_institution")
-    context = {"form": form, "name_of_school": data}
-    return render(request, "create_school.html", context)
-
-
-# View for the update of a school
-# To-Do
-# work on the form.is_valid for Foreign Key and allow update of district
-def update_institution(request, code=None):
-    school_to_update = get_object_or_404(School, pk=code)
+    # Process submit
     if request.method == 'POST':
         form = SchoolForms(request.POST)
-        if not form.is_valid():
-            school_to_update.school_name = form.cleaned_data['school_name']
-            school_to_update.school_code = form.cleaned_data['school_code']
-            school_to_update.category_of_school = form.cleaned_data['category_of_school']
-            school_to_update.updated_at = date.today().strftime("%Y-%m-%d")
-            school_to_update.updated_by = request.user.username
-            school_to_update.save()
-        return redirect("/historical/create_institution")
-    return render(request, 'edit_school.html', {'school_to_update': school_to_update})
+        if form.is_valid():
+            model_instance = form.save(commit=False)
+            model_instance.updated_by = request.user.username
+            model_instance.save()
+        return redirect("/historical/schools")
+    context = {"header": "Edit School" if code else "Create School", "form": form}
+    return render(request, 'form.html', context)
 
 
 # Enrollment by grade and sex
@@ -118,7 +99,8 @@ def enrollment(request):
                                              year=year).exists():
                 form.save()
             return redirect("/historical/enrollment")
-    context = {"form": form, "district_names": districts_names, "name_of_school": data}
+    context = {"form": form, "district_names": districts_names,
+               "name_of_school": data}
     return render(request, "enrollment.html", context)
 
 
@@ -193,7 +175,8 @@ def enrolled_district(request):
                 error_message = "Please select a chart type and school"
             else:
                 if district_selected is not False:
-                    data = AggregateEnrollment.objects.all().filter(district_of_school_id=district_selected)
+                    data = AggregateEnrollment.objects.all().filter(
+                        district_of_school_id=district_selected)
                 stu = {
                     "error_message": error_message,
                     "districts_names": districts_names,
@@ -223,7 +206,8 @@ def district_trend(request):
                     if selected_school is not None:
                         select_school_df = pd.DataFrame(AggregateEnrollment.objects.all().
                                                         filter(name_of_school=selected_school).values())
-                        select_school_df.sort_values(by=['academic_year'], inplace=True)
+                        select_school_df.sort_values(
+                            by=['academic_year'], inplace=True)
                         select_school_df = select_school_df.tail(10)
                         # function to get the graph
                         graph = get_plot(chart, z=select_school_df['capacity_of_school'],
@@ -264,7 +248,8 @@ def compare_trends(request):
                         aggregate_df = pd.DataFrame(AggregateEnrollment.objects.all().
                                                     filter(district_of_school=selected_district,
                                                            academic_year=year).values())
-                        schools_df = pd.DataFrame(School.objects.all().values())
+                        schools_df = pd.DataFrame(
+                            School.objects.all().values())
                         df = pd.merge(left=aggregate_df, right=schools_df,
                                       left_on='name_of_school_id', right_on='id')
                         # function to get the graph
@@ -406,7 +391,8 @@ def nationalgenderenrollment(request):
         created_by=request.user.username,
         updated_by=request.user.username
     )
-    form = NationalGenderEnrollmentForms(request.POST or None, instance=instance)
+    form = NationalGenderEnrollmentForms(
+        request.POST or None, instance=instance)
     if request.method == "POST":
         if form.is_valid():
             academic_year = form.cleaned_data['academic_year']
@@ -417,6 +403,48 @@ def nationalgenderenrollment(request):
                                                            category_of_school=category_of_school).exists():
                 form.save()
             return redirect("/historical/national_gender_enrollment")
+    if 'national_enrollment_trend' in request.POST:
+        data = pd.DataFrame(NationalGenderEnrollment.objects.values().all())
+        data_male_primary = pd.DataFrame(NationalGenderEnrollment.objects. \
+                                         filter(sex='male', category_of_school='primary').all().values())
+
+        data_male_secondary = pd.DataFrame(NationalGenderEnrollment.objects.filter(sex='male',
+                                                                                   category_of_school='secondary'). \
+                                           all().values())
+
+        data_female_primary = pd.DataFrame(NationalGenderEnrollment.objects.filter(sex='female',
+                                                                                   category_of_school='primary').all().values())
+
+        data_female_secondary = pd.DataFrame(NationalGenderEnrollment.objects.filter(sex='female',
+                                                                                     category_of_school='secondary').all().values())
+
+        # function to get the graph
+
+        graph_all = plot_national_gender_enrollment(
+            data_boys_primary=data_male_primary,
+            data_girls_primary=data_female_primary,
+            data_boys_secondary=data_male_secondary,
+            data_girls_secondary=data_female_secondary
+        )
+        graph_hist = national_gender_enrollment_hist(
+            data=data,
+            data_boys_primary=data_male_primary,
+            data_girls_primary=data_female_primary,
+            data_boys_secondary=data_male_secondary,
+            data_girls_secondary=data_female_secondary
+
+        )
+        graph_all = {
+            "graph": graph_all,
+            'data': data,
+            'data_boys_primary': data_male_primary,
+            'data_girls_primary': data_female_primary,
+            'data_boys_secondary': data_male_secondary,
+            'data_girls_secondary': data_female_secondary,
+            'graph_hist': graph_hist,
+        }
+
+        return render(request, "national_gender_enrollment_trend.html", graph_all)
     context = {"form": form, "name_of_school": data}
     return render(request, "national_gender.html", context)
 
@@ -444,13 +472,27 @@ def national_education_census(request):
         created_by=request.user.username,
         updated_by=request.user.username
     )
-    form = NationalEducationCensusForms(request.POST or None, instance=instance)
+    form = NationalEducationCensusForms(
+        request.POST or None, instance=instance)
     if request.method == "POST":
         if form.is_valid():
             academic_year = form.cleaned_data['academic_year']
             if not NationalEducationCensus.objects.filter(academic_year=academic_year).exists():
                 form.save()
             return redirect("/historical/national_education_census")
+    if 'national_census_trend' in request.POST:
+        data = pd.DataFrame(NationalEducationCensus.objects.values().all())
+        # function to get the graph
+
+        graph_all = plot_national_education_census(data=data)
+        graph_hist = national_education_census_hist(data=data)
+        graph_all = {
+            "graph": graph_all,
+            'data': data,
+            'graph_hist': graph_hist,
+        }
+
+        return render(request, "national_education_census_trend.html", graph_all)
     context = {"form": form, "census_data": data}
     return render(request, "national_education_census.html", context)
 
@@ -461,9 +503,12 @@ def update_national_census(request, code=None):
         form = NationalEducationCensusForms(request.POST)
         if not form.is_valid():
             data_to_update.academic_year = form.cleaned_data['academic_year']
-            data_to_update.age_3_to_4_years = request.POST.get('age_3_to_4', False)
-            data_to_update.age_5_to_11_years = request.POST.get('age_5_to_11', False)
-            data_to_update.age_12_to_16_years = request.POST.get('age_12_to_16', False)
+            data_to_update.age_3_to_4_years = request.POST.get(
+                'age_3_to_4', False)
+            data_to_update.age_5_to_11_years = request.POST.get(
+                'age_5_to_11', False)
+            data_to_update.age_12_to_16_years = request.POST.get(
+                'age_12_to_16', False)
             data_to_update.updated_at = date.today().strftime("%Y-%m-%d")
             data_to_update.updated_by = request.user.username
             data_to_update.save()
@@ -484,6 +529,19 @@ def national_education_expenditure(request):
             if not NationalExpenditure.objects.filter(academic_year=academic_year).exists():
                 form.save()
             return redirect("/historical/national_education_expenditure")
+
+    if 'national_expenditure_trend' in request.POST:
+        data = pd.DataFrame(NationalExpenditure.objects.values().all())
+        # function to get the graph
+        graph_all = plot_national_expenditure(data=data)
+        graph_hist = national_expenditure_hist(data=data)
+        graph_all = {
+            "graph": graph_all,
+            'data': data,
+            'graph_hist': graph_hist,
+        }
+
+        return render(request, "national_expenditure_trend.html", graph_all)
     context = {"form": form, "expenditure_data": data}
     return render(request, "national_education_expenditure.html", context)
 
@@ -494,11 +552,16 @@ def update_national_expenditure(request, code=None):
         form = NationalExpenditureForms(request.POST)
         if not form.is_valid():
             data_to_update.academic_year = form.cleaned_data['academic_year']
-            data_to_update.educational_expenditure = request.POST.get('educational_expenditure', False)
-            data_to_update.gdp_millions = request.POST.get('gdp_millions', False)
-            data_to_update.government_expenditure = request.POST.get('government_expenditure', False)
-            data_to_update.primary_school_expenditure = request.POST.get('primary_school_expenditure', False)
-            data_to_update.secondary_school_expenditure = request.POST.get('secondary_school_expenditure', False)
+            data_to_update.educational_expenditure = request.POST.get(
+                'educational_expenditure', False)
+            data_to_update.gdp_millions = request.POST.get(
+                'gdp_millions', False)
+            data_to_update.government_expenditure = request.POST.get(
+                'government_expenditure', False)
+            data_to_update.primary_school_expenditure = request.POST.get(
+                'primary_school_expenditure', False)
+            data_to_update.secondary_school_expenditure = request.POST.get(
+                'secondary_school_expenditure', False)
             data_to_update.updated_at = date.today().strftime("%Y-%m-%d")
             data_to_update.updated_by = request.user.username
             data_to_update.save()
@@ -531,15 +594,18 @@ def update_national_teacher_ratio(request, code=None):
         form = NationalTeachersRatioForms(request.POST)
         if not form.is_valid():
             data_to_update.academic_year = form.cleaned_data['academic_year']
-            data_to_update.total_enrollment = request.POST.get('total_enrollment', False)
-            data_to_update.number_of_trained_male_teachers = request.POST.get('number_of_trained_male_teachers', False)
+            data_to_update.total_enrollment = request.POST.get(
+                'total_enrollment', False)
+            data_to_update.number_of_trained_male_teachers = request.POST.get(
+                'number_of_trained_male_teachers', False)
             data_to_update.number_of_trained_female_teachers = request.POST.get('number_of_trained_female_teachers',
                                                                                 False)
             data_to_update.number_of_untrained_male_teachers = request.POST.get('number_of_untrained_male_teachers',
                                                                                 False)
             data_to_update.number_of_untrained_female_teachers = request.POST.get('number_of_untrained_female_teachers',
                                                                                   False)
-            data_to_update.total_number_of_teachers = request.POST.get('total_number_of_teachers', False)
+            data_to_update.total_number_of_teachers = request.POST.get(
+                'total_number_of_teachers', False)
             data_to_update.updated_at = date.today().strftime("%Y-%m-%d")
             data_to_update.updated_by = request.user.username
             data_to_update.save()
@@ -557,21 +623,24 @@ def enrollment_summary(request):
     context = {'d': data}
     if 'ger_primary' in request.POST:
         df1 = df.query("sex=='male' and category_of_school == 'primary'")
-        data_boys_1 = df1[['academic_year', 'sex', 'enrollment', 'age_5_to_11_years']]
+        data_boys_1 = df1[['academic_year', 'sex',
+                           'enrollment', 'age_5_to_11_years']]
         json_records = data_boys_1.reset_index().to_json(orient='records')
         data_boys_primary = json.loads(json_records)
         # function to get the graph
         graph_boys_primary = get_plot_boys_primary(data=data_boys_1)
 
         df2 = df.query("sex=='female' and category_of_school == 'primary'")
-        data_girls_1 = df2[['academic_year', 'sex', 'enrollment', 'age_5_to_11_years']]
+        data_girls_1 = df2[['academic_year', 'sex',
+                            'enrollment', 'age_5_to_11_years']]
         json_records = data_girls_1.reset_index().to_json(orient='records')
         data_girls_primary = json.loads(json_records)
         # function to get the graph
         graph_girls_primary = get_plot_girls_primary(data=data_girls_1)
 
         df3 = df.query("category_of_school == 'primary'")
-        data_both_primary = df3[['academic_year', 'sex', 'enrollment', 'age_5_to_11_years']]
+        data_both_primary = df3[['academic_year',
+                                 'sex', 'enrollment', 'age_5_to_11_years']]
         json_records = data_both_primary.reset_index().to_json(orient='records')
         all_data_primary = json.loads(json_records)
         graph_all_primary = get_plot_primary(data=data_both_primary,
@@ -586,21 +655,24 @@ def enrollment_summary(request):
         return render(request, 'ger.html', data_all_primary)
     if 'ger_secondary' in request.POST:
         df1 = df.query("sex=='male' and category_of_school == 'secondary'")
-        data_boys_1 = df1[['academic_year', 'sex', 'enrollment', 'age_12_to_16_years']]
+        data_boys_1 = df1[['academic_year', 'sex',
+                           'enrollment', 'age_12_to_16_years']]
         json_records = data_boys_1.reset_index().to_json(orient='records')
         data_boys_secondary = json.loads(json_records)
         # function to get the graph
         graph_boys_secondary = get_plot_boys_secondary(data=data_boys_1)
 
         df2 = df.query("sex=='female' and category_of_school == 'secondary'")
-        data_girls_1 = df2[['academic_year', 'sex', 'enrollment', 'age_12_to_16_years']]
+        data_girls_1 = df2[['academic_year', 'sex',
+                            'enrollment', 'age_12_to_16_years']]
         json_records = data_girls_1.reset_index().to_json(orient='records')
         data_girls_secondary = json.loads(json_records)
         # function to get the graph
         graph_girls_secondary = get_plot_girls_secondary(data=data_girls_1)
 
         df3 = df.query("category_of_school == 'secondary'")
-        data_both_secondary = df3[['academic_year', 'sex', 'enrollment', 'age_12_to_16_years']]
+        data_both_secondary = df3[['academic_year',
+                                   'sex', 'enrollment', 'age_12_to_16_years']]
         json_records = data_both_secondary.reset_index().to_json(orient='records')
         all_data_secondary = json.loads(json_records)
         graph_all_secondary = get_plot_secondary(data=data_both_secondary,
@@ -616,32 +688,43 @@ def enrollment_summary(request):
     if 'ger_gdp' in request.POST:
         expenditure = pd.DataFrame(NationalExpenditure.objects.
                                    values('academic_year', 'gdp_millions').all())
-        df_regression = pd.merge(left=df, right=expenditure, on='academic_year')
+        df_regression = pd.merge(
+            left=df, right=expenditure, on='academic_year')
         json_records = df_regression.reset_index().to_json(orient='records')
         data_regression = json.loads(json_records)
 
-        df1 = df_regression.query("sex=='male' and category_of_school == 'primary'")
-        data_boys_1 = df1[['academic_year', 'sex', 'enrollment', 'age_5_to_11_years', 'gdp_millions']]
-        data_boys_1 = data_boys_1[(data_boys_1[['age_5_to_11_years', 'gdp_millions']] != 0).all(axis=1)]
-        data_boys_1['ger'] = (data_boys_1['enrollment'] / data_boys_1['age_5_to_11_years']) * 100
+        df1 = df_regression.query(
+            "sex=='male' and category_of_school == 'primary'")
+        data_boys_1 = df1[['academic_year', 'sex',
+                           'enrollment', 'age_5_to_11_years', 'gdp_millions']]
+        data_boys_1 = data_boys_1[(
+                data_boys_1[['age_5_to_11_years', 'gdp_millions']] != 0).all(axis=1)]
+        data_boys_1['ger'] = (data_boys_1['enrollment'] /
+                              data_boys_1['age_5_to_11_years']) * 100
         data_boys_1['ger'] = data_boys_1['ger'].replace(np.inf, 0)
         data_boys_1['ger'].astype(float)
         json_records = data_boys_1.reset_index().to_json(orient='records')
         data_boys_primary = json.loads(json_records)
 
-        df2 = df_regression.query("sex=='female' and category_of_school == 'primary'")
-        data_girls_1 = df2[['academic_year', 'sex', 'enrollment', 'age_5_to_11_years', 'gdp_millions']]
+        df2 = df_regression.query(
+            "sex=='female' and category_of_school == 'primary'")
+        data_girls_1 = df2[['academic_year', 'sex',
+                            'enrollment', 'age_5_to_11_years', 'gdp_millions']]
         json_records = data_girls_1.reset_index().to_json(orient='records')
         data_girls_primary = json.loads(json_records)
 
-        df1 = df_regression.query("sex=='male' and category_of_school == 'secondary'")
-        data_boys_1_secondary = df1[['academic_year', 'sex', 'enrollment', 'age_12_to_16_years', 'gdp_millions']]
+        df1 = df_regression.query(
+            "sex=='male' and category_of_school == 'secondary'")
+        data_boys_1_secondary = df1[[
+            'academic_year', 'sex', 'enrollment', 'age_12_to_16_years', 'gdp_millions']]
         json_records = data_boys_1_secondary.reset_index().to_json(orient='records')
         data_boys_secondary = json.loads(json_records)
         # function to get the graph
 
-        df2 = df_regression.query("sex=='female' and category_of_school == 'secondary'")
-        data_girls_1_secondary = df2[['academic_year', 'sex', 'enrollment', 'age_12_to_16_years', 'gdp_millions']]
+        df2 = df_regression.query(
+            "sex=='female' and category_of_school == 'secondary'")
+        data_girls_1_secondary = df2[[
+            'academic_year', 'sex', 'enrollment', 'age_12_to_16_years', 'gdp_millions']]
         json_records = data_girls_1_secondary.reset_index().to_json(orient='records')
         data_girls_secondary = json.loads(json_records)
         # function to get the graph
@@ -666,51 +749,36 @@ def enrollment_summary(request):
     return render(request, 'enrollment_summary.html', context)
 
 
-def special_ed_quest(request):
-    form1 = SpecialEdForms1(request.GET)
-    form2 = SpecialEdForms2(request.GET)
-    form3 = SpecialEdForms3(request.GET)
-    form4 = SpecialEdForms4(request.GET)
-
-    data_forms = {
-        "form1": form1,
-        "form2": form2,
-        "form3": form3,
-        "form4": form4,
-
-    }
-
-    return render(request, 'special_ed_quest.html', data_forms)
-
-
-#==============================================
-#View for outlier detection at district level
-#==============================================
+# ==============================================
+# View for outlier detection at district level
+# ==============================================
 
 def outlier_district(request):
-    #return HttpResponse('In outlier detection at district level')
+    # return HttpResponse('In outlier detection at district level')
 
     error_message = None
     graph = None
 
     districts_names = District.objects.values('id', 'district_name')
     year_list = Enrollment.objects.distinct().values_list('year', flat=True)
-    school_categories = Enrollment.objects.distinct().values_list('category_of_school', flat=True)
+    school_categories = Enrollment.objects.distinct(
+    ).values_list('category_of_school', flat=True)
 
-    if (len(districts_names) > 0 and len(school_categories)> 0):
+    if (len(districts_names) > 0 and len(school_categories) > 0):
         if ((request.method) == 'POST'):
 
-            district_selected  = request.POST.get('district_name', None)
+            district_selected = request.POST.get('district_name', None)
             selected_year = request.POST.get('year', None)
             selected_school_type = request.POST.get('school_type', None)
 
             if (not district_selected or not selected_year or not selected_school_type):
                 error_message = "Please select all variables"
             else:
-                #enrollment_df = pd.DataFrame(AggregateEnrollment.objects.values().filter(district_of_school=district_selected, academic_year = selected_year))
-                enrollment_df = pd.DataFrame(AggregateEnrollment.objects.all().filter(category_of_school = selected_school_type,
-                                                                                      district_of_school=district_selected, 
-                                                                                      academic_year=selected_year).values())
+                # enrollment_df = pd.DataFrame(AggregateEnrollment.objects.values().filter(district_of_school=district_selected, academic_year = selected_year))
+                enrollment_df = pd.DataFrame(
+                    AggregateEnrollment.objects.all().filter(category_of_school=selected_school_type,
+                                                             district_of_school=district_selected,
+                                                             academic_year=selected_year).values())
 
                 if (enrollment_df.empty):
                     error_message = "No record was found for the selected district and academic year"
@@ -718,16 +786,16 @@ def outlier_district(request):
                 else:
 
                     schools_df = pd.DataFrame(School.objects.all().values())
-                    final_df = pd.merge(left = enrollment_df, right = schools_df,
+                    final_df = pd.merge(left=enrollment_df, right=schools_df,
                                         left_on='name_of_school_id', right_on='id')
-                    
+
                     enrollment_mean = final_df['total_enrollment'].mean()
-                    
+
                     enrollment_median = final_df['total_enrollment'].median()
 
                     mean_list = []
-                    
-                    x = range(0,len(final_df['school_name']))
+
+                    x = range(0, len(final_df['school_name']))
 
                     for a in x:
                         mean_list.append(enrollment_mean)
@@ -735,98 +803,91 @@ def outlier_district(request):
                     data_mean = pd.DataFrame(mean_list, columns=['Mean'])
 
                     graph = get_outlier_district_plot(x=final_df['total_enrollment'],
-                                                      y = final_df['school_name'],
-                                                      data = final_df,
-                                                      academic_year = selected_year,
-                                                      data_mean  = data_mean,   
-                                                      input_school_type = selected_school_type, 
-                                                      input_district = district_selected                             
+                                                      y=final_df['school_name'],
+                                                      data=final_df,
+                                                      academic_year=selected_year,
+                                                      data_mean=data_mean,
+                                                      input_school_type=selected_school_type,
+                                                      input_district=district_selected
                                                       )
     else:
         error_message = "No records found"
 
-        
-    
     stu = {
-        "graph" : graph,
-        "error_message" : error_message,
-        "districts_name" : districts_names,
-        "year_list" : year_list,
-        "school_list" : school_categories
+        "graph": graph,
+        "error_message": error_message,
+        "districts_name": districts_names,
+        "year_list": year_list,
+        "school_list": school_categories
 
     }
-    
-    return render(request, 'outlier_district_page.html', stu)
-    
 
-#==============================================
-#View for outlier detection at national level
-#==============================================
+    return render(request, 'outlier_district_page.html', stu)
+
+
+# ==============================================
+# View for outlier detection at national level
+# ==============================================
 
 def outlier_national(request):
-    
     error_message = None
     graph = None
     selected_school_type = ''
     selected_year = ''
 
     year_list = Enrollment.objects.distinct().values_list('year', flat=True)
-    school_categories = Enrollment.objects.distinct().values_list('category_of_school', flat=True)
+    school_categories = Enrollment.objects.distinct(
+    ).values_list('category_of_school', flat=True)
 
     if (len(year_list) > 0 and len(school_categories) > 0):
         if ((request.method) == 'POST'):
-            
+
             selected_school_type = request.POST.get('school_type', None)
             selected_year = request.POST.get('year', None)
 
             if (not selected_year or not selected_school_type):
                 error_message = "Please select an academic year"
             else:
-                #enrollment_df = pd.DataFrame(AggregateEnrollment.objects.values().filter(district_of_school=district_selected, academic_year = selected_year))
-                enrollment_df = pd.DataFrame(AggregateEnrollment.objects.all().filter(category_of_school = selected_school_type, academic_year=selected_year).values())
+                # enrollment_df = pd.DataFrame(AggregateEnrollment.objects.values().filter(district_of_school=district_selected, academic_year = selected_year))
+                enrollment_df = pd.DataFrame(AggregateEnrollment.objects.all().filter(
+                    category_of_school=selected_school_type, academic_year=selected_year).values())
 
                 if (enrollment_df.empty):
                     error_message = "No record was found for the academic year"
 
                 else:
                     schools_df = pd.DataFrame(School.objects.all().values())
-                    final_df = pd.merge(left = enrollment_df, right = schools_df,
+                    final_df = pd.merge(left=enrollment_df, right=schools_df,
                                         left_on='name_of_school_id', right_on='id')
-                    
 
-                    
                     enrollment_mean = final_df['total_enrollment'].mean()
-                    
 
                     mean_list = []
-                    
-                    x = range(0,len(final_df['school_name']))
+
+                    x = range(0, len(final_df['school_name']))
 
                     for a in x:
                         mean_list.append(enrollment_mean)
 
                     data_mean = pd.DataFrame(mean_list, columns=['Mean'])
                     graph = get_outlier_national_plot(x=final_df['total_enrollment'],
-                                                      y = final_df['school_name'],
-                                                      data = final_df,
-                                                      academic_year = selected_year,
-                                                      data_mean  = data_mean, 
-                                                      input_school_type = selected_school_type
-                                                                                        
+                                                      y=final_df['school_name'],
+                                                      data=final_df,
+                                                      academic_year=selected_year,
+                                                      data_mean=data_mean,
+                                                      input_school_type=selected_school_type
+
                                                       )
     else:
         error_message = "No records found"
 
-       
-    
     stu = {
-        "graph" : graph,
-        "error_message" : error_message,
-        "year_list" : year_list,
-        "school_list" : school_categories
+        "graph": graph,
+        "error_message": error_message,
+        "year_list": year_list,
+        "school_list": school_categories
 
     }
-
 
     return render(request, 'outlier_national_page.html', stu)
 
@@ -842,7 +903,7 @@ def district_performance(request):
     if len(districts_names) > 0:
         if request.method == 'POST':
             # Compare all districts
-            if request.POST['submit']=='Compare All Districts (CEE)':
+            if request.POST['submit'] == 'Compare All Districts (CEE)':
                 chart_title = "CEE Comparison, All Districts"
                 context['chart_title'] = chart_title
                 data = PrimaryPerformance.objects.all()
@@ -850,7 +911,7 @@ def district_performance(request):
                 context['graph'] = graph
                 context['heatmap'] = heatmap
                 return render(request, 'district_performance.html', context)
-            if request.POST['submit']=='Compare All Districts (CSEC)':
+            if request.POST['submit'] == 'Compare All Districts (CSEC)':
                 chart_title = "CSEC Comparison, All Districts"
                 context['chart_title'] = chart_title
                 return render(request, 'district_performance.html', context)
@@ -862,7 +923,7 @@ def district_performance(request):
                 error_message = "Please select 2 different districts to compare."
                 context['error_message'] = error_message
                 return render(request, 'district_performance.html', context)
-            if request.POST['submit']=='Compare CEE Results':
+            if request.POST['submit'] == 'Compare CEE Results':
                 chart_title = "CEE Comparison, Districts " + district_1 + " and " + district_2
                 context['chart_title'] = chart_title
                 data = PrimaryPerformance.objects.all()
@@ -878,24 +939,26 @@ def district_performance(request):
                 error_message = "Please select 2 different districts to compare."
                 context['error_message'] = error_message
                 return render(request, 'district_performance.html', context)
-            if request.POST['submit']=='Compare CSEC Results':
+            if request.POST['submit'] == 'Compare CSEC Results':
                 chart_title = "CSEC Comparison, Districts " + district_3 + " and " + district_4
                 context['chart_title'] = chart_title
                 return render(request, 'district_performance.html', context)
         else:
             return render(request, 'district_performance.html', context)
 
+
 UNIVERSAL_FIELDS = {'id', 'created_at', 'created_by', 'updated_at', 'updated_by'}
+
 
 def upload_scores(request):
     context = {}
     cee_field_names = CEEResults._meta.get_fields()
-    cee_field_names = [str(f).split('.')[-1] for f in cee_field_names] 
+    cee_field_names = [str(f).split('.')[-1] for f in cee_field_names]
     cee_field_names = list(set(cee_field_names) - UNIVERSAL_FIELDS)
     cee_field_names.sort()
 
     csec_field_names = CSECResults._meta.get_fields()
-    csec_field_names = [str(f).split('.')[-1] for f in csec_field_names] 
+    csec_field_names = [str(f).split('.')[-1] for f in csec_field_names]
     csec_field_names = list(set(csec_field_names) - UNIVERSAL_FIELDS)
     csec_field_names.sort()
     context['cee_field_names'] = cee_field_names
@@ -909,29 +972,28 @@ def upload_scores(request):
     type = "CEE"
     field_names = []
     csv_file = None
-    if request.POST['submit']=='Upload CSEC Scores':
+    if request.POST['submit'] == 'Upload CSEC Scores':
         field_names = csec_field_names
         if not "csec_file" in request.FILES:
             context['error_message'] = 'Please select a file to upload.'
             return render(request, "upload_scores.html", context)
         csv_file = request.FILES["csec_file"]
         type = "CSEC"
-    elif request.POST['submit']=='Upload CEE Scores':
+    elif request.POST['submit'] == 'Upload CEE Scores':
         field_names = cee_field_names
         if not "cee_file" in request.FILES:
             context['error_message'] = 'Please select a file to upload.'
             return render(request, "upload_scores.html", context)
         csv_file = request.FILES["cee_file"]
 
-
     if not csv_file.name.endswith('.csv'):
         context['error_message'] = 'Could not upload file. File must be CSV type.'
         return render(request, "upload_scores.html", context)
     scores = csv_file.read().decode("utf-8", 'ignore')
     user_data = {'created_by': request.user.username,
-                'updated_by': request.user.username,
-                'created_at': date.today().strftime("%Y-%m-%d"),
-                'updated_at': date.today().strftime("%Y-%m-%d")}
+                 'updated_by': request.user.username,
+                 'created_at': date.today().strftime("%Y-%m-%d"),
+                 'updated_at': date.today().strftime("%Y-%m-%d")}
     result = store_scores(scores, field_names, user_data, type)
     if 'error_message' in result:
         context['error_message'] = result['error_message']
@@ -945,6 +1007,7 @@ def upload_scores(request):
     context['cee_count'] = CEEResults.objects.count()
     context['csec_count'] = CSECResults.objects.count()
     return render(request, "upload_scores.html", context)
+
 
 
 #======================================================================
@@ -1068,3 +1131,4 @@ def boxplot_national(request):
 
 
     return render(request, 'boxplots_national_page.html', stu)
+

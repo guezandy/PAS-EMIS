@@ -1,60 +1,34 @@
-{% extends "base.html" %}
-{% block page_content %}
-<div class="container-fluid">
-    <div class="row">
-        <div class='col-md-6'>
-            <h1>All Districts</h1>
-        </div>
-        {% if can_view_service_defs %}
-        <div class="col-md-6 action-button-group">
-            <a href="{% url 'welfare:view_services' %}"><button type="button"
-                class="btn btn-success mb-2">View Service Definitions</button></a>
-        </div>
-        {% endif %}
-    </div>
-    <div class="row">
-        <div class="col-xl-3 col-md-6">
-            <div class="card bg-primary text-white mb-4">
-                <div class="card-body">
-                    <div class='stat'>{{student_service_count}}</div>
-                    <div class='stat-label'>Total Students with Services</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-md-6">
-            <div class="card bg-warning text-white mb-4">
-                <div class="card-body">
-                    <div class='stat'>{{student_service_percent|stringformat:".2f"}}%</div>
-                    <div class='stat-label'>Percent Students with Services</div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="card mb-4">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>District code</th>
-                            <th>District name</th>
-                            <th>Total students</th>
-                            <th>Students with services</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for district in districts %}
-                        <tr class='clickable-row' data-href="/welfare/district/{{district.district_code}}">
-                            <td>{{district.district_code}}</td>
-                            <td>{{district.district_name}}</td>
-                            <td>{{district.student_count}}</td>
-                            <td>{{district.student_service_count}} ({{district.student_service_percent|stringformat:".2f"}}%)</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock page_content %}
+{% extends "welfare_base.html" %}
+{% block page_title %}
+<h1>All Districts</h1>
+{% endblock %}
+{% block table_details %}
+<table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0">
+    <thead>
+        <tr>
+            <th class="align-middle">District code</th>
+            <th class="align-middle">District name</th>
+            <th class="align-middle">Students</th>
+            <th class="align-middle">Girls</th>
+            <th class="align-middle">Boys</th>
+            <th class="align-middle">Students w/ services</th>
+            <th class="align-middle">Girls w/ services</th>
+            <th class="align-middle">Boys w/ services</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for district in districts %}
+        <tr class='clickable-row' data-href="/welfare/district/{{district.district_code}}">
+            <td>{{district.district_code}}</td>
+            <td>{{district.district_name}}</td>
+            <td>{{district.student_count}}</td>
+            <td>{{district.girl_count}}</td>
+            <td>{{district.boy_count}}</td>
+            <td>{{district.students_with_services_count}} ({{district.students_with_services_percent|stringformat:".1f"}}%)</td>
+            <td>{{district.girls_with_services_count}} ({{district.girls_with_services_percent|stringformat:".1f"}}%)</td>
+            <td>{{district.boys_with_services_count}} ({{district.boys_with_services_percent|stringformat:".1f"}}%)</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock table_details %}

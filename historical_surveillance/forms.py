@@ -7,7 +7,7 @@ from .models import *
 class DistrictForms(forms.ModelForm):
     class Meta:
         model = District
-        fields = ["district_name", "district_code"]
+        fields = ["district_name", "district_code",  "updated_by", "created_by",]
         widgets = {
             "created_by": TextInput(attrs={"readonly": "readonly"}),
             "updated_by": TextInput(attrs={"readonly": "readonly"}),
@@ -35,18 +35,12 @@ class AggregateEnrollmentForms(forms.ModelForm):
 class SchoolForms(forms.ModelForm):
     class Meta:
         model = School
-        fields = "__all__"
+        fields = ["school_code", "school_name",  "district_name", "category_of_school","updated_by", "created_by"]
+        # fields = "__all__"
         widgets = {
             "created_by": TextInput(attrs={"readonly": "readonly"}),
             "updated_by": TextInput(attrs={"readonly": "readonly"}),
         }
-
-        """
-        widgets = {
-            'district_name': forms.Select(choices=District.objects.values_list('district_name', flat=True),
-                                          attrs={'class': 'form-control'})
-        }
-        """
 
 
 class EnrollmentForms(forms.ModelForm):
@@ -159,7 +153,7 @@ class SpecialEdForms4(forms.ModelForm):
         ]
 
         # widgets = {
-        #'specify_other_disability_name' : Textarea(attrs={'cols':80, 'rows' : 20}),
+        # 'specify_other_disability_name' : Textarea(attrs={'cols':80, 'rows' : 20}),
         # }
 
 class CSECForm(forms.ModelForm):

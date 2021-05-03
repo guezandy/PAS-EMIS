@@ -63,12 +63,11 @@ PLAYING_FIELD_CHOICES = [
 
 class District(models.Model):
     objects = None
-    # created_at = models.DateField(auto_now_add=True)
-    created_at = models.DateField()
+    created_at = models.DateField(auto_now_add=True)
     created_by = models.CharField(max_length=255, blank=True)
     district_code = models.CharField(max_length=50, blank=True, unique=True)
     district_name = models.CharField(max_length=50)
-    updated_at = models.DateField()
+    updated_at = models.DateField(auto_now=True)
     updated_by = models.CharField(max_length=255, blank=True)
 
     class Meta(CustomPermissionModel.Meta):
@@ -184,11 +183,11 @@ class NationalExpenditure(models.Model):
     created_at = models.DateField(auto_now_add=True)
     created_by = models.CharField(max_length=255)
     academic_year = models.CharField(max_length=30)
-    educational_expenditure = models.CharField(max_length=50)
-    gdp_millions = models.CharField(max_length=50)
-    government_expenditure = models.CharField(max_length=50)
-    primary_school_expenditure = models.CharField(max_length=50)
-    secondary_school_expenditure = models.CharField(max_length=50)
+    educational_expenditure = models.FloatField(max_length=50)
+    gdp_millions = models.FloatField(max_length=50)
+    government_expenditure = models.FloatField(max_length=50)
+    primary_school_expenditure = models.FloatField(max_length=50)
+    secondary_school_expenditure = models.FloatField(max_length=50)
     updated_at = models.DateField(auto_now_add=True)
     updated_by = models.CharField(max_length=255, blank=True)
 

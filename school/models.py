@@ -105,33 +105,21 @@ class Course(models.Model):
         return f"{self.subject.name}"
 
 
-class CourseGrade(models.Model):
+class CourseOutcome(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
+    # Grade
     grade = models.DecimalField(max_digits=4, decimal_places=2)
+    # Attendance
+    days_absent = models.IntegerField(null=True, blank=True)
+    # Notes
+    notes = models.CharField(max_length=550, null=True, blank=True)
 
     class Meta:
         unique_together = ("course", "student")
 
     def __str__(self):
-        return f"{self.student.first_name} {self.student.last_name} | {self.course.subject.name} | {self.grade}"
-
-
-class Assignment(models.Model):
-    name = models.CharField(max_length=100)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
-
-
-class AssignmentGrade(models.Model):
-    assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE, null=True)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
-    grade = models.DecimalField(max_digits=4, decimal_places=2)
-
-    class Meta:
-        unique_together = ("assignment", "student")
-
-    def __str__(self):
-        return f"{self.student.first_name} {self.student.last_name} | {self.assignment.name} | {self.grade}"
+        return f"{self.student.first_name} {self.student.last_name} |{self.course.subject.name} | Grade: {self.grade} Attendance: {self.days_absent}"
 
 
 APPRAISAL_CHOICES = (

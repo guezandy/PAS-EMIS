@@ -5,14 +5,23 @@ app_name = "surveillance"
 urlpatterns = [
     # for the index page
     path("", views.index, name="index"),
+
+    # Enrollment urls
     # for the enrollments page
-    path("enrollment", views.enrollment, name="enrollment"),
-    # to update the created schools
+    path("enrollments", views.enrollment, name="enrollments"),
+    # to update an existing enrollment record
     path(
-        "update_enrollment/<int:code>",
+        "enrollments/<int:code>",
         views.update_enrollment,
         name="update-enrollment",
     ),
+
+    path(
+        "enrollments/create",
+        views.update_enrollment,
+        name="create-enrollment",
+    ),
+
     # for the enrollment/capacity page
     path("enroll_class", views.enroll_class, name="enroll_class"),
     # to update the enrollment / capacity
@@ -24,21 +33,22 @@ urlpatterns = [
 
     # District urls
     # for the viewing districts
-    path("districts", views.district, name="district"),
+    path("districts", views.district, name="districts"),
     # for creating districts
-    path("district/create", views.edit_district, name="create-district"),
+    path("districts/create", views.edit_district, name="create-district"),
     # to update the created district
-    path("update_district/<int:code>", views.edit_district, name="update-district"),
+    path("districts/<int:code>",
+         views.edit_district, name="update-district"),
 
 
     # School urls
     # for viewing schools
-    path("schools", views.school, name="create-school"),
-    #for creating schools
-     path("schools/create", views.edit_school, name="create-school"),
+    path("schools", views.school, name="schools"),
+    # for creating schools
+    path("schools/create", views.edit_school, name="create-school"),
     # to update the created schools
     path(
-        "update_institution/<int:code>", views.edit_school, name="update-school"
+        "schools/<int:code>", views.edit_school, name="update-school"
     ),
 
     # enrollment/capacity table by district view
@@ -106,25 +116,24 @@ urlpatterns = [
     path(
         "district_performance",
         views.district_performance,
-        name ="district_performance")
-    ,
+        name="district_performance"),
     path(
         "upload_scores",
         views.upload_scores,
-        name ="upload_scores"),
+        name="upload_scores"),
     # enrollment analysis summary
     path("enrollment_summary", views.enrollment_summary, name="enrollment_summary"),
     # Annual special education questionnaire
     path("special_ed_quest", views.special_ed_quest, name="special_ed_quest"),
 
-    #========================================
-    #For outlier detection at district level
-    #========================================
+    # ========================================
+    # For outlier detection at district level
+    # ========================================
     path("outlier_district", views.outlier_district, name="outlier_district"),
 
-    #========================================
-    #For outlier detection at national level
-    #========================================
+    # ========================================
+    # For outlier detection at national level
+    # ========================================
     path("outlier_national", views.outlier_national, name="outlier_national")
-    
+
 ]

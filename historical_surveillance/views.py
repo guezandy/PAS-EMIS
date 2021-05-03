@@ -1,5 +1,7 @@
 
 import json
+from django.http.response import HttpResponseRedirect
+from django.urls.base import reverse
 
 
 import pandas as pd
@@ -45,7 +47,7 @@ def edit_district(request, code=None):
             model_instance = form.save(commit=False)
             model_instance.updated_by = request.user.username
             model_instance.save()
-            return redirect("/historical/districts")
+            return HttpResponseRedirect(reverse("surveillance:districts"))
     context = {
         "header": "Edit District" if code else "Create District", "form": form}
     #context = _add_side_navigation_context(request.user, context)
@@ -74,11 +76,13 @@ def edit_school(request, code=None):
     # Process submit
     if request.method == 'POST':
         form = SchoolForms(request.POST)
+        print('SCHOOL SAVE:', request.POST)
         if form.is_valid():
             model_instance = form.save(commit=False)
             model_instance.updated_by = request.user.username
             model_instance.save()
-        return redirect("/historical/schools")
+            print('SCHOOL SAVE:', model_instance)
+            return HttpResponseRedirect(reverse("surveillance:schools"))
     context = {"header": "Edit School" if code else "Create School", "form": form}
     return render(request, 'form.html', context)
 
@@ -86,45 +90,70 @@ def edit_school(request, code=None):
 # Enrollment by grade and sex
 def enrollment(request):
     data = Enrollment.objects.all()
-    districts_names = District.objects.values('district_code', 'district_name')
-    instance = Enrollment(
-        created_by=request.user.username,
-        updated_by=request.user.username
-    )
-    form = EnrollmentForms(request.POST or None, instance=instance)
-    if request.method == "POST":
-        if form.is_valid():
-            school = form.cleaned_data['school']
-            grade = form.cleaned_data['grade']
-            sex = form.cleaned_data['sex']
-            year = form.cleaned_data['year']
-            if not Enrollment.objects.filter(school=school,
-                                             grade=grade,
-                                             sex=sex,
-                                             year=year).exists():
-                form.save()
-            return redirect("/historical/enrollment")
-    context = {"form": form, "district_names": districts_names,
-               "name_of_school": data}
+    context = {"enrollments": data}
     return render(request, "enrollment.html", context)
+
+    # data = Enrollment.objects.all()
+    # districts_names = District.objects.values('district_code', 'district_name')
+    # instance = Enrollment(
+    #     created_by=request.user.username,
+    #     updated_by=request.user.username
+    # )
+    # form = EnrollmentForms(request.POST or None, instance=instance)
+    # if request.method == "POST":
+    #     if form.is_valid():
+    #         school = form.cleaned_data['school']
+    #         grade = form.cleaned_data['grade']
+    #         sex = form.cleaned_data['sex']
+    #         year = form.cleaned_data['year']
+    #         if not Enrollment.objects.filter(school=school,
+    #                                          grade=grade,
+    #                                          sex=sex,
+    #                                          year=year).exists():
+    #             form.save()
+    #         return redirect("/historical/enrollment")
+    # context = {"form": form, "district_names": districts_names,
+    #            "name_of_school": data}
+    # return render(request, "enrollment.html", context)
+    
+    
 
 
 # update enrollment by grade and sex
 def update_enrollment(request, code=None):
-    school_to_update = get_object_or_404(Enrollment, pk=code)
+     # Render edit form
+    if code:
+        instance = get_object_or_404(Enrollment, pk=code)
+    # Render create form
+    else:
+        instance = Enrollment(created_by=request.user.username,
+                          updated_by=request.user.username)
+    form = EnrollmentForms(request.POST or None, instance=instance)
+    # Process submit
     if request.method == 'POST':
         form = EnrollmentForms(request.POST)
-        if not form.is_valid():
-            school_to_update.grade = form.cleaned_data['grade']
-            school_to_update.enrollment = form.cleaned_data['enrollment']
-            school_to_update.sex = form.cleaned_data['sex']
-            school_to_update.minimum_age = form.cleaned_data['minimum_age']
-            school_to_update.maximum_age = form.cleaned_data['maximum_age']
-            school_to_update.updated_at = date.today().strftime("%Y-%m-%d")
-            school_to_update.updated_by = request.user.username
-            school_to_update.save()
-        return redirect("/historical/enrollment")
-    return render(request, 'edit_enrollment.html', {'school_to_update': school_to_update})
+        if form.is_valid():
+            model_instance = form.save(commit=False)
+            model_instance.updated_by = request.user.username
+            model_instance.save()
+            return HttpResponseRedirect(reverse("surveillance:enrollments"))
+    context = {"header": "Edit Enrollment" if code else "Add Enrollment Record", "form": form}
+    return render(request, 'form.html', context)
+
+    # school_to_update = get_object_or_404(Enrollment, pk=code)
+    # if request.method == 'POST':
+    #     form = EnrollmentForms(request.POST)
+    #     if not form.is_valid():
+    #         school_to_update.grade = form.cleaned_data['grade']
+    #         school_to_update.enrollment = form.cleaned_data['enrollment']
+    #         school_to_update.sex = form.cleaned_data['sex']
+    #         school_to_update.minimum_age = form.cleaned_data['minimum_age']
+    #         school_to_update.maximum_age = form.cleaned_data['maximum_age']
+    #         school_to_update.updated_at = date.today().strftime("%Y-%m-%d")
+    #         school_to_update.updated_by = request.user.username
+    #         school_to_update.save()
+    #     return redirect("/historical/enrollment")
+    # return render(request, 'edit_enrollment.html', {'school_to_update': school_to_update})
 
 
 # This function controls the total enrollment and school capacity form

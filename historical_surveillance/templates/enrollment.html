@@ -12,7 +12,7 @@ of the same data which is also handled by the error message displayed.
       <h1>National Enrollment by Grade and Sex</h1>
     </div>
     <div class="col-md-6 action-button-group">
-      <a href="{% url 'surveillance:create-school' %}"
+      <a href="{% url 'surveillance:create-enrollment' %}"
         ><button type="button" class="btn btn-success mb-2">
           Add Record
         </button></a
@@ -40,7 +40,7 @@ of the same data which is also handled by the error message displayed.
                 </tr>
               </thead>
               <tbody>
-                {% for school in name_of_school %}
+                {% for school in enrollments %}
                 <tr>
                   <td>{{ school.school }}</td>
                   <td>{{ school.year }}</td>
@@ -50,8 +50,8 @@ of the same data which is also handled by the error message displayed.
                   <td>{{ school.minimum_age }}</td>
                   <td>{{ school.maximum_age }}</td>
                   <td>
-                    <a class="btn btn-primary" href="/historical/update_enrollment/{{ school.id}}"
-                      ><i class="fas fa-pencil-alt"></i> Edit</a
+                    <a class="btn btn-primary" href= "{% url 'surveillance:update-enrollment' school.id %}">
+                    <i class="fas fa-pencil-alt"></i> Edit</a
                     >
                   </td>
                 </tr>
@@ -63,7 +63,7 @@ of the same data which is also handled by the error message displayed.
       </div>
     </div>
 
-    <div class="col-md-12">
+    {% comment %} <div class="col-md-12">
       <div class="card bg-transparent container-fluid text-dark mb-4">
         <div class="card-body">
           <h3>Enrollment by grade and sex</h3>
@@ -92,7 +92,7 @@ of the same data which is also handled by the error message displayed.
         </form>
       </div>
     </div>
-  </div>
+  </div> {% endcomment %}
 </main>
 
 {% endblock%}

@@ -43,8 +43,8 @@ of the same data which is also handled by the error message displayed.
                   <td>{{ item.district_name }}</td>
                   <td>{{ item.category_of_school }}</td>
                   <td>
-                    <a class="btn btn-primary" href="/historical/update_institution/{{ item.id}}"
-                      ><i class="fas fa-pencil-alt"></i> Edit</a
+                    <a class="btn btn-primary" href= "{% url 'surveillance:update-school' item.id %}">
+                    <i class="fas fa-pencil-alt"></i> Edit</a
                     >
                   </td>
                 </tr>

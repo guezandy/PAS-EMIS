@@ -257,6 +257,13 @@ def get_outlier_district_plot(**kwargs):
     return graph
 
 
+    plt.tight_layout()
+    graph = get_image()
+    return graph
+
+
+
+
 def get_plot_boys_primary(**kwargs):
     plt.switch_backend('AGG')
     data = kwargs.get('data')
@@ -354,6 +361,10 @@ def get_outlier_national_plot(**kwargs):
     graph = get_image()
     return graph
 
+
+    plt.tight_layout()
+    graph = get_image()
+    return graph
 
 def get_plot_primary(**kwargs):
     plt.switch_backend('AGG')
@@ -849,3 +860,69 @@ def store_scores(data, required_fields, user_data, type):
         result['n_scores'] = succeeded
         result['failed'] = failed
     return result
+
+
+
+
+
+#=======================================================================================
+#Box plots at district level
+#=======================================================================================
+
+def get_boxplot_district_plot(**kwargs):
+
+    plt.switch_backend('AGG')
+
+    school_enrollment = kwargs.get('x')
+    school_name = kwargs.get('y')
+
+    input_school_type = kwargs.get('input_school_type')
+    academic_year = kwargs.get('academic_year')
+    district_input = kwargs.get('input_district')
+
+
+    fig, ax1 = plt.subplots(figsize=(11,6))
+
+    plt.boxplot(school_enrollment, patch_artist = True, 
+                        boxprops = dict(facecolor = 'purple'), 
+                        meanline = True, showmeans = True)
+    
+    
+    plt.xticks([1], [input_school_type])
+    plt.ylabel('Enrollment')
+    plt.title("Box Plot for Enrollment in " + input_school_type + " schools  in " + " District" + district_input + " and academic year " + academic_year)
+
+    plt.tight_layout()
+    graph = get_image()
+    return graph
+
+
+
+#=========================================================================================
+#Box plots at national level
+#=========================================================================================
+
+def get_boxplot_national_plot(**kwargs):
+
+    plt.switch_backend('AGG')
+
+    school_enrollment = kwargs.get('x')
+    school_name = kwargs.get('y')
+
+    input_school_type = kwargs.get('input_school_type')
+    academic_year = kwargs.get('academic_year')
+
+    fig, ax1 = plt.subplots(figsize=(11,6))
+
+    plt.boxplot(school_enrollment, patch_artist = True, 
+                        boxprops = dict(facecolor = 'purple'),
+                        meanline = True, showmeans = True)
+    
+    plt.xticks([1], [input_school_type])
+    plt.ylabel('Enrollment')
+    plt.title("Box Plot for Enrollment in " + input_school_type + " schools " + " for academic year " + academic_year)
+
+    plt.tight_layout()
+    graph = get_image()
+    return graph
+

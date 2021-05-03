@@ -4,6 +4,7 @@ from io import BytesIO
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
+import re
 from sklearn.linear_model import LinearRegression
 from .models import School
 from .models import District
@@ -530,6 +531,20 @@ def primary_performance_plot(data, district_1, district_2):
     ax = sns.heatmap(performance, annot=True)
     ax.set_title("Percentage of Students Scoring above Mean (CEE)")
     plt.tight_layout()
+    heatmap = get_image()
+    return [graph, heatmap]
+
+def csec_performance_plot(data, district_1, district_2):
+    df = pd.DataFrame(data.values())
+    plt.switch_backend('AGG')
+    years = [extract_year(ys) for ys in df['EXAM_PERIOD'].drop_duplicates()]
+    print(years)
+
+
+    plt.plot(years)
+    graph = get_image()
+
+    plt.clf()
     heatmap = get_image()
     return [graph, heatmap]
 

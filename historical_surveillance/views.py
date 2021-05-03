@@ -853,6 +853,10 @@ def district_performance(request):
             if request.POST['submit']=='Compare All Districts (CSEC)':
                 chart_title = "CSEC Comparison, All Districts"
                 context['chart_title'] = chart_title
+                data = CSECResults.objects.all()
+                [graph, heatmap] = csec_performance_plot(data, None, None)
+                context['graph'] = graph
+                context['heatmap'] = heatmap
                 return render(request, 'district_performance.html', context)
 
             # Compare CEE between 2 districts
@@ -881,6 +885,10 @@ def district_performance(request):
             if request.POST['submit']=='Compare CSEC Results':
                 chart_title = "CSEC Comparison, Districts " + district_3 + " and " + district_4
                 context['chart_title'] = chart_title
+                data = CSECResults.objects.all()
+                [graph, heatmap] = csec_performance_plot(data, int(district_3), int(district_4))
+                context['graph'] = graph
+                context['heatmap'] = heatmap
                 return render(request, 'district_performance.html', context)
         else:
             return render(request, 'district_performance.html', context)
@@ -903,6 +911,8 @@ def upload_scores(request):
 
     context['cee_count'] = CEEResults.objects.count()
     context['csec_count'] = CSECResults.objects.count()
+    context['cee_by_year'] = [item['test_yr'] for item in CEEResults.objects.values('test_yr').distinct()]
+    context['csec_by_year'] = [item['EXAM_PERIOD'] for item in CSECResults.objects.values('EXAM_PERIOD').distinct()]
 
     if "GET" == request.method:
         return render(request, "upload_scores.html", context)
@@ -924,24 +934,35 @@ def upload_scores(request):
         csv_file = request.FILES["cee_file"]
 
 
-    if not csv_file.name.endswith('.csv'):
-        context['error_message'] = 'Could not upload file. File must be CSV type.'
-        return render(request, "upload_scores.html", context)
-    scores = csv_file.read().decode("utf-8", 'ignore')
-    user_data = {'created_by': request.user.username,
-                'updated_by': request.user.username,
-                'created_at': date.today().strftime("%Y-%m-%d"),
-                'updated_at': date.today().strftime("%Y-%m-%d")}
-    result = store_scores(scores, field_names, user_data, type)
-    if 'error_message' in result:
-        context['error_message'] = result['error_message']
-    if 'missing_fields' in result:
-        context['missing_fields'] = result['missing_fields']
-    n_scores = 0
-    if 'n_scores' in result:
-        context['n_scores'] = result['n_scores']
-    if 'failed' in result:
-        context['failed'] = result['failed']
+    if request.POST['submit'].startswith("delete_cee"):
+        time_period = request.POST['submit'][10:]
+        CEEResults.objects.filter(test_yr=time_period).delete()
+    elif request.POST['submit'].startswith("delete_csec"):
+        time_period = request.POST['submit'][10:]
+        CSECResults.objects.filter(EXAM_PERIOD=time_period).delete()
+    else:
+        if not csv_file.name.endswith('.csv'):
+            context['error_message'] = 'Could not upload file. File must be CSV type.'
+            return render(request, "upload_scores.html", context)
+        scores = csv_file.read().decode("utf-8", 'ignore')
+        user_data = {'created_by': request.user.username,
+                    'updated_by': request.user.username,
+                    'created_at': date.today().strftime("%Y-%m-%d"),
+                    'updated_at': date.today().strftime("%Y-%m-%d")}
+        result = store_scores(scores, field_names, user_data, type)
+        if 'error_message' in result:
+            context['error_message'] = result['error_message']
+        if 'missing_fields' in result:
+            context['missing_fields'] = result['missing_fields']
+        n_scores = 0
+        if 'n_scores' in result:
+            context['n_scores'] = result['n_scores']
+        if 'failed' in result:
+            context['failed'] = result['failed']
+
+
     context['cee_count'] = CEEResults.objects.count()
     context['csec_count'] = CSECResults.objects.count()
+    context['cee_by_year'] = [item['test_yr'] for item in CEEResults.objects.values('test_yr').distinct()]
+    context['csec_by_year'] = [item['EXAM_PERIOD'] for item in CSECResults.objects.values('EXAM_PERIOD').distinct()]
     return render(request, "upload_scores.html", context)

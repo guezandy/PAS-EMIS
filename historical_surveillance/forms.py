@@ -185,6 +185,7 @@ class CSECForm(forms.ModelForm):
         self.fields['PROFILE2_GRADE'].required = False
         self.fields['PROFILE3_GRADE'].required = False
         self.fields['PROFILE4_GRADE'].required = False
+        self.fields['SEX'].required = False
 
 class CEEForm(forms.ModelForm):
     class Meta:

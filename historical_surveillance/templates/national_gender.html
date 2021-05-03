@@ -9,6 +9,24 @@ The form is redirected to the home page of the app when a data is inserted to pr
 of the same data which is also handled by the error message displayed.
 -->
 <main>
+<div class="row">
+  <div class="col-xl-12 col-md-12">
+     <div class="card mb-4">
+                <div class="card-body">
+
+                     <form method = "POST" action="">
+                         {% csrf_token %}
+                        <input type="submit" name="national_enrollment_trend" class="btn btn-secondary btn-block" value="Get National Enrollment distribution" />
+                        <br/><br/>
+
+                    </form>
+
+
+                </div>
+            </div>
+        </div>
+</div>
+
     <div class="row">
 
         <div class="col-xl-5 col-md-5">
@@ -91,6 +109,12 @@ of the same data which is also handled by the error message displayed.
 
 
     </div>
+
+
+
+
+
+
 </main>
 
 

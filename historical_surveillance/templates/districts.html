@@ -1,0 +1,61 @@
+{% extends "base.html" %} {% load crispy_forms_filters %} {% load
+crispy_forms_tags %} {% block page_content %}
+<!-- This form handles the creation of schools in each district.
+The error handling needs to be reviewed for now, it takes the error messaged passed as a dictionary
+from the school view and displays to the user preventing duplicate data entry.
+The form is redirected to the home page of the app when a data is inserted to prevent double insert
+of the same data which is also handled by the error message displayed.
+-->
+<main>
+  <div class="row">
+    <div class="col-md-6">
+      <h1>District Directory</h1>
+    </div>
+    <div class="col-md-6 action-button-group">
+      <a href="{% url 'surveillance:create-district' %}"
+        ><button type="button" class="btn btn-success mb-2">
+          Create District
+        </button></a
+      >
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xl-12 col-md-12">
+      <div class="card mb-4">
+        <div class="card-body">
+          <!-- TO DO :
+                  Make table updatable -->
+          <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" max-width="100%">
+              <thead>
+                <tr>
+                  <th>District code</th>
+                  <th>District name</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for district in district_created %}
+                <tr>
+                  <td>{{ district.district_code }}</td>
+                  <td>{{ district.district_name }}</td>
+                  <td>
+                    <a class="btn btn-primary" href="/historical/update_district/{{ district.id}}"
+                      ><i class="fas fa-pencil-alt"></i> Edit</a
+                    >
+                    <!--<a href="/delete_/{{district.id}}"><i class="fas fa-trash-alt"></i>Delete</a>-->
+                  </td>
+
+                  {% endfor %}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+{% endblock%}

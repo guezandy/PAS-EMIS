@@ -21,16 +21,26 @@ urlpatterns = [
         views.update_enroll_class,
         name="update-enroll-class",
     ),
-    # for the create district page
-    path("district", views.district, name="district"),
+
+    # District urls
+    # for the viewing districts
+    path("districts", views.district, name="district"),
+    # for creating districts
+    path("district/create", views.edit_district, name="create-district"),
     # to update the created district
-    path("update_district/<int:code>", views.update_district, name="update-district"),
-    # for the create schools page
-    path("create_institution", views.create_institution, name="create-school"),
+    path("update_district/<int:code>", views.edit_district, name="update-district"),
+
+
+    # School urls
+    # for viewing schools
+    path("schools", views.school, name="create-school"),
+    #for creating schools
+     path("schools/create", views.edit_school, name="create-school"),
     # to update the created schools
     path(
-        "update_institution/<int:code>", views.update_institution, name="update-school"
+        "update_institution/<int:code>", views.edit_school, name="update-school"
     ),
+
     # enrollment/capacity table by district view
     path("enrolled_district", views.enrolled_district, name="enrolled_district"),
     # Visualization of enrollment / Capacity
@@ -105,7 +115,7 @@ urlpatterns = [
     # enrollment analysis summary
     path("enrollment_summary", views.enrollment_summary, name="enrollment_summary"),
     # Annual special education questionnaire
-    path("special_ed_quest", views.special_ed_quest, name="special_ed_quest"),
+    #path("special_ed_quest", views.special_ed_quest, name="special_ed_quest"),
 
     #========================================
     #For outlier detection at district level
@@ -115,6 +125,18 @@ urlpatterns = [
     #========================================
     #For outlier detection at national level
     #========================================
-    path("outlier_national", views.outlier_national, name="outlier_national")
+    path("outlier_national", views.outlier_national, name="outlier_national"),
+
+
+    #=========================================
+    #For box plots at district level
+    #=========================================
+    path("boxplot_district", views.boxplot_district, name="boxplot_district"),
+
+    #============================================
+    #For box plots at national level
+    #============================================
+    path("boxplot_national", views.boxplot_national, name="boxplot_national")
+
     
 ]

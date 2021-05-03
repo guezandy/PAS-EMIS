@@ -1,12 +1,12 @@
 from django import forms
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Submit, Row, Column, HTML
 
 from .models import (
     Course,
+    CourseOutcome,
     Subject,
     SubjectGroup,
-    Assignment,
-    AssignmentGrade,
-    CourseGrade,
     Student,
     TeacherAppraisal,
     PrincipalAppraisal,
@@ -19,11 +19,7 @@ from django.forms import TextInput, Textarea
 class DistrictForm(forms.ModelForm):
     class Meta:
         model = District
-        fields = "__all__"
-        widgets = {
-            "created_by": TextInput(attrs={"readonly": "readonly"}),
-            "updated_by": TextInput(attrs={"readonly": "readonly"}),
-        }
+        fields = ["district_name", "district_code"]
 
 
 class SchoolForm(forms.ModelForm):
@@ -68,19 +64,96 @@ class StudentForm(forms.ModelForm):
             "school_expectations": Textarea(attrs={"rows": 3, "cols": 20}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Row(
+                Column("first_name", css_class="form-group col-md-4 mb-0"),
+                Column("middle_initial", css_class="form-group col-md-4 mb-0"),
+                Column("last_name", css_class="form-group col-md-4 mb-0"),
+                css_class="form-row",
+            ),
+            Row(
+                Column("sex", css_class="form-group col-md-4 mb-0"),
+                Column("date_of_birth", css_class="form-group col-md-4 mb-0"),
+                css_class="form-row",
+            ),
+            "home_address",
+            "last_school_attended",
+            "father_name",
+            Row(
+                Column("father_work_telephone", css_class="form-group col-md-4 mb-0"),
+                Column("father_home_telephone", css_class="form-group col-md-4 mb-0"),
+                css_class="form-row",
+            ),
+            "father_email",
+            Row(
+                Column("father_occupation", css_class="form-group col-md-4 mb-0"),
+                Column("father_home_address", css_class="form-group col-md-4 mb-0"),
+                css_class="form-row",
+            ),
+            "mother_name",
+            Row(
+                Column("mother_work_telephone", css_class="form-group col-md-4 mb-0"),
+                Column("mother_home_telephone", css_class="form-group col-md-4 mb-0"),
+                css_class="form-row",
+            ),
+            "mother_email",
+            Row(
+                Column("mother_occupation", css_class="form-group col-md-4 mb-0"),
+                Column("mother_home_address", css_class="form-group col-md-4 mb-0"),
+                css_class="form-row",
+            ),
+            "guardian_name",
+            Row(
+                Column("guardian_work_telephone", css_class="form-group col-md-4 mb-0"),
+                Column("guardian_home_telephone", css_class="form-group col-md-4 mb-0"),
+                css_class="form-row",
+            ),
+            "guardian_email",
+            Row(
+                Column("guardian_occupation", css_class="form-group col-md-4 mb-0"),
+                Column("guardian_home_address", css_class="form-group col-md-4 mb-0"),
+                css_class="form-row",
+            ),
+            Row(
+                Column("doctor_name", css_class="form-group col-md-4 mb-0"),
+                Column("doctor_contact", css_class="form-group col-md-4 mb-0"),
+                css_class="form-row",
+            ),
+            Row(
+                Column("existing_medication", css_class="form-group col-md-4 mb-0"),
+                Column("existing_allergies", css_class="form-group col-md-4 mb-0"),
+                Column("dietary_requirements", css_class="form-group col-md-4 mb-0"),
+                css_class="form-row",
+            ),
+            "home_supervision",
+            "parent_help",
+            "discipline_history",
+            "special_needs",
+            "interests_talents",
+            "clubs_or_sports",
+            "improvements_requested",
+            "school_expectations",
+            Submit("submit", "Submit"),
+        )
+
 
 # TODO https://simpleisbetterthancomplex.com/tutorial/2018/01/29/how-to-implement-dependent-or-chained-dropdown-list-with-django.html
 class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
         fields = "__all__"
-        # fields = ["school", "subject", "teachers"]
 
 
-class CourseGradeForm(forms.ModelForm):
+class CourseOutcomeForm(forms.ModelForm):
     class Meta:
-        model = CourseGrade
+        model = CourseOutcome
         fields = "__all__"
+        widgets = {
+            "notes": Textarea(attrs={"rows": 3, "cols": 20}),
+        }
 
 
 class SubjectForm(forms.ModelForm):
@@ -92,18 +165,6 @@ class SubjectForm(forms.ModelForm):
 class SubjectGroupForm(forms.ModelForm):
     class Meta:
         model = SubjectGroup
-        fields = "__all__"
-
-
-class AssignmentForm(forms.ModelForm):
-    class Meta:
-        model = Assignment
-        fields = "__all__"
-
-
-class AssignmentGradeForm(forms.ModelForm):
-    class Meta:
-        model = AssignmentGrade
         fields = "__all__"
 
 
@@ -123,6 +184,23 @@ class PrincipalForm(forms.ModelForm):
         widgets = {
             "date_of_birth": TextInput(attrs={"type": "date"}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            "username",
+            "school",
+            Row(
+                Column("first_name", css_class="form-group col-md-4 mb-0"),
+                Column("last_name", css_class="form-group col-md-4 mb-0"),
+                css_class="form-row",
+            ),
+            "sex",
+            "date_of_birth",
+            "qualifications",
+            Submit("submit", "Submit"),
+        )
 
 
 class PrincipalAppraisalForm(forms.ModelForm):
@@ -173,9 +251,396 @@ class PrincipalAppraisalForm(forms.ModelForm):
             "chief_education_officer_comments": Textarea(attrs={"rows": 3, "cols": 20}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            "principal",
+            "teaching_experience_years",
+            Row(
+                Column("teaching_staff", css_class="form-group col-md-4 mb-0"),
+                Column("ancillary_staff", css_class="form-group col-md-4 mb-0"),
+                Column("administrative_staff", css_class="form-group col-md-4 mb-0"),
+                css_class="form-row",
+            ),
+            Row(
+                Column("evaluation_period_start", css_class="form-group col-md-4 mb-0"),
+                Column("evaluation_period_end", css_class="form-group col-md-4 mb-0"),
+                css_class="form-row",
+            ),
+            "last_appraisal",
+            "pre_conference",
+            HTML("<h5>Teaching and Learning</h5>"),
+            Row(
+                Column("class_visits", css_class="form-group col-md-6 mb-0"),
+                Column("class_observation", css_class="form-group col-md-6 mb-0"),
+                Column("teacher_reviews", css_class="form-group col-md-6 mb-0"),
+                Column("conducts_lessons", css_class="form-group col-md-6 mb-0"),
+                Column(
+                    "ensures_literacy_improvement", css_class="form-group col-md-6 mb-0"
+                ),
+                Column("student_achivevement", css_class="form-group col-md-6 mb-0"),
+                Column("class_supervision", css_class="form-group col-md-6 mb-0"),
+                css_class="form-row",
+            ),
+            HTML("<h5>Planning and organization</h5>"),
+            Row(
+                Column("school_development_plan", css_class="form-group col-md-6 mb-0"),
+                Column("smart_objectives", css_class="form-group col-md-6 mb-0"),
+                Column("annual_work_plan", css_class="form-group col-md-6 mb-0"),
+                Column("submits_to_ministry", css_class="form-group col-md-6 mb-0"),
+                Column("plan_implementation", css_class="form-group col-md-6 mb-0"),
+                Column("master_time_table", css_class="form-group col-md-6 mb-0"),
+                Column("time_table_available", css_class="form-group col-md-6 mb-0"),
+                Column(
+                    "ensure_teacher_comply_time_table",
+                    css_class="form-group col-md-6 mb-0",
+                ),
+                Column("prepare_annual_report", css_class="form-group col-md-6 mb-0"),
+                css_class="form-row",
+            ),
+            HTML("<h5>Leadership</h5>"),
+            Row(
+                Column("involves_staff", css_class="form-group col-md-6 mb-0"),
+                Column("facilitates_parental", css_class="form-group col-md-6 mb-0"),
+                Column("inspires_and_motivates", css_class="form-group col-md-6 mb-0"),
+                Column(
+                    "uses_variety_of_interpersonal",
+                    css_class="form-group col-md-6 mb-0",
+                ),
+                Column("advises_staff", css_class="form-group col-md-6 mb-0"),
+                Column("provies_pastoral_care", css_class="form-group col-md-6 mb-0"),
+            ),
+            HTML("<h5>Management</h5>"),
+            Row(
+                Column(
+                    "employs_suitable_procedures", css_class="form-group col-md-6 mb-0"
+                ),
+                Column("solicits_staff_input", css_class="form-group col-md-6 mb-0"),
+                Column("deploys_teachers", css_class="form-group col-md-6 mb-0"),
+                Column(
+                    "provides_a_working_atmosphere",
+                    css_class="form-group col-md-6 mb-0",
+                ),
+                Column("system_of_incentives", css_class="form-group col-md-6 mb-0"),
+                Column(
+                    "regular_meetings_for_staff", css_class="form-group col-md-6 mb-0"
+                ),
+                Column("regular_assembles", css_class="form-group col-md-6 mb-0"),
+                Column("timely_info", css_class="form-group col-md-6 mb-0"),
+            ),
+            HTML("<h5>Curriculum</h5>"),
+            Row(
+                Column(
+                    "ensure_curriculum_guides", css_class="form-group col-md-6 mb-0"
+                ),
+                Column(
+                    "ensures_consistent_instruction",
+                    css_class="form-group col-md-6 mb-0",
+                ),
+                Column("prescribed_subjects", css_class="form-group col-md-6 mb-0"),
+                Column("ensure_all_aspects", css_class="form-group col-md-6 mb-0"),
+                Column("promotes_participation", css_class="form-group col-md-6 mb-0"),
+                Column(
+                    "ensure_curriculum_modifications",
+                    css_class="form-group col-md-6 mb-0",
+                ),
+            ),
+            HTML("<h5>Student Assessment</h5>"),
+            Row(
+                Column(
+                    "regular_student_assessment", css_class="form-group col-md-6 mb-0"
+                ),
+                Column("analyses_students", css_class="form-group col-md-6 mb-0"),
+                Column("institutes_practices", css_class="form-group col-md-6 mb-0"),
+                Column(
+                    "ensures_teachers_eqipped", css_class="form-group col-md-6 mb-0"
+                ),
+            ),
+            HTML("<h5>Teacher Assessment</h5>"),
+            Row(
+                Column(
+                    "conducts_periodic_appraisals", css_class="form-group col-md-6 mb-0"
+                ),
+                Column(
+                    "provides_relevant_feedback", css_class="form-group col-md-6 mb-0"
+                ),
+                Column(
+                    "provides_support_to_teachers", css_class="form-group col-md-6 mb-0"
+                ),
+            ),
+            HTML("<h5>Discipline</h5>"),
+            Row(
+                Column(
+                    "clear_guidelines_student_behaviour",
+                    css_class="form-group col-md-6 mb-0",
+                ),
+                Column("maintains_roster", css_class="form-group col-md-6 mb-0"),
+                Column("order_and_discipline", css_class="form-group col-md-6 mb-0"),
+                Column(
+                    "uses_appropriate_sanctions", css_class="form-group col-md-6 mb-0"
+                ),
+                Column(
+                    "ensures_staff_observes_standards",
+                    css_class="form-group col-md-6 mb-0",
+                ),
+                Column("reports_all_incidents", css_class="form-group col-md-6 mb-0"),
+                Column(
+                    "maintains_accurate_documentation",
+                    css_class="form-group col-md-6 mb-0",
+                ),
+            ),
+            HTML("<h5>Staff Development</h5>"),
+            Row(
+                Column(
+                    "conducts_needs_assessment", css_class="form-group col-md-6 mb-0"
+                ),
+                Column(
+                    "organizes_staff_training", css_class="form-group col-md-6 mb-0"
+                ),
+                Column(
+                    "facilitate_staff_attendance", css_class="form-group col-md-6 mb-0"
+                ),
+                Column("staff_training", css_class="form-group col-md-6 mb-0"),
+            ),
+            HTML("<h5>Physical Plant</h5>"),
+            Row(
+                Column("maintenance", css_class="form-group col-md-6 mb-0"),
+                Column("resources_on_time", css_class="form-group col-md-6 mb-0"),
+                Column("distributes_resources", css_class="form-group col-md-6 mb-0"),
+                Column("safe_environment", css_class="form-group col-md-6 mb-0"),
+                Column("emergency_plan", css_class="form-group col-md-6 mb-0"),
+                Column("inventory_of_supplies", css_class="form-group col-md-6 mb-0"),
+            ),
+            HTML("<h5>Financial Management</h5>"),
+            Row(
+                Column("annual_budget", css_class="form-group col-md-6 mb-0"),
+                Column("school_revenue", css_class="form-group col-md-6 mb-0"),
+                Column("annual_financial_report", css_class="form-group col-md-6 mb-0"),
+                Column("report_on_time", css_class="form-group col-md-6 mb-0"),
+            ),
+            HTML("<h5>Interpersonal relations</h5>"),
+            Row(
+                Column("healthy_workplace", css_class="form-group col-md-6 mb-0"),
+                Column("respect_ideas", css_class="form-group col-md-6 mb-0"),
+                Column("cares_for_staff", css_class="form-group col-md-6 mb-0"),
+                Column("manages_conflict", css_class="form-group col-md-6 mb-0"),
+                Column("resolves_conflict", css_class="form-group col-md-6 mb-0"),
+                Column("work_and_dignity", css_class="form-group col-md-6 mb-0"),
+                Column(
+                    "demonstrates_sensitivity", css_class="form-group col-md-6 mb-0"
+                ),
+                Column(
+                    "maintains_confidentiality", css_class="form-group col-md-6 mb-0"
+                ),
+            ),
+            HTML("<h5>Personal Growth</h5>"),
+            Row(
+                Column("education_and_research", css_class="form-group col-md-6 mb-0"),
+                Column("supervisory_suggestions", css_class="form-group col-md-6 mb-0"),
+                Column("professional_training", css_class="form-group col-md-6 mb-0"),
+                Column("ministry_standards", css_class="form-group col-md-6 mb-0"),
+                Column(
+                    "school_related_activities", css_class="form-group col-md-6 mb-0"
+                ),
+                Column(
+                    "school_activities_puncutality",
+                    css_class="form-group col-md-6 mb-0",
+                ),
+                Column(
+                    "participates_organized_development",
+                    css_class="form-group col-md-6 mb-0",
+                ),
+            ),
+            HTML("<h5>Comments</h5>"),
+            "principals_comments",
+            "district_education_officer_comments",
+            "chief_education_officer_comments",
+            Submit("submit", "Submit"),
+        )
+
 
 class TeacherAppraisalForm(forms.ModelForm):
     class Meta:
         model = TeacherAppraisal
         fields = "__all__"
 
+        widgets = {
+            "evaluation_period_start": TextInput(attrs={"type": "date"}),
+            "evaluation_period_end": TextInput(attrs={"type": "date"}),
+            "last_appraisal": TextInput(attrs={"type": "date"}),
+            # Comments
+            "strengths": Textarea(attrs={"rows": 3, "cols": 20}),
+            "area_of_development": Textarea(attrs={"rows": 3, "cols": 20}),
+            "appraiser_comments": Textarea(attrs={"rows": 3, "cols": 20}),
+            "teacher_comments": Textarea(attrs={"rows": 3, "cols": 20}),
+            "district_officer_comments": Textarea(attrs={"rows": 3, "cols": 20}),
+            "district_officer_recommendations": Textarea(attrs={"rows": 3, "cols": 20}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            "teacher",
+            Row(
+                Column("year", css_class="form-group col-md-6 mb-0"),
+                Column(
+                    "teaching_experience_years", css_class="form-group col-md-6 mb-0"
+                ),
+            ),
+            Row(
+                Column("evaluation_period_start", css_class="form-group col-md-6 mb-0"),
+                Column("evaluation_period_end", css_class="form-group col-md-6 mb-0"),
+                Column("last_appraisal", css_class="form-group col-md-6 mb-0"),
+            ),
+            HTML("<h5>Planning and organization</h5>"),
+            Row(
+                Column("prepares_work", css_class="form-group col-md-6 mb-0"),
+                Column("prepares_lesson_plans", css_class="form-group col-md-6 mb-0"),
+                Column("lesson_plan_order", css_class="form-group col-md-6 mb-0"),
+                Column("objectives_clear", css_class="form-group col-md-6 mb-0"),
+                Column("objectives_appropriate", css_class="form-group col-md-6 mb-0"),
+                Column("objectives_achievable", css_class="form-group col-md-6 mb-0"),
+                Column("content", css_class="form-group col-md-6 mb-0"),
+                Column("good_judgement", css_class="form-group col-md-6 mb-0"),
+                Column("plans_activities", css_class="form-group col-md-6 mb-0"),
+                Column(
+                    "prepares_individual_instruction",
+                    css_class="form-group col-md-6 mb-0",
+                ),
+                Column(
+                    "prepares_group_instruction", css_class="form-group col-md-6 mb-0"
+                ),
+                Column("subtible_material", css_class="form-group col-md-6 mb-0"),
+                Column("adequate_material", css_class="form-group col-md-6 mb-0"),
+                Column("includes_timing", css_class="form-group col-md-6 mb-0"),
+                Column("well_organized", css_class="form-group col-md-6 mb-0"),
+                Column("prepares_exercises", css_class="form-group col-md-6 mb-0"),
+            ),
+            HTML("<h5>Instructional Process</h5>"),
+            Row(
+                Column("welcomes_class", css_class="form-group col-md-6 mb-0"),
+                Column("objectives_explicit", css_class="form-group col-md-6 mb-0"),
+                Column("engages_student", css_class="form-group col-md-6 mb-0"),
+                Column(
+                    "engages_students_meaningfully",
+                    css_class="form-group col-md-6 mb-0",
+                ),
+                Column("encourages_student", css_class="form-group col-md-6 mb-0"),
+                Column("awareness_of_student", css_class="form-group col-md-6 mb-0"),
+                Column("teachers_in_harmony", css_class="form-group col-md-6 mb-0"),
+                Column("teaching_strategies", css_class="form-group col-md-6 mb-0"),
+                Column("grasp_of_subject", css_class="form-group col-md-6 mb-0"),
+                Column(
+                    "presents_correct_information", css_class="form-group col-md-6 mb-0"
+                ),
+                Column(
+                    "arouses_students_interest", css_class="form-group col-md-6 mb-0"
+                ),
+                Column(
+                    "appropriate_instructional_material",
+                    css_class="form-group col-md-6 mb-0",
+                ),
+                Column(
+                    "appropriate_questionting", css_class="form-group col-md-6 mb-0"
+                ),
+                Column("student_opportunities", css_class="form-group col-md-6 mb-0"),
+                Column("student_participation", css_class="form-group col-md-6 mb-0"),
+                Column(
+                    "effective_use_of_structures", css_class="form-group col-md-6 mb-0"
+                ),
+                Column(
+                    "guides_stduent_to_develop", css_class="form-group col-md-6 mb-0"
+                ),
+                Column(
+                    "presents_instruction_logically",
+                    css_class="form-group col-md-6 mb-0",
+                ),
+                Column("ends_lessons", css_class="form-group col-md-6 mb-0"),
+                Column("achieves_objectives", css_class="form-group col-md-6 mb-0"),
+            ),
+            HTML("<h5>Assessment</h5>"),
+            Row(
+                Column("clear_comms", css_class="form-group col-md-6 mb-0"),
+                Column("assess_activities", css_class="form-group col-md-6 mb-0"),
+                Column("designs_assessmnet", css_class="form-group col-md-6 mb-0"),
+                Column("regular_assessment", css_class="form-group col-md-6 mb-0"),
+                Column("corrective_feedback", css_class="form-group col-md-6 mb-0"),
+                Column("accurate_records", css_class="form-group col-md-6 mb-0"),
+                Column(
+                    "monitors_student_progress", css_class="form-group col-md-6 mb-0"
+                ),
+                Column(
+                    "timely_feedback_to_students", css_class="form-group col-md-6 mb-0"
+                ),
+                Column(
+                    "timely_feedback_to_parents", css_class="form-group col-md-6 mb-0"
+                ),
+                Column("results_of_assessment", css_class="form-group col-md-6 mb-0"),
+            ),
+            HTML("<h5>Professionalism</h5>"),
+            Row(
+                Column("express_themselves", css_class="form-group col-md-6 mb-0"),
+                Column("arrives_work_on_time", css_class="form-group col-md-6 mb-0"),
+                Column("arrives_lesson_on_time", css_class="form-group col-md-6 mb-0"),
+                Column("reports_regularly", css_class="form-group col-md-6 mb-0"),
+                Column("ensures_safety", css_class="form-group col-md-6 mb-0"),
+                Column("trustworthy", css_class="form-group col-md-6 mb-0"),
+                Column("demonstrates_maturity", css_class="form-group col-md-6 mb-0"),
+                Column("sound_judgement", css_class="form-group col-md-6 mb-0"),
+                Column("seeks_opportunitiy", css_class="form-group col-md-6 mb-0"),
+                Column(
+                    "participates_development", css_class="form-group col-md-6 mb-0"
+                ),
+                Column("demonstrates_leadership", css_class="form-group col-md-6 mb-0"),
+                Column(
+                    "contribute_to_activities", css_class="form-group col-md-6 mb-0"
+                ),
+                Column("submits_required_info", css_class="form-group col-md-6 mb-0"),
+                Column("adhere_code_of_ethics", css_class="form-group col-md-6 mb-0"),
+            ),
+            HTML("<h5>Interpersonal Relationships</h5>"),
+            Row(
+                Column("enourages_students", css_class="form-group col-md-6 mb-0"),
+                Column("offers_advise", css_class="form-group col-md-6 mb-0"),
+                Column("accepts_advice", css_class="form-group col-md-6 mb-0"),
+                Column("is_cooperative", css_class="form-group col-md-6 mb-0"),
+                Column("demonstrates_sensitvity", css_class="form-group col-md-6 mb-0"),
+                Column("comms_students", css_class="form-group col-md-6 mb-0"),
+                Column("comms_colleagues", css_class="form-group col-md-6 mb-0"),
+                Column("comms_principal", css_class="form-group col-md-6 mb-0"),
+                Column("comms_parents", css_class="form-group col-md-6 mb-0"),
+                Column("good_rapport_students", css_class="form-group col-md-6 mb-0"),
+                Column("good_rapport_principal", css_class="form-group col-md-6 mb-0"),
+                Column("good_rapport_colleagues", css_class="form-group col-md-6 mb-0"),
+                Column(
+                    "good_rapport_support_staff", css_class="form-group col-md-6 mb-0"
+                ),
+                Column("good_rapport_parents", css_class="form-group col-md-6 mb-0"),
+            ),
+            HTML("<h5>Class management</h5>"),
+            Row(
+                Column("demonstrates_awareness", css_class="form-group col-md-6 mb-0"),
+                Column("creates_atmosphere", css_class="form-group col-md-6 mb-0"),
+                Column("student_behaviour", css_class="form-group col-md-6 mb-0"),
+                Column("fair_with_students", css_class="form-group col-md-6 mb-0"),
+                Column("manages_time", css_class="form-group col-md-6 mb-0"),
+                Column(
+                    "manages_learning_resources", css_class="form-group col-md-6 mb-0"
+                ),
+                Column("manages_effectively", css_class="form-group col-md-6 mb-0"),
+                Column("ensures_students_rules", css_class="form-group col-md-6 mb-0"),
+                Column("effective_transition", css_class="form-group col-md-6 mb-0"),
+                Column("class_register", css_class="form-group col-md-6 mb-0"),
+                Column("accurate_records", css_class="form-group col-md-6 mb-0"),
+            ),
+            HTML("<h5>Comments</h5>"),
+            "strengths",
+            "area_of_development",
+            "appraiser_comments",
+            "teacher_comments",
+            "district_officer_comments",
+            "district_officer_recommendations",
+            Submit("submit", "Submit"),
+        )

@@ -13,6 +13,8 @@
                 </button>
                 <div class="dropdown-menu">
                     <a class="dropdown-item" href="{% url 'school:create_teacher' %}">Create Teacher</a>
+                    <a class="dropdown-item" href="{% url 'school:create_teacher_appraisal' %}">Create Teacher
+                        Appraisal</a>
                     <a class="dropdown-item" href="{% url 'school:create_student' %}">Create Student</a>
                     <a class="dropdown-item" href="{% url 'school:create_course' %}">Create Course</a>
                     <div class="dropdown-divider"></div>
@@ -197,6 +199,43 @@
                         </table>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <div class="card-header">
+            Teacher Appraisals
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Teacher name</th>
+                            <th>Appraisal period</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Teacher name</th>
+                            <th>Appraisal period</th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% for appraisal in teacher_appraisals %}
+                        <tr>
+                            <td>{{appraisal.teacher.first_name}} {{appraisal.teacher.last_name}}</td>
+                            <td>{{appraisal.evaluation_period_start}} - {{appraisal.evaluation_period_end}}</td>
+                            <td>
+                                <a href="{% url 'school:edit_teacher_appraisal' appraisal.id %}"><Button
+                                        class="btn btn-primary">Edit</Button></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

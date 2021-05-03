@@ -1,9 +1,11 @@
 import base64
+import re
 from io import BytesIO
-
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
+from numpy import mean, std
+from pandas import to_numeric
 from sklearn.linear_model import LinearRegression
 from .models import School
 from .models import District
@@ -14,6 +16,7 @@ from .forms import CEEForm
 
 import numpy as np
 import pandas as pd
+
 
 def get_image() -> object:
     # create a byte buffer for the image to save
@@ -216,30 +219,22 @@ def get_plot(chart_type, **kwargs):
     return graph
 
 
-
-
-#===================================================================
-#Outlier detection at district level
-#===================================================================
+# ===================================================================
+# Outlier detection at district level
+# ===================================================================
 def get_outlier_district_plot(**kwargs):
-
     plt.switch_backend('AGG')
 
-    
     school_enrollment = kwargs.get('x')
     school_name = kwargs.get('y')
-    
+
     datamean = kwargs.get('data_mean')
     input_school_type = kwargs.get('input_school_type')
     academic_year = kwargs.get('academic_year')
     district_input = kwargs.get('input_district')
-    
 
+    fig, ax1 = plt.subplots(figsize=(10, 6))
 
-
-    fig, ax1 = plt.subplots(figsize=(10,6))
-
-    
     ax1.set_title('Enrollment for District')
     ax1.set_xlabel('School_Name')
     ax1.set_ylabel('School_Scores')
@@ -247,19 +242,26 @@ def get_outlier_district_plot(**kwargs):
     ax1.bar(school_name, school_enrollment, color='#7CFC00', edgecolor='#000000')
 
     for tick in ax1.xaxis.get_major_ticks():
-            tick.label.set_fontsize(14)
-            tick.label.set_rotation('vertical')
-    plt.plot(school_name, datamean, linewidth = 5, ls = 'solid', color = '#4B0082' )
-    
+        tick.label.set_fontsize(14)
+        tick.label.set_rotation('vertical')
+    plt.plot(school_name, datamean, linewidth=5, ls='solid', color='#4B0082')
 
     plt.xlabel("School Name")
-    plt.ylabel("Enrollment") 
-      
-    plt.title("Enrollment for " + input_school_type +" schools for district " + district_input + " and "+  academic_year +  " academic year ")
+    plt.ylabel("Enrollment")
+
+    plt.title(
+        "Enrollment for " + input_school_type + " schools for district " + district_input + " and " + academic_year + " academic year ")
 
     plt.tight_layout()
     graph = get_image()
     return graph
+
+
+    plt.tight_layout()
+    graph = get_image()
+    return graph
+
+
 
 
 def get_plot_boys_primary(**kwargs):
@@ -321,53 +323,48 @@ def get_plot_girls_primary(**kwargs):
                     textcoords='offset points')
     # adjust legend
 
-
     plt.tight_layout()
     graph = get_image()
     return graph
 
 
-#==========================================================================
-#Outlier detection at national level
-#==========================================================================
+# ==========================================================================
+# Outlier detection at national level
+# ==========================================================================
 
 def get_outlier_national_plot(**kwargs):
-
     plt.switch_backend('AGG')
 
-    
     school_enrollment = kwargs.get('x')
     school_name = kwargs.get('y')
-    
+
     datamean = kwargs.get('data_mean')
     input_school_type = kwargs.get('input_school_type')
     academic_year = kwargs.get('academic_year')
-    
 
-    fig, ax1 = plt.subplots(figsize=(11,6))
-
-
+    fig, ax1 = plt.subplots(figsize=(11, 6))
 
     ax1.set_title('Enrollment for Selected Year')
     ax1.set_xlabel('School_Name')
-    
 
     ax1.bar(school_name, school_enrollment, color='#7CFC00', edgecolor='#000000')
     for tick in ax1.xaxis.get_major_ticks():
-            tick.label.set_fontsize(14)
-            tick.label.set_rotation('vertical')
-    plt.plot(school_name, datamean, linewidth = 5, ls = 'solid', color = '#4B0082')
-    
+        tick.label.set_fontsize(14)
+        tick.label.set_rotation('vertical')
+    plt.plot(school_name, datamean, linewidth=5, ls='solid', color='#4B0082')
 
     plt.xlabel("School Name")
-    plt.ylabel("Enrollment")    
-    plt.title("Enrollment for " + input_school_type +" schools for year " + academic_year)
-    
+    plt.ylabel("Enrollment")
+    plt.title("Enrollment for " + input_school_type + " schools for year " + academic_year)
+
     plt.tight_layout()
     graph = get_image()
     return graph
 
 
+    plt.tight_layout()
+    graph = get_image()
+    return graph
 
 def get_plot_primary(**kwargs):
     plt.switch_backend('AGG')
@@ -486,7 +483,6 @@ def get_plot_secondary(**kwargs):
     return graph
 
 
-
 def get_plot_regression(**kwargs):
     plt.switch_backend('AGG')
     data = kwargs.get('data')
@@ -496,6 +492,282 @@ def get_plot_regression(**kwargs):
     data_girls_secondary = kwargs.get('data_girls_secondary')
 
 
+def plot_national_gender_enrollment(**kwargs):
+    plt.switch_backend('AGG')
+    data_boys_primary = kwargs.get('data_boys_primary')
+    data_boys_secondary = kwargs.get('data_boys_secondary')
+    data_girls_primary = kwargs.get('data_girls_primary')
+    data_girls_secondary = kwargs.get('data_girls_secondary')
+    title = 'Trend in enrollments over time'
+    plt.figure(figsize=(10, 8))
+    plt.title(title)
+    plt.plot(data_boys_primary['academic_year'], data_boys_primary['enrollment'], 'b-',
+             label='Boys enrolled in Primary School')
+    plt.plot(data_boys_secondary['academic_year'], data_boys_secondary['enrollment'], 'bo',
+             label='Boys enrolled in Secondary School')
+    plt.plot(data_girls_primary['academic_year'], data_girls_primary['enrollment'], 'r-',
+             label='Girls enrolled in Primary School')
+    plt.plot(data_girls_secondary['academic_year'], data_girls_secondary['enrollment'], 'ro',
+             label='Girls enrolled in secondary School')
+
+    plt.xticks(rotation=60)
+    # plt.ylim(0, max(y) + 100)
+    plt.ylabel("National Enrollment Trends")
+    plt.xlabel("Academic Year")
+    plt.legend()
+    plt.grid()
+
+    plt.tight_layout()
+    graph = get_image()
+    return graph
+
+
+def national_gender_enrollment_hist(**kwargs):
+    data_boys_primary = kwargs.get('data_boys_primary')
+    data_boys_secondary = kwargs.get('data_boys_secondary')
+    data_girls_primary = kwargs.get('data_girls_primary')
+    data_girls_secondary = kwargs.get('data_girls_secondary')
+
+    # boys primary mean of distribution
+    mu_boys_primary = mean(data_boys_primary.enrollment)
+    mu_girls_primary = mean(data_girls_primary.enrollment)
+    mu_boys_secondary = mean(data_boys_secondary.enrollment)
+    mu_girls_secondary = mean(data_girls_secondary.enrollment)
+
+    sigma_boys_primary = std(data_boys_primary.enrollment)
+    sigma_girls_primary = std(data_girls_primary.enrollment)
+    sigma_boys_secondary = std(data_boys_secondary.enrollment)
+    sigma_girls_secondary = std(data_girls_secondary.enrollment)
+
+    x_mu_boys_primary = mu_boys_primary + sigma_boys_primary * np.random.randn(437)
+    x_mu_girls_primary = mu_girls_primary + sigma_girls_primary * np.random.randn(437)
+    x_mu_boys_secondary = mu_boys_secondary + sigma_boys_secondary * np.random.randn(437)
+    x_mu_girls_secondary = mu_girls_secondary + sigma_girls_secondary * np.random.randn(437)
+    num_bins = 50
+
+    # fig, ax = plt.subplots()
+
+    fig, axs = plt.subplots(2, 2, figsize=(15,15))
+
+    # the histogram of the data
+    n_boys_primary, bins_boys_primary, patches_boys_primary = axs[0, 0].hist(x_mu_boys_primary, num_bins, density=True)
+    n_boys_secondary, bins_boys_secondary, patches_boys_secondary = axs[0, 1].hist(x_mu_boys_secondary, num_bins,
+                                                                                   density=True)
+    n_girls_primary, bins_girls_primary, patches_girls_primary = axs[1, 0].hist(x_mu_girls_primary, num_bins,
+                                                                                density=True)
+    n_girls_secondary, bins_girls_secondary, patches_girls_secondary = axs[1, 1].hist(x_mu_girls_secondary, num_bins,
+                                                                                      density=True)
+    # add a 'best fit' line
+    y_boys_primary = ((1 / (np.sqrt(2 * np.pi) * sigma_boys_primary)) *
+                      np.exp(-0.5 * (1 / sigma_boys_primary * (bins_boys_primary - mu_boys_primary)) ** 2))
+    y_boys_secondary = ((1 / (np.sqrt(2 * np.pi) * sigma_boys_secondary)) *
+                        np.exp(-0.5 * (1 / sigma_boys_secondary * (bins_boys_secondary - mu_boys_secondary)) ** 2))
+    y_girls_primary = ((1 / (np.sqrt(2 * np.pi) * sigma_girls_primary)) *
+                       np.exp(-0.5 * (1 / sigma_girls_primary * (bins_girls_primary - mu_girls_primary)) ** 2))
+
+    y_girls_secondary = ((1 / (np.sqrt(2 * np.pi) * sigma_girls_secondary)) *
+                         np.exp(-0.5 * (1 / sigma_girls_secondary * (bins_girls_secondary - mu_girls_secondary)) ** 2))
+
+    for ax in axs.flat:
+        ax.set(xlabel='Enrollment', ylabel='Probability Density')
+
+    # Hide x labels and tick labels for top plots and y ticks for right plots.
+    for ax in axs.flat:
+        ax.label_outer()
+
+    axs[0, 0].plot(bins_boys_primary, y_boys_primary, '--')
+    axs[0, 0].set_title('Primary-Boys')
+
+    axs[0, 1].plot(bins_boys_secondary, y_boys_secondary, '--')
+    axs[0, 1].set_title('Secondary-Boys')
+
+    axs[1, 0].plot(bins_girls_primary, y_girls_primary, '--')
+    axs[1, 0].set_title('Primary-Girls')
+
+    axs[1, 1].plot(bins_girls_secondary, y_girls_secondary, '--')
+    axs[1, 1].set_title('Secondary-Girls')
+
+    plt.tight_layout()
+    graph = get_image()
+    return graph
+
+
+def plot_national_education_census(**kwargs):
+    plt.switch_backend('AGG')
+    data = kwargs.get('data')
+
+    title = 'Education Census Over time'
+    plt.figure(figsize=(10, 8))
+    plt.title(title)
+    plt.plot(data['academic_year'], data['age_3_to_4_years'], 'b-',
+             label='Population of Age Group 3-4')
+    plt.plot(data['academic_year'], data['age_5_to_11_years'], 'y-',
+             label='Population of Age Group > 5 and less than 12')
+    plt.plot(data['academic_year'], data['age_12_to_16_years'], 'r-',
+             label='population of children above 12 years old')
+
+    plt.xticks(rotation=60)
+    # plt.ylim(0, max(y) + 100)
+    plt.ylabel("Education Census Trends")
+    plt.xlabel("Academic Year")
+    plt.legend()
+    plt.grid()
+
+    plt.tight_layout()
+    graph = get_image()
+    return graph
+
+
+def national_education_census_hist(**kwargs):
+    data = kwargs.get('data')
+    # boys primary mean of distribution
+    mu_data_3_4 = mean(data.age_3_to_4_years)
+    mu_data_5_11 = mean(data.age_5_to_11_years)
+    mu_data_12_16 = mean(data.age_12_to_16_years)
+
+    sigma_data_3_4 = std(data.age_3_to_4_years)
+    sigma_data_5_11 = std(data.age_5_to_11_years)
+    sigma_data_12_16 = std(data.age_12_to_16_years)
+
+    x_mu_data_3_4 = mu_data_3_4 + sigma_data_3_4 * np.random.randn(437)
+    x_mu_data_5_11 = mu_data_5_11 + sigma_data_5_11 * np.random.randn(437)
+    x_mu_data_12_16 = mu_data_12_16 + sigma_data_12_16 * np.random.randn(437)
+    num_bins = 50
+
+    # fig, ax = plt.subplots()
+
+    fig, (ax1, ax2, ax3) = plt.subplots(3, figsize=(15,15))
+
+    # the histogram of the data
+    n_3_4, bins_3_4, patches_3_4 = ax1.hist(x_mu_data_3_4, num_bins, density=True)
+    n_5_11, bins_5_11, patches_5_11 = ax2.hist(x_mu_data_5_11, num_bins, density=True)
+    n_12_16, bins_12_16, patches_12_16 = ax3.hist(x_mu_data_12_16, num_bins, density=True)
+
+    # add a 'best fit' line
+    y_3_4 = ((1 / (np.sqrt(2 * np.pi) * sigma_data_3_4)) *
+             np.exp(-0.5 * (1 / sigma_data_3_4 * (bins_3_4 - mu_data_3_4)) ** 2))
+    y_5_11 = ((1 / (np.sqrt(2 * np.pi) * sigma_data_5_11)) *
+              np.exp(-0.5 * (1 / sigma_data_5_11 * (bins_5_11 - mu_data_5_11)) ** 2))
+    y_12_16 = ((1 / (np.sqrt(2 * np.pi) * sigma_data_12_16)) *
+               np.exp(-0.5 * (1 / sigma_data_12_16 * (bins_12_16 - mu_data_12_16)) ** 2))
+
+    ax1.plot(bins_3_4, y_3_4, '--')
+    ax1.set_title('3 - 4 years')
+
+    ax2.plot(bins_5_11, y_5_11, '--')
+    ax2.set_title('Greater / equal 5, Less than 12')
+
+    ax3.plot(bins_12_16, y_12_16, '--')
+    ax3.set_title('>=12 years')
+
+    plt.tight_layout()
+    graph = get_image()
+    return graph
+
+
+def plot_national_expenditure(**kwargs):
+    plt.switch_backend('AGG')
+    data = kwargs.get('data')
+    title = 'Education Expenditure'
+    plt.figure(figsize=(10, 8))
+    plt.title(title)
+    plt.plot(data['academic_year'], data.educational_expenditure, 'b-',
+             label='Educational Expenditure')
+    plt.plot(data['academic_year'], data['gdp_millions'], 'y-',
+             label='GDP (Million XCD)')
+    plt.plot(data['academic_year'], data['government_expenditure'], 'r-',
+             label='Government Expenditure')
+    plt.plot(data['academic_year'], data['primary_school_expenditure'], 'g-',
+             label='Primary School Expenditure')
+    plt.plot(data['academic_year'], data['secondary_school_expenditure'], 'k-',
+             label='Secondary School Expenditure')
+
+    plt.xticks(rotation=60)
+    # plt.ylim(0, max(y) + 100)
+    plt.ylabel("Expenditure Trends")
+    plt.xlabel("Academic Year")
+    plt.legend()
+    plt.grid()
+
+    plt.tight_layout()
+    graph = get_image()
+    return graph
+
+
+def national_expenditure_hist(**kwargs):
+    data = kwargs.get('data')
+    mu_educational_expenditure = mean(data['educational_expenditure'])
+    mu_gdp_millions = mean(data['gdp_millions'])
+    mu_government_expenditure = mean(data['government_expenditure'])
+    mu_primary_school_expenditure = mean(data['primary_school_expenditure'])
+    mu_secondary_school_expenditure = mean(data['secondary_school_expenditure'])
+
+    sigma_educational_expenditure = std(data.educational_expenditure)
+    sigma_gdp_millions = std(data.gdp_millions)
+    sigma_government_expenditure = std(data.government_expenditure)
+    sigma_primary_school_expenditure = std(data.primary_school_expenditure)
+    sigma_secondary_school_expenditure = std(data.secondary_school_expenditure)
+
+    x_mu_educational_expenditure = mu_educational_expenditure + sigma_educational_expenditure * np.random.randn(437)
+    x_mu_gdp_millions = mu_gdp_millions + sigma_gdp_millions * np.random.randn(437)
+    x_mu_government_expenditure = mu_government_expenditure + sigma_government_expenditure * np.random.randn(437)
+    x_mu_primary_school_expenditure = mu_primary_school_expenditure + sigma_primary_school_expenditure * np.random.randn(
+        437)
+    x_mu_secondary_school_expenditure = mu_secondary_school_expenditure + sigma_secondary_school_expenditure * np.random.randn(
+        437)
+    num_bins = 50
+
+    # fig, ax = plt.subplots()
+
+    fig, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(5, figsize=(15,15))
+
+    # the histogram of the data
+    n_educational_expenditure, bins_educational_expenditure, patches_educational_expenditure = \
+        ax1.hist(x_mu_educational_expenditure, num_bins, density=True)
+    n_gdp_millions, bins_gdp_millions, patches_gdp_millions = \
+        ax2.hist(x_mu_gdp_millions, num_bins, density=True)
+    n_government_expenditure, bins_government_expenditure, patches_government_expenditure = \
+        ax3.hist(x_mu_government_expenditure, num_bins, density=True)
+    n_primary_school_expenditure, bins_primary_school_expenditure, patches_primary_school_expenditure = \
+        ax4.hist(x_mu_primary_school_expenditure, num_bins, density=True)
+    n_secondary_school_expenditure, bins_secondary_school_expenditure, patches_secondary_school_expenditure = \
+        ax5.hist(x_mu_secondary_school_expenditure, num_bins, density=True)
+    # add a 'best fit' line
+    y_educational_expenditure = ((1 / (np.sqrt(2 * np.pi) * sigma_educational_expenditure)) *
+                                 np.exp(-0.5 * (1 / sigma_educational_expenditure * (
+                                             bins_educational_expenditure - mu_educational_expenditure)) ** 2))
+    y_gdp_millions = ((1 / (np.sqrt(2 * np.pi) * sigma_gdp_millions)) *
+                      np.exp(-0.5 * (1 / sigma_gdp_millions * (bins_gdp_millions - mu_gdp_millions)) ** 2))
+    y_government_expenditure = ((1 / (np.sqrt(2 * np.pi) * sigma_government_expenditure)) *
+                                np.exp(-0.5 * (1 / sigma_government_expenditure * (
+                                            bins_government_expenditure - mu_government_expenditure)) ** 2))
+    y_primary_school_expenditure = ((1 / (np.sqrt(2 * np.pi) * sigma_primary_school_expenditure)) *
+                                    np.exp(-0.5 * (1 / sigma_primary_school_expenditure * (
+                                            bins_primary_school_expenditure - mu_primary_school_expenditure)) ** 2))
+    y_secondary_school_expenditure = ((1 / (np.sqrt(2 * np.pi) * sigma_secondary_school_expenditure)) *
+                                      np.exp(-0.5 * (1 / sigma_secondary_school_expenditure * (
+                                              bins_secondary_school_expenditure - mu_secondary_school_expenditure)) ** 2))
+
+    ax1.plot(bins_educational_expenditure, y_educational_expenditure, '--')
+    ax1.set_title('Educational Expenditure')
+
+    ax2.plot(bins_gdp_millions, y_gdp_millions, '--')
+    ax2.set_title('gdp(Million XCD)')
+
+    ax3.plot(bins_government_expenditure, y_government_expenditure, '--')
+    ax3.set_title('Government Expenditure')
+
+    ax4.plot(bins_primary_school_expenditure, y_primary_school_expenditure, '--')
+    ax4.set_title('Primary School Expenditure')
+
+    ax5.plot(bins_secondary_school_expenditure, y_secondary_school_expenditure, '--')
+    ax5.set_title('Secondary School Expenditure')
+
+    plt.tight_layout()
+    graph = get_image()
+    return graph
+
+
 def primary_performance_plot(data, district_1, district_2):
     df = pd.DataFrame(data.values())
     plt.switch_backend('AGG')
@@ -503,12 +775,12 @@ def primary_performance_plot(data, district_1, district_2):
     years = [int(y[1]) for y in years]
     min_year = min(years)
 
-    N_DISTRICTS=District.objects.count()
+    N_DISTRICTS = District.objects.count()
 
     tests = np.zeros((len(years), N_DISTRICTS), dtype=int)
     above_avg = np.zeros((len(years), N_DISTRICTS), dtype=int)
     performance = np.zeros((len(years), N_DISTRICTS), dtype=float)
-    
+
     for index, row in df.iterrows():
         year = int(row['academic_year'].split('/')[1])
         school_code = row['school_id']
@@ -518,22 +790,22 @@ def primary_performance_plot(data, district_1, district_2):
         n_above_avg = int(row['above_average_scores'])
         if np.isnan(n_tests) or np.isnan(n_above_avg):
             continue
-        tests[year-min_year][district-1] += n_tests
-        above_avg[year-min_year][district-1] += n_above_avg
+        tests[year - min_year][district - 1] += n_tests
+        above_avg[year - min_year][district - 1] += n_above_avg
 
     for y in range(len(years)):
-        performance[y] = 100 * above_avg[y]/tests[y]
+        performance[y] = 100 * above_avg[y] / tests[y]
     performance = pd.DataFrame(performance)
-    labels = ['District ' + str(d+1) for d in range(N_DISTRICTS)]
+    labels = ['District ' + str(d + 1) for d in range(N_DISTRICTS)]
     if not (district_1 and district_2):
         for d in range(N_DISTRICTS):
             plt.plot(years, performance[d])
     else:
-        plt.plot(years, performance[district_1-1])
-        plt.plot(years, performance[district_2-1])
-        labels = ['District '+ str(district_1), 'District' + str(district_2)]
+        plt.plot(years, performance[district_1 - 1])
+        plt.plot(years, performance[district_2 - 1])
+        labels = ['District ' + str(district_1), 'District' + str(district_2)]
     plt.xticks([min(years), max(years)])
-    plt.legend(labels, loc = 'upper left', bbox_to_anchor=(1, 1.05))
+    plt.legend(labels, loc='upper left', bbox_to_anchor=(1, 1.05))
     plt.title("Percentage of Students Scoring Above Mean (CEE)")
     plt.tight_layout()
     graph = get_image()
@@ -541,16 +813,18 @@ def primary_performance_plot(data, district_1, district_2):
     plt.clf()
     performance = performance.T
     performance.columns = np.arange(1999, 2018, step=1)
-    performance.index = ['District ' + str(d+1) for d in range(N_DISTRICTS)]
+    performance.index = ['District ' + str(d + 1) for d in range(N_DISTRICTS)]
     ax = sns.heatmap(performance, annot=True)
     ax.set_title("Percentage of Students Scoring above Mean (CEE)")
     plt.tight_layout()
     heatmap = get_image()
     return [graph, heatmap]
 
+
 def extract_year(period):
     year_string = re.findall(r'\d+', period)
     return year_string[0]
+
 
 def store_scores(data, required_fields, user_data, type):
     result = {}
@@ -586,3 +860,69 @@ def store_scores(data, required_fields, user_data, type):
         result['n_scores'] = succeeded
         result['failed'] = failed
     return result
+
+
+
+
+
+#=======================================================================================
+#Box plots at district level
+#=======================================================================================
+
+def get_boxplot_district_plot(**kwargs):
+
+    plt.switch_backend('AGG')
+
+    school_enrollment = kwargs.get('x')
+    school_name = kwargs.get('y')
+
+    input_school_type = kwargs.get('input_school_type')
+    academic_year = kwargs.get('academic_year')
+    district_input = kwargs.get('input_district')
+
+
+    fig, ax1 = plt.subplots(figsize=(11,6))
+
+    plt.boxplot(school_enrollment, patch_artist = True, 
+                        boxprops = dict(facecolor = 'purple'), 
+                        meanline = True, showmeans = True)
+    
+    
+    plt.xticks([1], [input_school_type])
+    plt.ylabel('Enrollment')
+    plt.title("Box Plot for Enrollment in " + input_school_type + " schools  in " + " District" + district_input + " and academic year " + academic_year)
+
+    plt.tight_layout()
+    graph = get_image()
+    return graph
+
+
+
+#=========================================================================================
+#Box plots at national level
+#=========================================================================================
+
+def get_boxplot_national_plot(**kwargs):
+
+    plt.switch_backend('AGG')
+
+    school_enrollment = kwargs.get('x')
+    school_name = kwargs.get('y')
+
+    input_school_type = kwargs.get('input_school_type')
+    academic_year = kwargs.get('academic_year')
+
+    fig, ax1 = plt.subplots(figsize=(11,6))
+
+    plt.boxplot(school_enrollment, patch_artist = True, 
+                        boxprops = dict(facecolor = 'purple'),
+                        meanline = True, showmeans = True)
+    
+    plt.xticks([1], [input_school_type])
+    plt.ylabel('Enrollment')
+    plt.title("Box Plot for Enrollment in " + input_school_type + " schools " + " for academic year " + academic_year)
+
+    plt.tight_layout()
+    graph = get_image()
+    return graph
+

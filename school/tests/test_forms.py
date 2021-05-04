@@ -5,7 +5,7 @@ from helpers.testing.TestCases import ViewTestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
 from historical_surveillance.models import District, School
-from school.models import Teacher, Student, Course, Subject, SubjectGroup, CourseGrade
+from school.models import Teacher, Student, Course, CourseGrade
 from helpers.testing.mocks import generate_district, generate_school
 
 
@@ -77,18 +77,6 @@ class TestGetReturnCorrectForm(ViewTestCase):
         response = self.client.get(reverse("school:create_student"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertEqual(response.context["form"].__class__.__name__, "StudentForm")
-
-    def test_get_create_subject_group_form(self):
-        response = self.client.get(reverse("school:create_subject_group"))
-        self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertEqual(
-            response.context["form"].__class__.__name__, "SubjectGroupForm"
-        )
-
-    def test_get_create_subject_form(self):
-        response = self.client.get(reverse("school:create_subject"))
-        self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertEqual(response.context["form"].__class__.__name__, "SubjectForm")
 
     def test_get_create_principal_form(self):
         response = self.client.get(reverse("school:create_principal"))

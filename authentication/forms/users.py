@@ -3,7 +3,7 @@ from django import forms
 from authentication.models.users import Teacher
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Row, Column, HTML
-from django.forms import TextInput, Textarea
+from django.forms import TextInput, Textarea, HiddenInput
 
 
 class TeacherForm(forms.ModelForm):
@@ -12,6 +12,7 @@ class TeacherForm(forms.ModelForm):
         fields = "__all__"
         widgets = {
             "date_of_birth": TextInput(attrs={"type": "date"}),
+            "date_joined": TextInput(attrs={"type": "date"}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -19,6 +20,8 @@ class TeacherForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             "username",
+            "password",
+            "date_joined",
             "school",
             Row(
                 Column("first_name", css_class="form-group col-md-4 mb-0"),
@@ -48,5 +51,4 @@ class TeacherForm(forms.ModelForm):
                 Column("qualifications", css_class="form-group col-md-4 mb-0"),
                 css_class="form-row",
             ),
-            Submit("submit", "Submit"),
         )

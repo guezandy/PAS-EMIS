@@ -58,14 +58,14 @@
                     <thead>
                         <tr>
                             <th class="align-middle">Service name</th>
-                            <th class="align-middle">Students w/ services</th>
-                            <th class="align-middle">Girls w/ services</th>
-                            <th class="align-middle">Boys w/ services</th>
+                            <th class="align-middle">Students w/ service</th>
+                            <th class="align-middle">Girls w/ service</th>
+                            <th class="align-middle">Boys w/ service</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for service_info in services_info %}
-                        <tr class='clickable-row' data-href="/welfare/district/{{district.district_code}}">
+                        <tr>
                             <td>{{service_info.service_name}}</td>
                             <td>{{service_info.students_with_services_count}} ({{service_info.students_with_services_percent|stringformat:".1f"}}%)</td>
                             <td>{{service_info.girls_with_services_count}} ({{service_info.girls_with_services_percent|stringformat:".1f"}}%)</td>

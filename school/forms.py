@@ -5,8 +5,6 @@ from crispy_forms.layout import Layout, Submit, Row, Column, HTML
 from .models import (
     Course,
     CourseOutcome,
-    Subject,
-    SubjectGroup,
     Student,
     TeacherAppraisal,
     PrincipalAppraisal,
@@ -47,7 +45,7 @@ class StudentForm(forms.ModelForm):
             "interests_talents": "Describe your child's special interest or talents",
             "clubs_or_sports": "Please list any clubs or sports teams your child belongs to",
             "improvements_requested": "What academic improvements would you like to see in your child by the end of the first term",
-            "school_expectations": "",
+            "school_expectations": "Expectations of school",
         }
         widgets = {
             "date_of_birth": TextInput(attrs={"type": "date"}),
@@ -81,6 +79,8 @@ class StudentForm(forms.ModelForm):
             ),
             "home_address",
             "last_school_attended",
+            "school",
+            "graduation_year",
             "father_name",
             Row(
                 Column("father_work_telephone", css_class="form-group col-md-4 mb-0"),
@@ -136,7 +136,6 @@ class StudentForm(forms.ModelForm):
             "clubs_or_sports",
             "improvements_requested",
             "school_expectations",
-            Submit("submit", "Submit"),
         )
 
 
@@ -154,18 +153,6 @@ class CourseOutcomeForm(forms.ModelForm):
         widgets = {
             "notes": Textarea(attrs={"rows": 3, "cols": 20}),
         }
-
-
-class SubjectForm(forms.ModelForm):
-    class Meta:
-        model = Subject
-        fields = "__all__"
-
-
-class SubjectGroupForm(forms.ModelForm):
-    class Meta:
-        model = SubjectGroup
-        fields = "__all__"
 
 
 class PrincipalForm(forms.ModelForm):
@@ -199,7 +186,6 @@ class PrincipalForm(forms.ModelForm):
             "sex",
             "date_of_birth",
             "qualifications",
-            Submit("submit", "Submit"),
         )
 
 
@@ -234,6 +220,80 @@ class PrincipalAppraisalForm(forms.ModelForm):
             "time_table_available": "makes the time-table available to teachers and Ministry officials",
             "ensure_teacher_comply_time_table": "ensures that teachers comply with the time-table",
             "prepare_annual_report": "prepares and submits an annual report to the Ministry",
+            # Leadership
+            "involves_staff": "involve staff in the decision making ",
+            "facilitates_parental": "facilitates parental/stakeholder involvement in school life ",
+            "inspires_and_motivates": "inspires and motivates staff and students to achieve their full potential ",
+            "uses_variety_of_interpersonal": "uses a variety of interpersonal and group skills to achieve school goals ",
+            "advises_staff": "advises staff, parents, and Ministry Officials on matters affecting the school",
+            "provies_pastoral_care": "provides pastoral care to students and staff.",
+            # Management
+            "employs_suitable_procedures": "employs suitable procedures for recruiting and selecting staff",
+            "solicits_staff_input": "solicit staff input in the deployment process",
+            "deploys_teachers": "deploys teachers effectively according to their competences",
+            "provides_a_working_atmosphere": "provides a working atmosphere that enables staff to perform well",
+            "system_of_incentives": "establishes a system of incentives for recognizing and rewarding students, staff and other stakeholders",
+            "regular_meetings_for_staff": "organizes regular meetings for staff and parents ",
+            "regular_assembles": "organizes regular assembles",
+            "timely_info": "ensures that information is disseminated in a timely manner.",
+            # Curriculum
+            "ensure_curriculum_guides": "ensures that curriculum guides and support materials are available and adequate",
+            "ensures_consistent_instruction": "ensures that transition in instruction is consistent with the prescribed curriculum",
+            "prescribed_subjects": "ensures that the prescribed subjects are adequately catered for in a master time-table",
+            "ensure_all_aspects": "ensures that all aspects of the curriculum are taught/implemented.",
+            "promotes_participation": "Promotes participation in co and extra curricular activities",
+            "ensure_curriculum_modifications": "ensures that the curriculum is modified to cater for the varying needs, interests and abilities of students.",
+            # Students
+            "regular_student_assessment": "facilitate regular students’ assessment (school based, district, national/regional)",
+            "analyses_students": "analyzes students’ performance",
+            "institutes_practices": "Institutes appropriate practices for remediation",
+            "ensures_teachers_eqipped": "ensures that teachers are equipped with relevant techniques for evaluating student performance.",
+            # Teachers
+            "conducts_periodic_appraisals": "conducts periodic appraisals of teachers",
+            "provides_relevant_feedback": "provides relevant feedback for improvement",
+            "provides_support_to_teachers": "provide support to individual teachers where necessary.",
+            # Discipline
+            "clear_guidelines_student_behaviour": "establishes clearly defined guidelines for student behavior in accordance with the Education Act.",
+            "maintains_roster": "prepares and maintains roster for supervision of students",
+            "order_and_discipline": "maintains order and discipline in the school",
+            "uses_appropriate_sanctions": "uses appropriate sanctions for violation of school rules and regulations",
+            "ensures_staff_observes_standards": "ensures that staff observes the established standards.",
+            "reports_all_incidents": "Reports promptly all incidents of violence, slashed abuse and other criminal acts to the relevant authorities.",
+            "maintains_accurate_documentation": "maintains accurate and up to date documentation of offenses / sanctions.",
+            # Staff development
+            "conducts_needs_assessment": "conducts needs assessment among staff",
+            "organizes_staff_training": "organizes and facilitates staff training workshops.",
+            "facilitate_staff_attendance": "facilitates staff attendance at workshops/seminars/conferences",
+            "staff_training": "provides opportunities for staff members to use competences acquired at training sessions.",
+            # Physical plant
+            "maintenance": "ensures the proper maintenance of school property",
+            "resources_on_time": "requests necessary resources on time.",
+            "distributes_resources": "distributes available resources to staff as needed.",
+            "safe_environment": "ensures that the school's environment is safe and secure.",
+            "emergency_plan": "maintains an emergency plan",
+            "inventory_of_supplies": "maintains an inventory of school supplies, equipment and furniture.",
+            # Financial
+            "annual_budget": "prepares and submits an annual budget",
+            "school_revenue": "keeps accurate records of revenue and expenditure",
+            "annual_financial_report": "prepares and submits an annual financial report",
+            "report_on_time": "submits prescribed data to the Ministry of Education on time.",
+            # Interpersonal relations
+            "healthy_workplace": "builds and maintains a healthy working relationship with all stakeholders.",
+            "respect_ideas": "Respects the ideas and opinions of staff members.",
+            "cares_for_staff": "cares for staff and students",
+            "manages_conflict": "manages conflicts effectively ",
+            "resolves_conflict": "resolves conflicts effectively.",
+            "work_and_dignity": "values the work and dignity of others.",
+            "demonstrates_sensitivity": "Demonstrate sensitivity to the needs and feelings of others ",
+            "maintains_confidentiality": "maintains confidentiality.",
+            # Personal growth
+            "education_and_research": "keeps abreast of educational development and research.",
+            "supervisory_suggestions": "Accept supervisory suggestions/directives",
+            "professional_training": "pursues appropriate professional training and development.",
+            "ministry_standards": "Observes the standards as established by the Ministry of Education",
+            "school_related_activities": "attend school and school related activities regularly.",
+            "school_activities_puncutality": "Reports for school and school related activities punctually",
+            "participates_organized_development": "participates in organized professional development activities",
             # Comments
             "principals_comments": "Principal's Comments",
             "district_education_officer_comments": "District Education Officer's Comments",
@@ -456,7 +516,6 @@ class PrincipalAppraisalForm(forms.ModelForm):
             "principals_comments",
             "district_education_officer_comments",
             "chief_education_officer_comments",
-            Submit("submit", "Submit"),
         )
 
 
@@ -476,6 +535,100 @@ class TeacherAppraisalForm(forms.ModelForm):
             "teacher_comments": Textarea(attrs={"rows": 3, "cols": 20}),
             "district_officer_comments": Textarea(attrs={"rows": 3, "cols": 20}),
             "district_officer_recommendations": Textarea(attrs={"rows": 3, "cols": 20}),
+        }
+        labels = {
+            # Planning and organization
+            "prepares_work": "Prepares and submits schemes of work related to the scope and sequence of the curriculum",
+            "prepares_lesson_plans": "Prepares lesson plans",
+            "lesson_plan_order": "Prepares lesson plans that are well laid out and sequenced",
+            "objectives_clear": "Writes objectives that are clear",
+            "objectives_appropriate": "Writes objectives that are level appropriate",
+            "objectives_achievable": "Selects objectives that are achievable",
+            "content": "Prepares content that is a good match for the objectives",
+            "good_judgement": "Demonstrates sound judgment in decision-making.",
+            "plans_activities": "Plans activities that are well differentiated",
+            "prepares_individual_instruction": "Prepares instruction with opportunities for individual work.",
+            "prepares_group_instruction": "Prepares instruction with opportunities for group work.",
+            "subtible_material": "Prepares materials that are usable in the setting.",
+            "adequate_material": "Prepares instructional materials that are adequate",
+            "includes_timing": "Includes timing as an integral part of the planning",
+            "well_organized": "Is well organized for lesson presentation.",
+            "prepares_exercises": "Prepares assessment exercises to monitor students’ learning",
+            # Instructional
+            "welcomes_class": "Welcomes/ settles the class appropriately.",
+            "objectives_explicit": "Makes objectives explicit to students at the start of the lesson.",
+            "engages_student": "Engages students in activities that are appropriate. ",
+            "engages_students_meaningfully": "Engages students in activities that are meaningful.",
+            "encourages_student": "Engages students in activities that encourage them to think",
+            "awareness_of_student": "Demonstrates an awareness of students’ levels of performance.",
+            "teachers_in_harmony": "Teaches in harmony with objectives",
+            "teaching_strategies": "Uses a variety of teaching strategies to enhance learning",
+            "grasp_of_subject": "Demonstrates a good grasp of the subject matter",
+            "presents_correct_information": "Presents correct information",
+            "arouses_students_interest": "Arouses and maintains students’ interest",
+            "appropriate_instructional_material": "Uses appropriate instructional material in the teaching/learning environment.",
+            "appropriate_questionting": "Uses appropriate questioning techniques",
+            "student_opportunities": "Gives students opportunities to respond to questions",
+            "student_participation": "Ensures that all students participate in instructional activities",
+            "effective_use_of_structures": "Makes effective use of a variety of organizational structures (whole class, small groups, pairs, one-on-one).",
+            "guides_stduent_to_develop": "Guides students to develop concepts/ master skills.",
+            "presents_instruction_logically": "Presents instruction in a logical and coherent manner",
+            "ends_lessons": "Ends lessons appropriately",
+            "achieves_objectives": "Achieves instructional objectives.",
+            # Assessment
+            "clear_comms": "Communicates clear criteria/standards for assessment to students.",
+            "assess_activities": "Uses appropriate assessment activities to monitor students performance ",
+            "designs_assessmnet": "Designs assessment exercises at the appropriate level(s) of difficulty",
+            "regular_assessment": "Regularly assesses during lesson to ascertain students’ understanding",
+            "corrective_feedback": "Provides corrective feedback during the course of the lesson",
+            "accurate_records": "Maintains accurate records of students’ performance",
+            "monitors_student_progress": "Frequently monitors each students’ progress",
+            "timely_feedback_to_students": "Provides timely feedback to students on their performance",
+            "timely_feedback_to_parents": "Provides timely feedback to parents on students’ performance.",
+            "results_of_assessment": "Takes appropriate action based on results of assessments.",
+            # Professionalism
+            "express_themselves": "Expresses himself / herself clearly and is easily understood. ",
+            "arrives_work_on_time": "arrives for lessons on time ",
+            "arrives_lesson_on_time": "arrives for work on time",
+            "reports_regularly": "reports for work regularly ",
+            "ensures_safety": "ensures the safety of all students",
+            "trustworthy": "is trustworthy",
+            "demonstrates_maturity": "demonstrates maturity in dealing with students ",
+            "sound_judgement": "Demonstrates sound judgment in decision-making",
+            "seeks_opportunitiy": "Seeks opportunities for his/her Professional Development",
+            "participates_development": "Participates in professional Development",
+            "demonstrates_leadership": "demonstrates leadership skills in the performance of duties",
+            "contribute_to_activities": "Contribute To the life of the school including co-curricular activities.",
+            "submits_required_info": "Submits required information (reports, data, etc) on time",
+            "adhere_code_of_ethics": "adheres to the code of ethics",
+            # Interpersonal
+            "enourages_students": "Encourages students to respect the worth and dignity of others.",
+            "offers_advise": "offers advice to others (principal, colleagues, students, parents)",
+            "accepts_advice": "accepts advice from others (principal, colleagues, students, parents)",
+            "is_cooperative": "Is co-operative and works well with staff members",
+            "demonstrates_sensitvity": "demonstrates sensitivity To opinions, attitudes, and feelings of others",
+            "comms_students": "Communicates effectively with students.",
+            "comms_colleagues": "Communicates effectively with colleagues",
+            "comms_principal": "Communicates effectively with Principal",
+            "comms_support_staff": "Communicates effectively with support / ancillary staff ",
+            "comms_parents": "Communicates effectively with parents ",
+            "good_rapport_students": "Maintains a good rapport with Students",
+            "good_rapport_principal": "Maintains a good rapport with Principal ",
+            "good_rapport_colleagues": "Maintains a good rapport with colleagues",
+            "good_rapport_support_staff": "Maintains a good rapport with support / ancillary staff ",
+            "good_rapport_parents": "Maintains a good rapport with parents ",
+            # Class management
+            "demonstrates_awareness": "demonstrates an awareness  of what is happening in the classroom.",
+            "creates_atmosphere": "creates an atmosphere conducive to learning ",
+            "student_behaviour": "deals effectively with students’ behavior. ",
+            "fair_with_students": "Is Fair in dealing with students ",
+            "manages_time": "manages time effectively ",
+            "manages_learning_resources": "manages and utilizes learning resources effectively ",
+            "manages_effectively": "manages effectively Classroom-Related activities, assignments, projects, field trips, etc. ",
+            "ensures_students_rules": "ensures that students observe the rules for classroom activities and students’ behavior",
+            "effective_transition": "demonstrates effective transition from one activity to another during instruction",
+            "class_register": "takes a class register ",
+            "accurate_records": "keeps accurate and relevant student records",
         }
 
     def __init__(self, *args, **kwargs):
@@ -642,5 +795,4 @@ class TeacherAppraisalForm(forms.ModelForm):
             "teacher_comments",
             "district_officer_comments",
             "district_officer_recommendations",
-            Submit("submit", "Submit"),
         )

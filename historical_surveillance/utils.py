@@ -534,19 +534,80 @@ def primary_performance_plot(data, district_1, district_2):
     heatmap = get_image()
     return [graph, heatmap]
 
+def clean_secondary_name(name):
+    name = re.sub("[^a-zA-Z]+", "", name)
+    name = name.lower().replace('secondary', "")
+    name = name.replace('school', "")
+    return ' '.join(name.split())
+
+def match_name(name, schools, district_dict):
+    for school in schools:
+        if clean_secondary_name(name) == clean_secondary_name(getattr(school, 'school_name')):
+            district_code = getattr(school, 'district_name_id')
+            district_dict[name] = district_code
+            return district_code
+    return None
+
 def csec_performance_plot(data, district_1, district_2):
+    left_out = set()
+
     df = pd.DataFrame(data.values())
     plt.switch_backend('AGG')
     years = [extract_year(ys) for ys in df['EXAM_PERIOD'].drop_duplicates()]
-    print(years)
+    years = [int(y) for y in years]
+    years.sort()
+    min_year = min(years)
 
+    schools = School.objects.filter(category_of_school='public secondary')
+    
+    N_DISTRICTS=District.objects.count()
+    scores = np.zeros((len(years), N_DISTRICTS))
+    n_tests = np.zeros((len(years), N_DISTRICTS))
+    passing_scores = np.zeros((len(years), N_DISTRICTS))
 
-    plt.plot(years)
+    # cache school to district matches
+    district_dict = {}
+
+    for index, row in df.iterrows():
+        name = row['SCHOOL']
+        if name in district_dict:
+            district = district_dict[name]
+        else:
+            district = match_name(name, schools, district_dict)
+        if not district:
+            left_out.add(row['SCHOOL'])
+            continue
+        year = int(extract_year(row['EXAM_PERIOD'])) - min_year
+        n_tests[year][district-1] += 1
+        score = row['OVERALL_GRADE']
+        if score=='I' or score=='II' or score=='III':
+            scores[year][district-1] += 1
+
+    passing_scores = 100 * scores/n_tests
+    passing_scores = pd.DataFrame(passing_scores)
+
+    labels = ['District ' + str(d+1) for d in range(N_DISTRICTS)]
+    if not (district_1 and district_2):
+        for d in range(N_DISTRICTS):
+            plt.plot(years, passing_scores[d])
+    else:
+        plt.plot(years, passing_scores[district_1-1])
+        plt.plot(years, passing_scores[district_2-1])
+        labels = ['District '+ str(district_1), 'District' + str(district_2)]
+    plt.xticks([min(years), max(years)])
+    plt.legend(labels, loc = 'upper left', bbox_to_anchor=(1, 1.05))
+    plt.title("Percentage of Passing Scores (CSEC)")
+    plt.tight_layout()
     graph = get_image()
 
     plt.clf()
+    passing_scores = passing_scores.T
+    passing_scores.columns = years
+    passing_scores.index = ['District ' + str(d+1) for d in range(N_DISTRICTS)]
+    ax = sns.heatmap(passing_scores, annot=True)
+    plt.tight_layout()
     heatmap = get_image()
-    return [graph, heatmap]
+    return [graph, heatmap, left_out]
 
 def extract_year(period):
     year_string = re.findall(r'\d+', period)

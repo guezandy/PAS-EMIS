@@ -210,9 +210,9 @@ def _get_service_detail_list(students) -> list:
             
 
 def _get_basic_stats_dict(students, other_properties: dict = None) -> dict:
-    if not students:
-        return {}
-
+    if students is None:
+        return other_properties if other_properties else {}
+    
     student_count = students.count()
     students_with_services = [ s for s in students if _student_has_services(s) ]
     

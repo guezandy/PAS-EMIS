@@ -9,12 +9,7 @@ from .models import *
 class DistrictForms(forms.ModelForm):
     class Meta:
         model = District
-        fields = [
-            "district_name",
-            "district_code",
-            "updated_by",
-            "created_by",
-        ]
+        fields = "__all__"
         widgets = {
             "created_by": TextInput(attrs={"readonly": "readonly"}),
             "updated_by": TextInput(attrs={"readonly": "readonly"}),
@@ -42,15 +37,7 @@ class AggregateEnrollmentForms(forms.ModelForm):
 class SchoolForms(forms.ModelForm):
     class Meta:
         model = School
-        fields = [
-            "school_code",
-            "school_name",
-            "district_name",
-            "category_of_school",
-            "updated_by",
-            "created_by",
-        ]
-        # fields = "__all__"
+        fields = "__all__"
         widgets = {
             "created_by": TextInput(attrs={"readonly": "readonly"}),
             "updated_by": TextInput(attrs={"readonly": "readonly"}),
@@ -63,16 +50,8 @@ class EnrollmentForms(forms.ModelForm):
         fields = "__all__"
         widgets = {
             "created_by": TextInput(attrs={"readonly": "readonly"}),
+            "updated_by": TextInput(attrs={"readonly": "readonly"}),
         }
-        """
-        widgets = {
-            'district': forms.Select(choices=District.objects.values_list('district_name', flat=True),
-                                     attrs={'class': 'form-control'}),
-            'school': forms.Select(choices=School.objects.values_list('school_name', flat=True),
-                                   attrs={'class': 'form-control'})
-
-        }
-        """
 
 
 class NationalGenderEnrollmentForms(forms.ModelForm):

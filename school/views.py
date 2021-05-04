@@ -167,6 +167,9 @@ def single_district_view(request, code):
                 school__district_name=district
             )
         ],
+        "principal_appraisals": PrincipalAppraisal.objects.filter(
+            principal__school__district_name=district
+        ),
     }
     context = _add_side_navigation_context(request.user, context)
     return render(request, "single_district.html", context)
@@ -218,6 +221,7 @@ def single_school_view(request, code):
         "students": Student.objects.filter(school=school).values(
             "id", "first_name", "last_name", "graduation_year"
         ),
+        "teacher_appraisals": TeacherAppraisal.objects.filter(teacher__school=school),
     }
     context = _add_side_navigation_context(request.user, context)
     return render(request, "single_school.html", context)
@@ -480,8 +484,9 @@ def principal_appraisal_form(request, code=None):
         if form.is_valid():
             new_instance = form.save()
             return redirect(
-                f"/school/district/{new_instance.principal.school.school_code}"
+                f"/school/district/{new_instance.principal.school.district_name.district_code}"
             )
+    print(form.errors)
     context = {
         "header": "Edit Principal Appraisal" if code else "Create Principal Appraisal",
         "form": form,

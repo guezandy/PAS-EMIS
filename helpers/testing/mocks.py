@@ -1,5 +1,5 @@
 from historical_surveillance.models import District, School
-from school.models import Teacher, Student, Course, Subject, SubjectGroup, CourseGrade
+from school.models import Teacher, Student, Course, CourseGrade
 
 
 def generate_district():

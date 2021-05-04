@@ -5,8 +5,6 @@ from crispy_forms.layout import Layout, Submit, Row, Column, HTML
 from .models import (
     Course,
     CourseOutcome,
-    Subject,
-    SubjectGroup,
     Student,
     TeacherAppraisal,
     PrincipalAppraisal,
@@ -47,7 +45,7 @@ class StudentForm(forms.ModelForm):
             "interests_talents": "Describe your child's special interest or talents",
             "clubs_or_sports": "Please list any clubs or sports teams your child belongs to",
             "improvements_requested": "What academic improvements would you like to see in your child by the end of the first term",
-            "school_expectations": "",
+            "school_expectations": "Expectations of school",
         }
         widgets = {
             "date_of_birth": TextInput(attrs={"type": "date"}),
@@ -81,6 +79,8 @@ class StudentForm(forms.ModelForm):
             ),
             "home_address",
             "last_school_attended",
+            "school",
+            "graduation_year",
             "father_name",
             Row(
                 Column("father_work_telephone", css_class="form-group col-md-4 mb-0"),
@@ -154,18 +154,6 @@ class CourseOutcomeForm(forms.ModelForm):
         widgets = {
             "notes": Textarea(attrs={"rows": 3, "cols": 20}),
         }
-
-
-class SubjectForm(forms.ModelForm):
-    class Meta:
-        model = Subject
-        fields = "__all__"
-
-
-class SubjectGroupForm(forms.ModelForm):
-    class Meta:
-        model = SubjectGroup
-        fields = "__all__"
 
 
 class PrincipalForm(forms.ModelForm):

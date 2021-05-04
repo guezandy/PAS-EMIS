@@ -77,32 +77,15 @@ class Student(models.Model):
         return f"{self.first_name} {self.last_name}"
 
 
-# Ex: Math, Science, etc
-class SubjectGroup(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-
-    def __str__(self):
-        return str(self.name)
-
-
-# Ex: Geometry, Algebra 2, Physics 1, etc
-class Subject(models.Model):
-    subject_group = models.ForeignKey(SubjectGroup, on_delete=models.CASCADE, null=True)
-    name = models.CharField(max_length=100, unique=True)
-
-    def __str__(self):
-        return f"{self.subject_group.name} {self.name}"
-
-
 # Ex: Capstone course - has 1 teacher 1 subject a schedule and many students
 class Course(models.Model):
-    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, null=True)
+    subject_name = models.CharField(max_length=255, blank=True, null=True)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, null=True)
     students = models.ManyToManyField(Student)
     school = models.ForeignKey(School, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
-        return f"{self.subject.name}"
+        return f"{self.subject_name}"
 
 
 class CourseOutcome(models.Model):
@@ -119,7 +102,7 @@ class CourseOutcome(models.Model):
         unique_together = ("course", "student")
 
     def __str__(self):
-        return f"{self.student.first_name} {self.student.last_name} |{self.course.subject.name} | Grade: {self.grade} Attendance: {self.days_absent}"
+        return f"{self.student.first_name} {self.student.last_name} |{self.course.subject_name} | Grade: {self.grade} Attendance: {self.days_absent}"
 
 
 APPRAISAL_CHOICES = (

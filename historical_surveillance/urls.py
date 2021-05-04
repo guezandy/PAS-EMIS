@@ -124,16 +124,28 @@ urlpatterns = [
     # enrollment analysis summary
     path("enrollment_summary", views.enrollment_summary, name="enrollment_summary"),
     # Annual special education questionnaire
-    path("special_ed_quest", views.special_ed_quest, name="special_ed_quest"),
+    #path("special_ed_quest", views.special_ed_quest, name="special_ed_quest"),
 
     # ========================================
     # For outlier detection at district level
     # ========================================
     path("outlier_district", views.outlier_district, name="outlier_district"),
 
-    # ========================================
-    # For outlier detection at national level
-    # ========================================
-    path("outlier_national", views.outlier_national, name="outlier_national")
+    #========================================
+    #For outlier detection at national level
+    #========================================
+    path("outlier_national", views.outlier_national, name="outlier_national"),
 
+
+    #=========================================
+    #For box plots at district level
+    #=========================================
+    path("boxplot_district", views.boxplot_district, name="boxplot_district"),
+
+    #============================================
+    #For box plots at national level
+    #============================================
+    path("boxplot_national", views.boxplot_national, name="boxplot_national")
+
+    
 ]

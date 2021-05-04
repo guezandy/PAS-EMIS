@@ -7,25 +7,15 @@
             <h1>{{course_name}}</h1>
         </div>
         <div class="col-md-6 action-button-group">
-            <a href="{% url 'school:create_assignment' %}"><button type="button" class="btn btn-success mb-2">Create
-                    Assignment</button></a>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xl-3 col-md-6">
-            <div class="card bg-primary text-white mb-4">
-                <div class="card-body">
-                    <div class='stat'>67%</div>
-                    <div class='stat-label'>Class Average</div>
-                </div>
-            </div>
+            <a href="{% url 'school:create_course_outcome' %}"><button type="button" class="btn btn-success mb-2">Enter
+                    final grade</button></a>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12">
             <div class="card mb-4">
                 <div class="card-header">
-                    Assignments
+                    Gradebook
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -33,39 +23,35 @@
                             <thead>
                                 <tr>
                                     <th>Student</th>
-                                    {% for key, name in assignments.items %}
-                                    <th>
-                                        {{name}}
-                                        <a href="{% url 'school:edit_assignment' key %}"><Button
-                                                class="btn btn-primary">Edit</Button></a>
-                                        <a href="{% url 'school:delete_assignment' key %}"><Button
-                                                class="btn btn-danger">Delete</Button></a>
-                                    </th>
-                                    {% endfor %}
+                                    <th>Grade</th>
+                                    <th>Days Absent</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tfoot>
                                 <tr>
                                     <th>Student</th>
-                                    {% for key, name in assignments.items %}
-                                    <th>
-                                        {{name}}
-                                        <a href="{% url 'school:edit_assignment' key %}"><Button
-                                                class="btn btn-primary">Edit</Button></a>
-                                        <a href="{% url 'school:delete_assignment' key %}"><Button
-                                                class="btn btn-danger">Delete</Button></a>
-                                    </th>
-                                    {% endfor %}
+                                    <th>Grade</th>
+                                    <th>Days Absent</th>
+                                    <th></th>
                                 </tr>
                             </tfoot>
                             <tbody>
                                 {% for student in students %}
                                 <tr>
                                     <td>{{student.student_name}}</td>
-                                    {% for key, name in assignments.items %}
-                                    <th><input type="number" class="form-input"
-                                            value="{{student.assignments|keyvalue:key}}"></th>
-                                    {% endfor %}
+                                    <td>{{student.grade}}</td>
+                                    <td>{{student.attendance}}</td>
+                                    {% if student.course_outcome_id %}
+                                    <td><a href="{% url 'school:edit_course_outcome' student.course_outcome_id %}"><button
+                                                type="button" class="btn btn-success mb-2">Edit final grade</button></a>
+                                    </td>
+                                    {% else %}
+                                    <td><a href="{% url 'school:create_course_outcome' %}"><button type="button"
+                                                class="btn btn-success mb-2">Create final
+                                                grade</button></a>
+                                    </td>
+                                    {% endif %}
                                 </tr>
                                 {% endfor %}
                             </tbody>

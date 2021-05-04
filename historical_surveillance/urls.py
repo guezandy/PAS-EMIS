@@ -6,31 +6,6 @@ urlpatterns = [
     # for the index page
     path("", views.index, name="index"),
 
-    # Enrollment urls
-    # for the enrollments page
-    path("enrollments", views.enrollment, name="enrollments"),
-    # to update an existing enrollment record
-    path(
-        "enrollments/<int:code>",
-        views.update_enrollment,
-        name="update-enrollment",
-    ),
-
-    path(
-        "enrollments/create",
-        views.update_enrollment,
-        name="create-enrollment",
-    ),
-
-    # for the enrollment/capacity page
-    path("enroll_class", views.enroll_class, name="enroll_class"),
-    # to update the enrollment / capacity
-    path(
-        "update_enroll_class/<int:code>",
-        views.update_enroll_class,
-        name="update-enroll-class",
-    ),
-
     # District urls
     # for the viewing districts
     path("districts", views.district, name="districts"),
@@ -50,6 +25,39 @@ urlpatterns = [
     path(
         "schools/<int:code>", views.edit_school, name="update-school"
     ),
+
+    # Enrollment urls
+    # for the enrollments page
+    path("enrollments", views.enrollment, name="enrollments"),
+    # to update an existing enrollment record
+    path(
+        "enrollments/<int:code>",
+        views.update_enrollment,
+        name="update-enrollment",
+    ),
+
+    path(
+        "enrollments/create",
+        views.update_enrollment,
+        name="create-enrollment",
+    ),
+
+    # Enrollment/Capacity page
+    # for the enrollment/capacity page
+    path("aggregate-enrollments", views.aggregate_enrollment, name="aggregate-enrollments"),
+    # to update the enrollment / capacity
+    path(
+        "aggregate-enrollments/<int:code>",
+        views.update_aggregate_enrollment,
+        name="update-aggregate-enrollment",
+    ),
+    # to create a new enrollment / capacity record
+        path(
+        "aggregate-enrollment/create",
+        views.update_aggregate_enrollment,
+        name="create-aggregate-enrollment",
+    ),
+
 
     # enrollment/capacity table by district view
     path("enrolled_district", views.enrolled_district, name="enrolled_district"),

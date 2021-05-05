@@ -37,7 +37,7 @@ SECRET_KEY = "4972qip7alqj2)+-57#9ni%(bah7*#l7ix106x!mmfhnt92u_)"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['www.stluciapas.com','stluciapas.com', '107.20.35.151']
+ALLOWED_HOSTS = []
 
 LOGIN_URL = "/auth/login"
 

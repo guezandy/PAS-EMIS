@@ -129,7 +129,7 @@ urlpatterns = [
         "cee_results",
         views.cee_results,
         name="cee-results"),
-        
+   """     
     path(
         "update_cee/<int:id>",
         views.update_cee,
@@ -139,6 +139,9 @@ urlpatterns = [
         "cee_results/create",
         views.update_cee,
         name="create_cee"),
+        
+    """
+
 
     #Form 5 National Examination
     path(

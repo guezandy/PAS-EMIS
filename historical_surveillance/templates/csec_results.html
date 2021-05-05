@@ -1,5 +1,5 @@
-{% extends "base.html" %} {% load crispy_forms_filters %}
-{% load crispy_forms_tags %} {% block page_content %}
+{% extends "base.html" %} {% load crispy_forms_filters %} {% load
+crispy_forms_tags %} {% block page_content %}
 <!-- This form handles the creation of schools in each district.
 The error handling needs to be reviewed for now, it takes the error messaged passed as a dictionary
 from the school view and displays to the user preventing duplicate data entry.
@@ -12,10 +12,11 @@ of the same data which is also handled by the error message displayed.
       <h1>Caribbean Secondary School Exit Examination</h1>
     </div>
     <div class="col-md-6 action-button-group">
-      <a href="{% url 'surveillance:csec_results' %}"
+      <a href="{% url 'surveillance:create-csec' %}"
         ><button type="button" class="btn btn-success mb-2">
           Add record
-        </button></a>
+        </button></a
+      >
     </div>
   </div>
 
@@ -29,35 +30,37 @@ of the same data which is also handled by the error message displayed.
                 <tr>
                   <th>Test Year</th>
                   <th>Name of School</th>
-                    <th>Sex</th>
-                    <th>Subject</th>
-                    <th>Proficiency</th>
-                    <th>Profile 1</th>
-                    <th>Profile 2</th>
-                    <th>Profile 3</th>
-                    <th>Profile 4</th>
-                    <th>Overall Grade</th>
-
+                  <th>Sex</th>
+                  <th>Subject</th>
+                  <th>Proficiency</th>
+                  <th>Profile 1</th>
+                  <th>Profile 2</th>
+                  <th>Profile 3</th>
+                  <th>Profile 4</th>
+                  <th>Overall Grade</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {% for csec in results %}
                 <tr>
-                 <td>{{ csec.year }}</td>
-                 <td>{{ csec.school }}</td>
-                 <td>{{ csec.sex }}</td>
-                 <td>{{ csec.subject }}</td>
-                 <td>{{ csec.proficiency }}</td>
-                 <td>{{ csec.profile1 }}</td>
-                 <td>{{ csec.profile2 }}</td>
-                 <td>{{ csec.profile3 }}</td>
-                 <td>{{ csec.profile4 }}</td>
-                 <td>{{ csec.overall_grade }}</td>
+                  <td>{{ csec.year }}</td>
+                  <td>{{ csec.school }}</td>
+                  <td>{{ csec.sex }}</td>
+                  <td>{{ csec.subject }}</td>
+                  <td>{{ csec.proficiency }}</td>
+                  <td>{{ csec.profile1 }}</td>
+                  <td>{{ csec.profile2 }}</td>
+                  <td>{{ csec.profile3 }}</td>
+                  <td>{{ csec.profile4 }}</td>
+                  <td>{{ csec.overall_grade }}</td>
                   <td>
-                    <a class="btn btn-primary" href="/historical/update_cee/{{ cee.id}}"
-                      ><i class="fas fa-pencil-alt"></i> Edit</a
+                    <a
+                      class="btn btn-primary"
+                      href="{% url 'surveillance:update-csec' csec.id %}"
                     >
-
+                      <i class="fas fa-pencil-alt"></i> Edit</a
+                    >
                   </td>
 
                   {% endfor %}

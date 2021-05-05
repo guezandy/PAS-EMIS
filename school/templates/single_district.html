@@ -62,6 +62,7 @@
                             <th>School name</th>
                             <th>Teacher count</th>
                             <th>Student count</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tfoot>
@@ -70,15 +71,18 @@
                             <th>School name</th>
                             <th>Teacher count</th>
                             <th>Student count</th>
+                            <th></th>
                         </tr>
                     </tfoot>
                     <tbody>
                         {% for school in schools %}
-                        <tr class='clickable-row' data-href="/school/school_details/{{school.school_code}}">
+                        <tr>
                             <td>{{school.school_code}}</td>
                             <td>{{school.school_name}}</td>
                             <td>{{school.teacher_count}}</td>
                             <td>{{school.student_count}}</td>
+                            <td><a href="/school/school_details/{{school.school_code}}"><button type="button"
+                                        class="btn btn-primary mb-2">Details</button></a></td>
                         </tr>
                         {% endfor %}
                     </tbody>

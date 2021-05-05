@@ -614,14 +614,14 @@ def enrollment_summary(request):
     data = json.loads(json_records)
     context = {'d': data}
     if 'ger_primary' in request.POST:
-        data_boys_1 = df.query("sex=='male' and category_of_school == 'primary'")
+        data_boys_1 = df.query("sex=='males' and category_of_school == 'primary'")
         json_records = data_boys_1.reset_index().to_json(orient='records')
         data_boys_primary = json.loads(json_records)
         # function to get the graph
         graph_boys_primary = get_plot_boys_primary(data=data_boys_1)
 
-        data_girls_1 = df.query("sex=='female' and category_of_school == 'primary'")
 
+        data_girls_1 = df.query("sex=='females' and category_of_school == 'primary'")
         json_records = data_girls_1.reset_index().to_json(orient='records')
         data_girls_primary = json.loads(json_records)
         # function to get the graph

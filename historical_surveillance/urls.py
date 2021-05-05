@@ -123,11 +123,7 @@ urlpatterns = [
         "district_performance",
         views.district_performance,
         name="district_performance"),
-    path(
-        "upload_scores",
-        views.upload_scores,
 
-        name="upload_scores"),
     # Grade 6 national examination
     path(
         "cee_results",
@@ -137,12 +133,12 @@ urlpatterns = [
     path(
         "update_cee/<int:id>",
         views.update_cee,
-        name="update-cee"),
+        name="update_cee"),
     
      path(
         "cee_results/create",
         views.update_cee,
-        name="create-cee"),
+        name="create_cee"),
 
     #Form 5 National Examination
     path(

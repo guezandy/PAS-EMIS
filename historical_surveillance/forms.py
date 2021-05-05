@@ -97,13 +97,26 @@ class ceeForms(forms.ModelForm):
     class Meta:
         model = CEE
         fields = "__all__"
-
+        widgets = {
+            "created_by": TextInput(attrs={"readonly": "readonly"}),
+            "updated_by": TextInput(attrs={"readonly": "readonly"}),
+        }
+    helper = FormHelper()
+    helper.add_input(Submit('submit', 'Submit', css_class='btn-primary'))
+    helper.form_method = 'POST'
 
 
 class csecForms(forms.ModelForm):
     class Meta:
-        model = CEE
+        model = CSEC
         fields = "__all__"
+        widgets = {
+            "created_by": TextInput(attrs={"readonly": "readonly"}),
+            "updated_by": TextInput(attrs={"readonly": "readonly"}),
+        }
+    helper = FormHelper()
+    helper.add_input(Submit('submit', 'Submit', css_class='btn-primary'))
+    helper.form_method = 'POST'
 
 
 class CSECForm(forms.ModelForm):

@@ -132,13 +132,33 @@ urlpatterns = [
     path(
         "cee_results",
         views.cee_results,
-        name="cee_results"),
+        name="cee-results"),
+        
+    path(
+        "update_cee/<int:id>",
+        views.update_cee,
+        name="update-cee"),
+    
+     path(
+        "cee_results/create",
+        views.update_cee,
+        name="create-cee"),
 
     #Form 5 National Examination
     path(
         "csec_results",
         views.csec_results,
-        name="csec_results"),
+        name="csec-results"),
+
+    path(
+    "update_csec/<int:id>",
+    views.update_csec,
+    name="update-csec"),
+    
+     path(
+        "csec_results/create",
+        views.update_csec,
+        name="create-csec"),
 
 
     path(

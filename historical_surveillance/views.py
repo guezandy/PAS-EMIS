@@ -14,11 +14,55 @@ def cee_results(request):
     context = {"results": data}
     return render(request, 'cee_results.html', context)
 
+# This is for creating and editing a district
+def update_cee(request, id=None):
+    # Render edit form
+    if id:
+        instance = get_object_or_404(CEE, pk=id)
+    # Render create form
+    else:
+        instance = CEE(created_by=request.user.username,
+                            updated_by=request.user.username)
+    form = ceeForms(request.POST or None, instance=instance)
+    # Process submit
+    if request.method == "POST":
+        if form.is_valid():
+            model_instance = form.save(commit=False)
+            model_instance.updated_by = request.user.username
+            model_instance.save()
+            return HttpResponseRedirect(reverse("surveillance:cee-results"))
+    context = {
+        "header": "Edit CEE Record" if id else "Create CEE Record", "form": form}
+    # context = _add_side_navigation_context(request.user, context)
+    return render(request, "historical_form.html", context)
+
 
 def csec_results(request):
     data = CSEC.objects.all()
     context = {"results": data}
     return render(request, 'csec_results.html', context)
+
+# This is for creating and editing a csec record
+def update_csec(request, id=None):
+    # Render edit form
+    if id:
+        instance = get_object_or_404(CSEC, pk=id)
+    # Render create form
+    else:
+        instance = CSEC(created_by=request.user.username,
+                            updated_by=request.user.username)
+    form = csecForms(request.POST or None, instance=instance)
+    # Process submit
+    if request.method == "POST":
+        if form.is_valid():
+            model_instance = form.save(commit=False)
+            model_instance.updated_by = request.user.username
+            model_instance.save()
+            return HttpResponseRedirect(reverse("surveillance:csec-results"))
+    context = {
+        "header": "Edit CSEC Record" if id else "Create CSEC Record", "form": form}
+    # context = _add_side_navigation_context(request.user, context)
+    return render(request, "historical_form.html", context)
 
 
 # This is the examination Analysis

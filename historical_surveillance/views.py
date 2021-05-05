@@ -1,6 +1,4 @@
-
 import json
-
 
 import pandas as pd
 from django.contrib import messages
@@ -666,29 +664,13 @@ def enrollment_summary(request):
     return render(request, 'enrollment_summary.html', context)
 
 
-def special_ed_quest(request):
-    form1 = SpecialEdForms1(request.GET)
-    form2 = SpecialEdForms2(request.GET)
-    form3 = SpecialEdForms3(request.GET)
-    form4 = SpecialEdForms4(request.GET)
 
-    data_forms = {
-        "form1": form1,
-        "form2": form2,
-        "form3": form3,
-        "form4": form4,
-
-    }
-
-    return render(request, 'special_ed_quest.html', data_forms)
-
-
-#==============================================
-#View for outlier detection at district level
-#==============================================
+# ==============================================
+# View for outlier detection at district level
+# ==============================================
 
 def outlier_district(request):
-    #return HttpResponse('In outlier detection at district level')
+    # return HttpResponse('In outlier detection at district level')
 
     error_message = None
     graph = None
@@ -697,20 +679,21 @@ def outlier_district(request):
     year_list = Enrollment.objects.distinct().values_list('year', flat=True)
     school_categories = Enrollment.objects.distinct().values_list('category_of_school', flat=True)
 
-    if (len(districts_names) > 0 and len(school_categories)> 0):
+    if (len(districts_names) > 0 and len(school_categories) > 0):
         if ((request.method) == 'POST'):
 
-            district_selected  = request.POST.get('district_name', None)
+            district_selected = request.POST.get('district_name', None)
             selected_year = request.POST.get('year', None)
             selected_school_type = request.POST.get('school_type', None)
 
             if (not district_selected or not selected_year or not selected_school_type):
                 error_message = "Please select all variables"
             else:
-                #enrollment_df = pd.DataFrame(AggregateEnrollment.objects.values().filter(district_of_school=district_selected, academic_year = selected_year))
-                enrollment_df = pd.DataFrame(AggregateEnrollment.objects.all().filter(category_of_school = selected_school_type,
-                                                                                      district_of_school=district_selected, 
-                                                                                      academic_year=selected_year).values())
+                # enrollment_df = pd.DataFrame(AggregateEnrollment.objects.values().filter(district_of_school=district_selected, academic_year = selected_year))
+                enrollment_df = pd.DataFrame(
+                    AggregateEnrollment.objects.all().filter(category_of_school=selected_school_type,
+                                                             district_of_school=district_selected,
+                                                             academic_year=selected_year).values())
 
                 if (enrollment_df.empty):
                     error_message = "No record was found for the selected district and academic year"
@@ -718,16 +701,16 @@ def outlier_district(request):
                 else:
 
                     schools_df = pd.DataFrame(School.objects.all().values())
-                    final_df = pd.merge(left = enrollment_df, right = schools_df,
+                    final_df = pd.merge(left=enrollment_df, right=schools_df,
                                         left_on='name_of_school_id', right_on='id')
-                    
+
                     enrollment_mean = final_df['total_enrollment'].mean()
-                    
+
                     enrollment_median = final_df['total_enrollment'].median()
 
                     mean_list = []
-                    
-                    x = range(0,len(final_df['school_name']))
+
+                    x = range(0, len(final_df['school_name']))
 
                     for a in x:
                         mean_list.append(enrollment_mean)
@@ -735,36 +718,33 @@ def outlier_district(request):
                     data_mean = pd.DataFrame(mean_list, columns=['Mean'])
 
                     graph = get_outlier_district_plot(x=final_df['total_enrollment'],
-                                                      y = final_df['school_name'],
-                                                      data = final_df,
-                                                      academic_year = selected_year,
-                                                      data_mean  = data_mean,   
-                                                      input_school_type = selected_school_type, 
-                                                      input_district = district_selected                             
+                                                      y=final_df['school_name'],
+                                                      data=final_df,
+                                                      academic_year=selected_year,
+                                                      data_mean=data_mean,
+                                                      input_school_type=selected_school_type,
+                                                      input_district=district_selected
                                                       )
     else:
         error_message = "No records found"
 
-        
-    
     stu = {
-        "graph" : graph,
-        "error_message" : error_message,
-        "districts_name" : districts_names,
-        "year_list" : year_list,
-        "school_list" : school_categories
+        "graph": graph,
+        "error_message": error_message,
+        "districts_name": districts_names,
+        "year_list": year_list,
+        "school_list": school_categories
 
     }
-    
-    return render(request, 'outlier_district_page.html', stu)
-    
 
-#==============================================
-#View for outlier detection at national level
-#==============================================
+    return render(request, 'outlier_district_page.html', stu)
+
+
+# ==============================================
+# View for outlier detection at national level
+# ==============================================
 
 def outlier_national(request):
-    
     error_message = None
     graph = None
     selected_school_type = ''
@@ -775,58 +755,54 @@ def outlier_national(request):
 
     if (len(year_list) > 0 and len(school_categories) > 0):
         if ((request.method) == 'POST'):
-            
+
             selected_school_type = request.POST.get('school_type', None)
             selected_year = request.POST.get('year', None)
 
             if (not selected_year or not selected_school_type):
                 error_message = "Please select an academic year"
             else:
-                #enrollment_df = pd.DataFrame(AggregateEnrollment.objects.values().filter(district_of_school=district_selected, academic_year = selected_year))
-                enrollment_df = pd.DataFrame(AggregateEnrollment.objects.all().filter(category_of_school = selected_school_type, academic_year=selected_year).values())
+                # enrollment_df = pd.DataFrame(AggregateEnrollment.objects.values().filter(district_of_school=district_selected, academic_year = selected_year))
+                enrollment_df = pd.DataFrame(
+                    AggregateEnrollment.objects.all().filter(category_of_school=selected_school_type,
+                                                             academic_year=selected_year).values())
 
                 if (enrollment_df.empty):
                     error_message = "No record was found for the academic year"
 
                 else:
                     schools_df = pd.DataFrame(School.objects.all().values())
-                    final_df = pd.merge(left = enrollment_df, right = schools_df,
+                    final_df = pd.merge(left=enrollment_df, right=schools_df,
                                         left_on='name_of_school_id', right_on='id')
-                    
 
-                    
                     enrollment_mean = final_df['total_enrollment'].mean()
-                    
 
                     mean_list = []
-                    
-                    x = range(0,len(final_df['school_name']))
+
+                    x = range(0, len(final_df['school_name']))
 
                     for a in x:
                         mean_list.append(enrollment_mean)
 
                     data_mean = pd.DataFrame(mean_list, columns=['Mean'])
                     graph = get_outlier_national_plot(x=final_df['total_enrollment'],
-                                                      y = final_df['school_name'],
-                                                      data = final_df,
-                                                      academic_year = selected_year,
-                                                      data_mean  = data_mean, 
-                                                      input_school_type = selected_school_type
-                                                                                        
+                                                      y=final_df['school_name'],
+                                                      data=final_df,
+                                                      academic_year=selected_year,
+                                                      data_mean=data_mean,
+                                                      input_school_type=selected_school_type
+
                                                       )
     else:
         error_message = "No records found"
 
-       
-    
     stu = {
-        "graph" : graph,
-        "error_message" : error_message,
-        "year_list" : year_list,
-        "school_list" : school_categories
+        "graph": graph,
+        "error_message": error_message,
+        "year_list": year_list,
+        "school_list": school_categories
 
     }
-
 
     return render(request, 'outlier_national_page.html', stu)
 
@@ -842,7 +818,7 @@ def district_performance(request):
     if len(districts_names) > 0:
         if request.method == 'POST':
             # Compare all districts
-            if request.POST['submit']=='Compare All Districts (CEE)':
+            if request.POST['submit'] == 'Compare All Districts (CEE)':
                 chart_title = "CEE Comparison, All Districts"
                 context['chart_title'] = chart_title
                 data = PrimaryPerformance.objects.all()
@@ -850,7 +826,7 @@ def district_performance(request):
                 context['graph'] = graph
                 context['heatmap'] = heatmap
                 return render(request, 'district_performance.html', context)
-            if request.POST['submit']=='Compare All Districts (CSEC)':
+            if request.POST['submit'] == 'Compare All Districts (CSEC)':
                 chart_title = "CSEC Comparison, All Districts"
                 context['chart_title'] = chart_title
                 data = CSECResults.objects.all()
@@ -862,14 +838,14 @@ def district_performance(request):
                 return render(request, 'district_performance.html', context)
 
             # Compare CEE between 2 districts
-            if request.POST['submit']=='Compare CEE Results':
+            if request.POST['submit'] == 'Compare CEE Results':
                 district_1 = request.POST.get('district_1_name', False)
                 district_2 = request.POST.get('district_2_name', False)
                 if not (district_1 and district_2) or district_1 == district_2:
                     error_message = "Please select 2 different districts to compare."
                     context['error_message'] = error_message
                     return render(request, 'district_performance.html', context)
-                if request.POST['submit']=='Compare CEE Results':
+                if request.POST['submit'] == 'Compare CEE Results':
                     chart_title = "CEE Comparison, Districts " + district_1 + " and " + district_2
                     context['chart_title'] = chart_title
                     data = PrimaryPerformance.objects.all()
@@ -885,7 +861,7 @@ def district_performance(request):
                 error_message = "Please select 2 different districts to compare."
                 context['error_message'] = error_message
                 return render(request, 'district_performance.html', context)
-            if request.POST['submit']=='Compare CSEC Results':
+            if request.POST['submit'] == 'Compare CSEC Results':
                 chart_title = "CSEC Comparison, Districts " + district_3 + " and " + district_4
                 context['chart_title'] = chart_title
                 data = CSECResults.objects.all()
@@ -898,17 +874,19 @@ def district_performance(request):
         else:
             return render(request, 'district_performance.html', context)
 
+
 UNIVERSAL_FIELDS = {'id', 'created_at', 'created_by', 'updated_at', 'updated_by'}
+
 
 def upload_scores(request):
     context = {}
     cee_field_names = CEEResults._meta.get_fields()
-    cee_field_names = [str(f).split('.')[-1] for f in cee_field_names] 
+    cee_field_names = [str(f).split('.')[-1] for f in cee_field_names]
     cee_field_names = list(set(cee_field_names) - UNIVERSAL_FIELDS)
     cee_field_names.sort()
 
     csec_field_names = CSECResults._meta.get_fields()
-    csec_field_names = [str(f).split('.')[-1] for f in csec_field_names] 
+    csec_field_names = [str(f).split('.')[-1] for f in csec_field_names]
     csec_field_names = list(set(csec_field_names) - UNIVERSAL_FIELDS)
     csec_field_names.sort()
     context['cee_field_names'] = cee_field_names
@@ -924,20 +902,19 @@ def upload_scores(request):
     type = "CEE"
     field_names = []
     csv_file = None
-    if request.POST['submit']=='Upload CSEC Scores':
+    if request.POST['submit'] == 'Upload CSEC Scores':
         field_names = csec_field_names
         if not "csec_file" in request.FILES:
             context['error_message'] = 'Please select a file to upload.'
             return render(request, "upload_scores.html", context)
         csv_file = request.FILES["csec_file"]
         type = "CSEC"
-    elif request.POST['submit']=='Upload CEE Scores':
+    elif request.POST['submit'] == 'Upload CEE Scores':
         field_names = cee_field_names
         if not "cee_file" in request.FILES:
             context['error_message'] = 'Please select a file to upload.'
             return render(request, "upload_scores.html", context)
         csv_file = request.FILES["cee_file"]
-
 
     if request.POST['submit'].startswith("delete_cee"):
         time_period = request.POST['submit'][10:]
@@ -951,9 +928,9 @@ def upload_scores(request):
             return render(request, "upload_scores.html", context)
         scores = csv_file.read().decode("utf-8", 'ignore')
         user_data = {'created_by': request.user.username,
-                    'updated_by': request.user.username,
-                    'created_at': date.today().strftime("%Y-%m-%d"),
-                    'updated_at': date.today().strftime("%Y-%m-%d")}
+                     'updated_by': request.user.username,
+                     'created_at': date.today().strftime("%Y-%m-%d"),
+                     'updated_at': date.today().strftime("%Y-%m-%d")}
         result = store_scores(scores, field_names, user_data, type)
         if 'error_message' in result:
             context['error_message'] = result['error_message']
@@ -965,28 +942,24 @@ def upload_scores(request):
         if 'failed' in result:
             context['failed'] = result['failed']
 
-
     context['cee_count'] = CEEResults.objects.count()
     context['csec_count'] = CSECResults.objects.count()
     context['cee_by_year'] = [item['test_yr'] for item in CEEResults.objects.values('test_yr').distinct()]
     context['csec_by_year'] = [item['EXAM_PERIOD'] for item in CSECResults.objects.values('EXAM_PERIOD').distinct()]
     return render(request, "upload_scores.html", context)
-=======
-import json
+
+
 from django.http.response import HttpResponseRedirect
 from django.urls.base import reverse
 
-from django.shortcuts import render, redirect, get_object_or_404
-from django.utils.datetime_safe import date
-from .forms import *
-from .models import *
-from .utils import *
+
 
 
 def cee_results(request):
     data = CEE.objects.all()
     context = {"results": data}
     return render(request, 'cee_results.html', context)
+
 
 # This is for creating and editing a district
 def update_cee(request, id=None):
@@ -996,7 +969,7 @@ def update_cee(request, id=None):
     # Render create form
     else:
         instance = CEE(created_by=request.user.username,
-                            updated_by=request.user.username)
+                       updated_by=request.user.username)
     form = ceeForms(request.POST or None, instance=instance)
     # Process submit
     if request.method == "POST":
@@ -1004,7 +977,7 @@ def update_cee(request, id=None):
             model_instance = form.save(commit=False)
             model_instance.updated_by = request.user.username
             model_instance.save()
-            return HttpResponseRedirect(reverse("surveillance:cee-results"))
+            return HttpResponseRedirect(reverse("surveillance:cee_results"))
     context = {
         "header": "Edit CEE Record" if id else "Create CEE Record", "form": form}
     # context = _add_side_navigation_context(request.user, context)
@@ -1016,6 +989,7 @@ def csec_results(request):
     context = {"results": data}
     return render(request, 'csec_results.html', context)
 
+
 # This is for creating and editing a csec record
 def update_csec(request, id=None):
     # Render edit form
@@ -1024,7 +998,7 @@ def update_csec(request, id=None):
     # Render create form
     else:
         instance = CSEC(created_by=request.user.username,
-                            updated_by=request.user.username)
+                        updated_by=request.user.username)
     form = csecForms(request.POST or None, instance=instance)
     # Process submit
     if request.method == "POST":
@@ -1032,7 +1006,7 @@ def update_csec(request, id=None):
             model_instance = form.save(commit=False)
             model_instance.updated_by = request.user.username
             model_instance.save()
-            return HttpResponseRedirect(reverse("surveillance:csec-results"))
+            return HttpResponseRedirect(reverse("surveillance:csec_results"))
     context = {
         "header": "Edit CSEC Record" if id else "Create CSEC Record", "form": form}
     # context = _add_side_navigation_context(request.user, context)
@@ -1632,14 +1606,13 @@ def enrollment_summary(request):
     data = json.loads(json_records)
     context = {'d': data}
     if 'ger_primary' in request.POST:
-        data_boys_1 = df.query("sex=='male' and category_of_school == 'primary'")
+        data_boys_1 = df.query("sex=='males' and category_of_school == 'primary'")
         json_records = data_boys_1.reset_index().to_json(orient='records')
         data_boys_primary = json.loads(json_records)
         # function to get the graph
         graph_boys_primary = get_plot_boys_primary(data=data_boys_1)
 
-        data_girls_1 = df.query("sex=='female' and category_of_school == 'primary'")
-
+        data_girls_1 = df.query("sex=='females' and category_of_school == 'primary'")
         json_records = data_girls_1.reset_index().to_json(orient='records')
         data_girls_primary = json.loads(json_records)
         # function to get the graph

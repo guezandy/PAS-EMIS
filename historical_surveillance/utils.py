@@ -648,7 +648,7 @@ def store_scores(data, required_fields, user_data, type):
         result['n_scores'] = succeeded
         result['failed'] = failed
     return result
-=======
+
 import base64
 import re
 from io import BytesIO
@@ -907,12 +907,9 @@ def get_outlier_district_plot(**kwargs):
     graph = get_image()
     return graph
 
-
     plt.tight_layout()
     graph = get_image()
     return graph
-
-
 
 
 def get_plot_boys_primary(**kwargs):
@@ -1012,10 +1009,10 @@ def get_outlier_national_plot(**kwargs):
     graph = get_image()
     return graph
 
-
     plt.tight_layout()
     graph = get_image()
     return graph
+
 
 def get_plot_primary(**kwargs):
     plt.switch_backend('AGG')
@@ -1026,7 +1023,7 @@ def get_plot_primary(**kwargs):
     for _ in data.shape:
         ger_boys = (data_boys['enrollment'] / data_boys['age_5_to_11_years']) * 100
         ger_girls = (data_girls['enrollment'] / data_girls['age_5_to_11_years']) * 100
-        academic_year = data_girls.academic_year
+        academic_year = data_boys.academic_year
         title = 'Trend of GER for Primary Schools in St. Lucia'
         plt.figure(figsize=(10, 8))
         plt.title(title)
@@ -1198,7 +1195,7 @@ def national_gender_enrollment_hist(**kwargs):
 
     # fig, ax = plt.subplots()
 
-    fig, axs = plt.subplots(2, 2, figsize=(15,15))
+    fig, axs = plt.subplots(2, 2, figsize=(15, 15))
 
     # the histogram of the data
     n_boys_primary, bins_boys_primary, patches_boys_primary = axs[0, 0].hist(x_mu_boys_primary, num_bins, density=True)
@@ -1287,7 +1284,7 @@ def national_education_census_hist(**kwargs):
 
     # fig, ax = plt.subplots()
 
-    fig, (ax1, ax2, ax3) = plt.subplots(3, figsize=(15,15))
+    fig, (ax1, ax2, ax3) = plt.subplots(3, figsize=(15, 15))
 
     # the histogram of the data
     n_3_4, bins_3_4, patches_3_4 = ax1.hist(x_mu_data_3_4, num_bins, density=True)
@@ -1370,7 +1367,7 @@ def national_expenditure_hist(**kwargs):
 
     # fig, ax = plt.subplots()
 
-    fig, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(5, figsize=(15,15))
+    fig, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(5, figsize=(15, 15))
 
     # the histogram of the data
     n_educational_expenditure, bins_educational_expenditure, patches_educational_expenditure = \
@@ -1386,12 +1383,12 @@ def national_expenditure_hist(**kwargs):
     # add a 'best fit' line
     y_educational_expenditure = ((1 / (np.sqrt(2 * np.pi) * sigma_educational_expenditure)) *
                                  np.exp(-0.5 * (1 / sigma_educational_expenditure * (
-                                             bins_educational_expenditure - mu_educational_expenditure)) ** 2))
+                                         bins_educational_expenditure - mu_educational_expenditure)) ** 2))
     y_gdp_millions = ((1 / (np.sqrt(2 * np.pi) * sigma_gdp_millions)) *
                       np.exp(-0.5 * (1 / sigma_gdp_millions * (bins_gdp_millions - mu_gdp_millions)) ** 2))
     y_government_expenditure = ((1 / (np.sqrt(2 * np.pi) * sigma_government_expenditure)) *
                                 np.exp(-0.5 * (1 / sigma_government_expenditure * (
-                                            bins_government_expenditure - mu_government_expenditure)) ** 2))
+                                        bins_government_expenditure - mu_government_expenditure)) ** 2))
     y_primary_school_expenditure = ((1 / (np.sqrt(2 * np.pi) * sigma_primary_school_expenditure)) *
                                     np.exp(-0.5 * (1 / sigma_primary_school_expenditure * (
                                             bins_primary_school_expenditure - mu_primary_school_expenditure)) ** 2))
@@ -1513,15 +1510,11 @@ def store_scores(data, required_fields, user_data, type):
     return result
 
 
-
-
-
-#=======================================================================================
-#Box plots at district level
-#=======================================================================================
+# =======================================================================================
+# Box plots at district level
+# =======================================================================================
 
 def get_boxplot_district_plot(**kwargs):
-
     plt.switch_backend('AGG')
 
     school_enrollment = kwargs.get('x')
@@ -1531,30 +1524,27 @@ def get_boxplot_district_plot(**kwargs):
     academic_year = kwargs.get('academic_year')
     district_input = kwargs.get('input_district')
 
+    fig, ax1 = plt.subplots(figsize=(11, 6))
 
-    fig, ax1 = plt.subplots(figsize=(11,6))
+    plt.boxplot(school_enrollment, patch_artist=True,
+                boxprops=dict(facecolor='purple'),
+                meanline=True, showmeans=True)
 
-    plt.boxplot(school_enrollment, patch_artist = True, 
-                        boxprops = dict(facecolor = 'purple'), 
-                        meanline = True, showmeans = True)
-    
-    
     plt.xticks([1], [input_school_type])
     plt.ylabel('Enrollment')
-    plt.title("Box Plot for Enrollment in " + input_school_type + " schools  in " + " District" + district_input + " and academic year " + academic_year)
+    plt.title(
+        "Box Plot for Enrollment in " + input_school_type + " schools  in " + " District" + district_input + " and academic year " + academic_year)
 
     plt.tight_layout()
     graph = get_image()
     return graph
 
 
-
-#=========================================================================================
-#Box plots at national level
-#=========================================================================================
+# =========================================================================================
+# Box plots at national level
+# =========================================================================================
 
 def get_boxplot_national_plot(**kwargs):
-
     plt.switch_backend('AGG')
 
     school_enrollment = kwargs.get('x')
@@ -1563,12 +1553,12 @@ def get_boxplot_national_plot(**kwargs):
     input_school_type = kwargs.get('input_school_type')
     academic_year = kwargs.get('academic_year')
 
-    fig, ax1 = plt.subplots(figsize=(11,6))
+    fig, ax1 = plt.subplots(figsize=(11, 6))
 
-    plt.boxplot(school_enrollment, patch_artist = True, 
-                        boxprops = dict(facecolor = 'purple'),
-                        meanline = True, showmeans = True)
-    
+    plt.boxplot(school_enrollment, patch_artist=True,
+                boxprops=dict(facecolor='purple'),
+                meanline=True, showmeans=True)
+
     plt.xticks([1], [input_school_type])
     plt.ylabel('Enrollment')
     plt.title("Box Plot for Enrollment in " + input_school_type + " schools " + " for academic year " + academic_year)
@@ -1576,5 +1566,4 @@ def get_boxplot_national_plot(**kwargs):
     plt.tight_layout()
     graph = get_image()
     return graph
-
 

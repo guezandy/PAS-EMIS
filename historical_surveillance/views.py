@@ -29,7 +29,7 @@ def update_cee(request, id=None):
             model_instance = form.save(commit=False)
             model_instance.updated_by = request.user.username
             model_instance.save()
-            return HttpResponseRedirect(reverse("surveillance:cee_results"))
+            return HttpResponseRedirect(reverse("surveillance:cee-results"))
     context = {
         "header": "Edit CEE Record" if id else "Create CEE Record", "form": form}
     # context = _add_side_navigation_context(request.user, context)
@@ -59,7 +59,7 @@ def update_csec(request, id=None):
             model_instance = form.save(commit=False)
             model_instance.updated_by = request.user.username
             model_instance.save()
-            return HttpResponseRedirect(reverse("surveillance:csec_results"))
+            return HttpResponseRedirect(reverse("surveillance:csec-results"))
     context = {
         "header": "Edit CSEC Record" if id else "Create CSEC Record", "form": form}
     # context = _add_side_navigation_context(request.user, context)

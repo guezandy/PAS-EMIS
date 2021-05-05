@@ -18,6 +18,9 @@ class DistrictForm(forms.ModelForm):
     class Meta:
         model = District
         fields = ["district_name", "district_code"]
+    helper = FormHelper()
+    helper.add_input(Submit('submit', 'Submit', css_class='btn-primary'))
+    helper.form_method = 'POST'
 
 
 class SchoolForm(forms.ModelForm):
@@ -28,6 +31,9 @@ class SchoolForm(forms.ModelForm):
             "created_by": TextInput(attrs={"readonly": "readonly"}),
             "updated_by": TextInput(attrs={"readonly": "readonly"}),
         }
+    helper = FormHelper()
+    helper.add_input(Submit('submit', 'Submit', css_class='btn-primary'))
+    helper.form_method = 'POST'
 
 
 class StudentForm(forms.ModelForm):
@@ -136,6 +142,7 @@ class StudentForm(forms.ModelForm):
             "clubs_or_sports",
             "improvements_requested",
             "school_expectations",
+            Submit('submit', 'Submit')
         )
 
 
@@ -144,6 +151,9 @@ class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
         fields = "__all__"
+    helper = FormHelper()
+    helper.add_input(Submit('submit', 'Submit', css_class='btn-primary'))
+    helper.form_method = 'POST'
 
 
 class CourseOutcomeForm(forms.ModelForm):
@@ -153,6 +163,9 @@ class CourseOutcomeForm(forms.ModelForm):
         widgets = {
             "notes": Textarea(attrs={"rows": 3, "cols": 20}),
         }
+    helper = FormHelper()
+    helper.add_input(Submit('submit', 'Submit', css_class='btn-primary'))
+    helper.form_method = 'POST'
 
 
 class PrincipalForm(forms.ModelForm):
@@ -186,6 +199,7 @@ class PrincipalForm(forms.ModelForm):
             "sex",
             "date_of_birth",
             "qualifications",
+            Submit('submit', 'Submit')
         )
 
 
@@ -516,6 +530,7 @@ class PrincipalAppraisalForm(forms.ModelForm):
             "principals_comments",
             "district_education_officer_comments",
             "chief_education_officer_comments",
+            Submit('submit', 'Submit')
         )
 
 
@@ -795,4 +810,5 @@ class TeacherAppraisalForm(forms.ModelForm):
             "teacher_comments",
             "district_officer_comments",
             "district_officer_recommendations",
+            Submit('submit', 'Submit')
         )

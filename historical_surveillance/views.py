@@ -1,7 +1,6 @@
 import json
 from django.http.response import HttpResponseRedirect
 from django.urls.base import reverse
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.datetime_safe import date
 from .forms import *
@@ -13,6 +12,7 @@ def cee_results(request):
     data = CEE.objects.all()
     context = {"results": data}
     return render(request, 'cee_results.html', context)
+
 
 def update_cee(request, id=None):
     # Render edit form
@@ -34,7 +34,6 @@ def update_cee(request, id=None):
         "header": "Edit CEE Record" if id else "Create CEE Record", "form": form}
     # context = _add_side_navigation_context(request.user, context)
     return render(request, "historical_form.html", context)
-
 
 
 def csec_results(request):
@@ -665,7 +664,6 @@ def enrollment_summary(request):
         # function to get the graph
         graph_boys_primary = get_plot_boys_primary(data=data_boys_1)
 
-
         data_girls_1 = df.query("sex=='females' and category_of_school == 'primary'")
         json_records = data_girls_1.reset_index().to_json(orient='records')
         data_girls_primary = json.loads(json_records)
@@ -982,6 +980,7 @@ def district_performance(request):
 
 UNIVERSAL_FIELDS = {'id', 'created_at', 'created_by', 'updated_at', 'updated_by'}
 
+
 # ======================================================================
 # View for box plots at district level
 # ======================================================================
@@ -1094,5 +1093,3 @@ def boxplot_national(request):
     }
 
     return render(request, 'boxplots_national_page.html', stu)
-
-

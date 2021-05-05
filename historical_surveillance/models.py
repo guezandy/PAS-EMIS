@@ -5,7 +5,6 @@ from emis.permissions import CustomPermissionModel
 import authentication
 from emis import settings
 
-
 GRADE_CHOICES = [
     ("grade k", "Grade k"),
     ("grade 1", "Grade 1"),
@@ -204,12 +203,12 @@ class NationalStudentTeacherRatio(models.Model):
     created_by = models.CharField(max_length=255)
     category_of_school = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
     academic_year = models.CharField(max_length=20)
-    total_enrollment = models.CharField(max_length=20)
-    number_of_trained_male_teachers = models.CharField(max_length=20)
-    number_of_trained_female_teachers = models.CharField(max_length=20)
-    number_of_untrained_male_teachers = models.CharField(max_length=20)
-    number_of_untrained_female_teachers = models.CharField(max_length=20)
-    total_number_of_teachers = models.CharField(max_length=20)
+    total_enrollment = models.IntegerField(max_length=50)
+    number_of_trained_male_teachers = models.IntegerField(max_length=50)
+    number_of_trained_female_teachers = models.IntegerField(max_length=20)
+    number_of_untrained_male_teachers = models.IntegerField(max_length=20)
+    number_of_untrained_female_teachers = models.IntegerField(max_length=20)
+    total_number_of_teachers = models.IntegerField(max_length=20)
     updated_at = models.DateField(auto_now_add=True)
     updated_by = models.CharField(max_length=255)
 
@@ -237,6 +236,7 @@ class PrimaryPerformance(models.Model):
     def __str__(self):
         return str(self.academic_year)
 
+
 class CSECResults(models.Model):
     objects = None
     created_at = models.DateField(auto_now_add=True)
@@ -255,6 +255,7 @@ class CSECResults(models.Model):
     OVERALL_GRADE = models.CharField(max_length=30, null=True)
     updated_at = models.DateField(auto_now_add=True, null=True)
     updated_by = models.CharField(max_length=255, null=True)
+
     class Meta(CustomPermissionModel.Meta):
         pass
 
@@ -266,11 +267,11 @@ class CEE(models.Model):
     objects = None
     created_at = models.DateField(auto_now_add=True, null=True)
     created_by = models.CharField(max_length=255, blank=True)
-    age_at_test	= models.IntegerField(null=True)
-    test_yr	= models.IntegerField(null=True)
+    age_at_test = models.IntegerField(null=True)
+    test_yr = models.IntegerField(null=True)
     district = models.ForeignKey(District, on_delete=models.CASCADE)
     stud_id = models.CharField(max_length=255, blank=True)
-    sex	= models.CharField(max_length=255, choices=SEX_CHOICES)
+    sex = models.CharField(max_length=255, choices=SEX_CHOICES)
     genparaw = models.IntegerField(null=True)
     genpbraw = models.IntegerField(null=True)
     genpcraw = models.IntegerField(null=True)
@@ -288,10 +289,32 @@ class CEE(models.Model):
     primsch = models.ForeignKey(School, on_delete=models.CASCADE, related_name='primsch')
     secsch = models.ForeignKey(School, on_delete=models.CASCADE, related_name='secsch')
     rank = models.IntegerField(blank=True)
-    engcomp	= models.CharField(max_length=255, null=True)
+    engcomp = models.CharField(max_length=255, null=True)
     mathcomp = models.CharField(max_length=255, null=True)
     gpcomp = models.CharField(max_length=255, null=True)
-    totcomp	= models.CharField(max_length=255, null=True)
+    totcomp = models.CharField(max_length=255, null=True)
+    updated_at = models.DateField(auto_now_add=True, null=True)
+    updated_by = models.CharField(max_length=255, null=True)
+
+    class Meta(CustomPermissionModel.Meta):
+        pass
+
+
+class CSEC(models.Model):
+    objects = None
+    created_at = models.DateField(auto_now_add=True, null=True)
+    created_by = models.CharField(max_length=255, blank=True)
+    year = models.CharField(max_length=255, blank=True)
+    school = models.ForeignKey(School, on_delete=models.CASCADE)
+    candidate_number = models.CharField(max_length=255, blank=True)
+    sex = models.CharField(max_length=255, choices=SEX_CHOICES)
+    subject = models.CharField(max_length=255, blank=True)
+    proficiency = models.CharField(max_length=255, blank=True)
+    profile1 = models.CharField(max_length=255, blank=True)
+    profile2 = models.CharField(max_length=255, blank=True)
+    profile3 = models.CharField(max_length=255, blank=True)
+    profile4 = models.CharField(max_length=255, blank=True)
+    overall_grade = models.CharField(max_length=255, blank=True)
     updated_at = models.DateField(auto_now_add=True, null=True)
     updated_by = models.CharField(max_length=255, null=True)
 
@@ -303,14 +326,14 @@ class CEEResults(models.Model):
     objects = None
     created_at = models.DateField(auto_now_add=True, null=True)
     created_by = models.CharField(max_length=255, blank=True)
-    stud_id	= models.CharField(max_length=255, null=True)
-    schcode	= models.CharField(max_length=255, null=True)
+    stud_id = models.CharField(max_length=255, null=True)
+    schcode = models.CharField(max_length=255, null=True)
     engb1 = models.CharField(max_length=255, null=True)
     engb2 = models.CharField(max_length=255, null=True)
-    mathsb1	= models.CharField(max_length=255, null=True)
-    mathsb2	= models.CharField(max_length=255, null=True)
-    test_yr	= models.CharField(max_length=255, null=True)
-    sex	= models.CharField(max_length=255, null=True)
+    mathsb1 = models.CharField(max_length=255, null=True)
+    mathsb2 = models.CharField(max_length=255, null=True)
+    test_yr = models.CharField(max_length=255, null=True)
+    sex = models.CharField(max_length=255, null=True)
     form = models.CharField(max_length=255, null=True)
     genparaw = models.CharField(max_length=255, null=True)
     genpbraw = models.CharField(max_length=255, null=True)
@@ -326,10 +349,10 @@ class CEEResults(models.Model):
     vocab_raw = models.CharField(max_length=255, null=True)
     read_raw = models.CharField(max_length=255, null=True)
     sent_raw = models.CharField(max_length=255, null=True)
-    engcomp	= models.CharField(max_length=255, null=True)
+    engcomp = models.CharField(max_length=255, null=True)
     mathcomp = models.CharField(max_length=255, null=True)
     gpcomp = models.CharField(max_length=255, null=True)
-    totcomp	= models.CharField(max_length=255, null=True)
+    totcomp = models.CharField(max_length=255, null=True)
     updated_at = models.DateField(auto_now_add=True, null=True)
     updated_by = models.CharField(max_length=255, null=True)
 

@@ -8,10 +8,17 @@ from .forms import *
 from .models import *
 from .utils import *
 
+
 def cee_results(request):
     data = CEE.objects.all()
     context = {"results": data}
     return render(request, 'cee_results.html', context)
+
+
+def csec_results(request):
+    data = CSEC.objects.all()
+    context = {"results": data}
+    return render(request, 'csec_results.html', context)
 
 
 # This is the examination Analysis
@@ -96,13 +103,13 @@ def enrollment(request):
 
 # update enrollment by grade and sex
 def update_enrollment(request, code=None):
-     # Render edit form
+    # Render edit form
     if code:
         instance = get_object_or_404(Enrollment, pk=code)
     # Render create form
     else:
         instance = Enrollment(created_by=request.user.username,
-                          updated_by=request.user.username)
+                              updated_by=request.user.username)
     form = EnrollmentForms(request.POST or None, instance=instance)
     # Process submit
     if request.method == 'POST':
@@ -130,7 +137,7 @@ def update_aggregate_enrollment(request, code=None):
     # Render create form
     else:
         instance = AggregateEnrollment(created_by=request.user.username,
-                          updated_by=request.user.username)
+                                       updated_by=request.user.username)
     form = AggregateEnrollmentForms(request.POST or None, instance=instance)
     # Process submit
     if request.method == 'POST':
@@ -439,7 +446,7 @@ def update_national_gender(request, code=None):
     if request.method == 'POST':
         form = NationalGenderEnrollmentForms(request.POST)
         if not form.is_valid():
-            data_to_update.academic_year = form.cleaned_data['academic_year']
+            data_to_update.academic_year = request.POST.get('academic_year', False)
             data_to_update.sex = request.POST.get('sex', False)
             # data_to_update.sex = form.cleaned_data[ request.POST.get('sex', False)]
             data_to_update.enrollment = form.cleaned_data['enrollment']
@@ -487,7 +494,7 @@ def update_national_census(request, code=None):
     if request.method == 'POST':
         form = NationalEducationCensusForms(request.POST)
         if not form.is_valid():
-            data_to_update.academic_year = form.cleaned_data['academic_year']
+            data_to_update.academic_year = request.POST.get('academic_year', False)
             data_to_update.age_3_to_4_years = request.POST.get(
                 'age_3_to_4', False)
             data_to_update.age_5_to_11_years = request.POST.get(
@@ -510,7 +517,7 @@ def national_education_expenditure(request):
     form = NationalExpenditureForms(request.POST or None, instance=instance)
     if request.method == "POST":
         if form.is_valid():
-            academic_year = form.cleaned_data['academic_year']
+            academic_year = request.POST.get('academic_year', False)
             if not NationalExpenditure.objects.filter(academic_year=academic_year).exists():
                 form.save()
             return redirect("/historical/national_education_expenditure")
@@ -536,7 +543,7 @@ def update_national_expenditure(request, code=None):
     if request.method == 'POST':
         form = NationalExpenditureForms(request.POST)
         if not form.is_valid():
-            data_to_update.academic_year = form.cleaned_data['academic_year']
+            data_to_update.academic_year = request.POST.get('academic_year', False)
             data_to_update.educational_expenditure = request.POST.get(
                 'educational_expenditure', False)
             data_to_update.gdp_millions = request.POST.get(
@@ -563,7 +570,7 @@ def national_teacher_ratio(request):
     form = NationalTeachersRatioForms(request.POST or None, instance=instance)
     if request.method == "POST":
         if form.is_valid():
-            academic_year = form.cleaned_data['academic_year']
+            academic_year = request.POST.get('academic_year', False)
             category_of_school = form.cleaned_data['category_of_school']
             if not NationalStudentTeacherRatio.objects.filter(academic_year=academic_year,
                                                               category_of_school=category_of_school).exists():
@@ -578,7 +585,7 @@ def update_national_teacher_ratio(request, code=None):
     if request.method == 'POST':
         form = NationalTeachersRatioForms(request.POST)
         if not form.is_valid():
-            data_to_update.academic_year = form.cleaned_data['academic_year']
+            data_to_update.academic_year = request.POST.get('academic_year', False)
             data_to_update.total_enrollment = request.POST.get(
                 'total_enrollment', False)
             data_to_update.number_of_trained_male_teachers = request.POST.get(
@@ -607,7 +614,7 @@ def enrollment_summary(request):
     data = json.loads(json_records)
     context = {'d': data}
     if 'ger_primary' in request.POST:
-        data_boys_1= df.query("sex=='male' and category_of_school == 'primary'")
+        data_boys_1 = df.query("sex=='male' and category_of_school == 'primary'")
         json_records = data_boys_1.reset_index().to_json(orient='records')
         data_boys_primary = json.loads(json_records)
         # function to get the graph
@@ -980,7 +987,6 @@ def upload_scores(request):
     context['cee_count'] = CEEResults.objects.count()
     context['csec_count'] = CSECResults.objects.count()
     return render(request, "upload_scores.html", context)
-
 
 
 # ======================================================================

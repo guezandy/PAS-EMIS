@@ -99,6 +99,13 @@ class ceeForms(forms.ModelForm):
         fields = "__all__"
 
 
+
+class csecForms(forms.ModelForm):
+    class Meta:
+        model = CEE
+        fields = "__all__"
+
+
 class CSECForm(forms.ModelForm):
     class Meta:
         model = CSECResults

@@ -1,5 +1,5 @@
-{% extends "base.html" %} {% load crispy_forms_filters %} {% load
-crispy_forms_tags %} {% block page_content %}
+{% extends "base.html" %} {% load crispy_forms_filters %}
+{% load crispy_forms_tags %} {% block page_content %}
 <!-- This form handles the creation of schools in each district.
 The error handling needs to be reviewed for now, it takes the error messaged passed as a dictionary
 from the school view and displays to the user preventing duplicate data entry.
@@ -9,10 +9,10 @@ of the same data which is also handled by the error message displayed.
 <main>
   <div class="row">
     <div class="col-md-6">
-      <h1>National Common Entrance Results</h1>
+      <h1>Caribbean Secondary School Exit Examination</h1>
     </div>
     <div class="col-md-6 action-button-group">
-      <a href="{% url 'surveillance:cee_results' %}"
+      <a href="{% url 'surveillance:csec_results' %}"
         ><button type="button" class="btn btn-success mb-2">
           Add record
         </button></a>
@@ -20,7 +20,7 @@ of the same data which is also handled by the error message displayed.
   </div>
 
   <div class="row">
-    <div class="col-xl-12 col-md-12">
+    <div class="col-md-12">
       <div class="card mb-4">
         <div class="card-body">
           <div class="table-responsive">
@@ -28,29 +28,31 @@ of the same data which is also handled by the error message displayed.
               <thead>
                 <tr>
                   <th>Test Year</th>
-                  <th>Name of Primary School</th>
-                  <th>Secondary School Choice</th>
-                   <th>Age at Test</th>
+                  <th>Name of School</th>
                     <th>Sex</th>
-                    <th>English Composite Score</th>
-                    <th>Mathematics Composite Score</th>
-                    <th>General Paper Composite Score</th>
-                    <th>Total Composite Score</th>
+                    <th>Subject</th>
+                    <th>Proficiency</th>
+                    <th>Profile 1</th>
+                    <th>Profile 2</th>
+                    <th>Profile 3</th>
+                    <th>Profile 4</th>
+                    <th>Overall Grade</th>
 
                 </tr>
               </thead>
               <tbody>
-                {% for cee in results %}
+                {% for csec in results %}
                 <tr>
-                  <td>{{ cee.test_yr }}</td>
-                  <td>{{ cee.primsch }}</td>
-                  <td>{{ cee.secsch }}</td>
-                  <td>{{ cee.age_at_test }}</td>
-                  <td>{{ cee.sex }}</td>
-                 <td>{{ cee.engcomp }}</td>
-                 <td>{{ cee.mathcomp }}</td>
-                 <td>{{ cee.gpcomp }}</td>
-                 <td>{{ cee.totcomp }}</td>
+                 <td>{{ csec.year }}</td>
+                 <td>{{ csec.school }}</td>
+                 <td>{{ csec.sex }}</td>
+                 <td>{{ csec.subject }}</td>
+                 <td>{{ csec.proficiency }}</td>
+                 <td>{{ csec.profile1 }}</td>
+                 <td>{{ csec.profile2 }}</td>
+                 <td>{{ csec.profile3 }}</td>
+                 <td>{{ csec.profile4 }}</td>
+                 <td>{{ csec.overall_grade }}</td>
                   <td>
                     <a class="btn btn-primary" href="/historical/update_cee/{{ cee.id}}"
                       ><i class="fas fa-pencil-alt"></i> Edit</a

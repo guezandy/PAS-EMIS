@@ -97,6 +97,7 @@
                                     <th>Name</th>
                                     <th>Course count</th>
                                     <th></th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tfoot>
@@ -105,17 +106,20 @@
                                     <th>Name</th>
                                     <th>Course count</th>
                                     <th></th>
+                                    <th></th>
                                 </tr>
                             </tfoot>
                             <tbody>
                                 {% for teacher in teachers %}
-                                <tr class="clickable-row" data-href="/school/teacher/{{teacher.teacher_code}}">
+                                <tr>
                                     <td>{{teacher.teacher_code}}</td>
                                     <td>{{teacher.name}}</td>
                                     <td>{{teacher.course_count}}</td>
                                     <td><a href="{% url 'school:edit_teacher' teacher.teacher_code %}"><Button
                                                 class="btn btn-primary">Edit</Button></a>
                                     </td>
+                                    <td><a href="/school/teacher/{{teacher.teacher_code}}"><button type="button"
+                                                class="btn btn-primary mb-2">Details</button></a></td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

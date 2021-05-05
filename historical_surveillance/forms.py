@@ -97,13 +97,26 @@ class ceeForms(forms.ModelForm):
     class Meta:
         model = CEE
         fields = "__all__"
-
+        widgets = {
+            "created_by": TextInput(attrs={"readonly": "readonly"}),
+            "updated_by": TextInput(attrs={"readonly": "readonly"}),
+        }
+    helper = FormHelper()
+    helper.add_input(Submit('submit', 'Submit', css_class='btn-primary'))
+    helper.form_method = 'POST'
 
 
 class csecForms(forms.ModelForm):
     class Meta:
-        model = CEE
+        model = CSEC
         fields = "__all__"
+        widgets = {
+            "created_by": TextInput(attrs={"readonly": "readonly"}),
+            "updated_by": TextInput(attrs={"readonly": "readonly"}),
+        }
+    helper = FormHelper()
+    helper.add_input(Submit('submit', 'Submit', css_class='btn-primary'))
+    helper.form_method = 'POST'
 
 
 class CSECForm(forms.ModelForm):
@@ -126,10 +139,17 @@ class CSECForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(CSECForm, self).__init__(*args, **kwargs)
+        self.fields['PROFILE1_GRADE'].required = False
+        self.fields['PROFILE2_GRADE'].required = False
+        self.fields['PROFILE3_GRADE'].required = False
+        self.fields['PROFILE4_GRADE'].required = False
+        self.fields['SEX'].required = False
+
         self.fields["PROFILE1_GRADE"].required = False
         self.fields["PROFILE2_GRADE"].required = False
         self.fields["PROFILE3_GRADE"].required = False
         self.fields["PROFILE4_GRADE"].required = False
+
 
 
 class CEEForm(forms.ModelForm):

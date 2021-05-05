@@ -12,7 +12,7 @@ of the same data which is also handled by the error message displayed.
       <h1>National Common Entrance Results</h1>
     </div>
     <div class="col-md-6 action-button-group">
-      <a href="{% url 'surveillance:cee_results' %}"
+      <a href="{% url 'surveillance:create-cee' %}"
         ><button type="button" class="btn btn-success mb-2">
           Add record
         </button></a>
@@ -36,6 +36,7 @@ of the same data which is also handled by the error message displayed.
                     <th>Mathematics Composite Score</th>
                     <th>General Paper Composite Score</th>
                     <th>Total Composite Score</th>
+                  <th>Actions</th>
 
                 </tr>
               </thead>
@@ -52,8 +53,8 @@ of the same data which is also handled by the error message displayed.
                  <td>{{ cee.gpcomp }}</td>
                  <td>{{ cee.totcomp }}</td>
                   <td>
-                    <a class="btn btn-primary" href="/historical/update_cee/{{ cee.id}}"
-                      ><i class="fas fa-pencil-alt"></i> Edit</a
+                    <a class="btn btn-primary"  href= "{% url 'surveillance:update-cee' cee.id %}">
+                      <i class="fas fa-pencil-alt"></i> Edit</a
                     >
 
                   </td>

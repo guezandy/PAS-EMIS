@@ -9,12 +9,12 @@ of the same data which is also handled by the error message displayed.
 <main>
   <div class="row">
     <div class="col-md-6">
-      <h1>National Enrollment by Grade and Sex</h1>
+      <h1>Schools Directory</h1>
     </div>
     <div class="col-md-6 action-button-group">
-      <a href="{% url 'surveillance:create-enrollment' %}"
+      <a href="{% url 'surveillance:create-school' %}"
         ><button type="button" class="btn btn-success mb-2">
-          Add Record
+          Create School
         </button></a
       >
     </div>
@@ -24,33 +24,26 @@ of the same data which is also handled by the error message displayed.
     <div class="col-md-12">
       <div class="card mb-4">
         <div class="card-body">
-
           <div class="table-responsive">
             <table class="table table-bordered" id="dataTable" max-width="100%">
               <thead>
                 <tr>
+                  <th>School Code</th>
                   <th>Name of School</th>
-                  <th>Academic Year</th>
-                  <th>Grade</th>
-                  <th>Sex</th>
-                  <th>Enrollment</th>
-                  <th>Minimum Age</th>
-                  <th>Maximum Age</th>
+                  <th>District of School</th>
+                  <th>Category of School</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {% for record in enrollments %}
+                {% for item in schools %}
                 <tr>
-                  <td>{{ record.school }}</td>
-                  <td>{{ record.year }}</td>
-                  <td>{{ record.grade }}</td>
-                  <td>{{ record.sex }}</td>
-                  <td>{{ record.enrollment }}</td>
-                  <td>{{ record.minimum_age }}</td>
-                  <td>{{ record.maximum_age }}</td>
+                  <td>{{ item.school_code }}</td>
+                  <td>{{ item.school_name }}</td>
+                  <td>{{ item.district_name }}</td>
+                  <td>{{ item.category_of_school }}</td>
                   <td>
-                    <a class="btn btn-primary" href= "{% url 'surveillance:update-enrollment' record.id %}">
+                    <a class="btn btn-primary" href= "{% url 'surveillance:update-school' item.id %}">
                     <i class="fas fa-pencil-alt"></i> Edit</a
                     >
                   </td>
@@ -62,6 +55,7 @@ of the same data which is also handled by the error message displayed.
         </div>
       </div>
     </div>
+  </div>
 </main>
 
 {% endblock%}

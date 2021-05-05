@@ -1,19 +1,9 @@
 from django.contrib import admin
 
-from .models import (
-    Course,
-    CourseGrade,
-    Subject,
-    SubjectGroup,
-    Assignment,
-    AssignmentGrade,
-    Student,
-)
+from .models import Course, CourseOutcome, Student, PrincipalAppraisal, TeacherAppraisal
 
 admin.site.register(Student)
 admin.site.register(Course)
-admin.site.register(CourseGrade)
-admin.site.register(Subject)
-admin.site.register(SubjectGroup)
-admin.site.register(Assignment)
-admin.site.register(AssignmentGrade)
+admin.site.register(CourseOutcome)
+admin.site.register(PrincipalAppraisal)
+admin.site.register(TeacherAppraisal)

@@ -3,6 +3,7 @@ import datetime
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.db.models import Count
+from datetime import datetime
 
 from authentication.models.users import (
     SchoolAdministrator,
@@ -23,11 +24,7 @@ from .forms import (
     DistrictForm,
     SchoolForm,
     CourseForm,
-    CourseGradeForm,
-    SubjectForm,
-    SubjectGroupForm,
-    AssignmentForm,
-    AssignmentGradeForm,
+    CourseOutcomeForm,
     StudentForm,
     PrincipalForm,
     PrincipalAppraisalForm,
@@ -37,11 +34,7 @@ from historical_surveillance.models import District, School
 from .models import (
     Student,
     Course,
-    CourseGrade,
-    SubjectGroup,
-    Subject,
-    Assignment,
-    AssignmentGrade,
+    CourseOutcome,
     PrincipalAppraisal,
     TeacherAppraisal,
 )
@@ -171,6 +164,9 @@ def single_district_view(request, code):
                 school__district_name=district
             )
         ],
+        "principal_appraisals": PrincipalAppraisal.objects.filter(
+            principal__school__district_name=district
+        ),
     }
     context = _add_side_navigation_context(request.user, context)
     return render(request, "single_district.html", context)
@@ -213,8 +209,7 @@ def single_school_view(request, code):
         "courses": [
             {
                 "course_code": course.id,
-                "subject_group": course.subject.subject_group,
-                "subject": course.subject,
+                "subject": course.subject_name,
                 "teacher": f"{course.teacher.first_name} {course.teacher.last_name}",
             }
             for course in Course.objects.filter(school=school)
@@ -222,6 +217,7 @@ def single_school_view(request, code):
         "students": Student.objects.filter(school=school).values(
             "id", "first_name", "last_name", "graduation_year"
         ),
+        "teacher_appraisals": TeacherAppraisal.objects.filter(teacher__school=school),
     }
     context = _add_side_navigation_context(request.user, context)
     return render(request, "single_school.html", context)
@@ -238,8 +234,7 @@ def teacher_view(request, code):
         "teacher_code": teacher.id,
         "courses": [
             {
-                "subject_group": course.subject.subject_group.name,
-                "subject": course.subject.name,
+                "subject": course.subject_name,
                 "course_code": course.id,
                 "student_count": course.students.count(),
             }
@@ -263,27 +258,22 @@ def course_view(request, teacher_code, course_code):
 
     students = []
     for student in course.students.all():
-        student_assignments = AssignmentGrade.objects.filter(
-            student=student, assignment__course=course
-        )
-        assignment_map = {a.assignment.id: a.grade for a in student_assignments}
+        student_outcome = CourseOutcome.objects.filter(student=student, course=course)
         students.append(
             {
                 "student_name": f"{student.first_name} {student.last_name}",
                 "student_code": student.id,
-                "assignments": assignment_map,
+                "course_outcome_id": getattr(student_outcome.first(), "id", None),
+                "grade": getattr(student_outcome.first(), "grade", None),
+                "attendance": getattr(student_outcome.first(), "days_absent", None),
             }
         )
 
     context = {
         "teacher_name": f"{teacher.first_name} {teacher.last_name}",
         "teacher_code": teacher.id,
-        "course_name": course.subject.name,
+        "course_name": course.subject_name,
         "course_code": course.id,
-        "assignments": {
-            assignment.id: assignment.name
-            for assignment in Assignment.objects.filter(course=course)
-        },
         "students": students,
     }
     context = _add_side_navigation_context(request.user, context)
@@ -348,7 +338,7 @@ def teacher_form(request, code=None):
         instance = teacher_query.first()
     # Initialize create form with created_by and updated_by pre-populated
     else:
-        instance = Teacher()
+        instance = Teacher(password="password", date_joined=datetime.now())
     form = TeacherForm(request.POST or None, instance=instance)
     if request.method == "POST":
         if form.is_valid():
@@ -401,95 +391,6 @@ def student_form(request, code=None):
     return render(request, "form.html", context)
 
 
-def subject_group_form(request, code=None):
-    # Render edit form
-    if code:
-        subject_group_query = SubjectGroup.objects.filter(id=code)
-        # Invalid student code
-        if not subject_group_query.exists():
-            return redirect("/school/districts")
-        instance = subject_group_query.first()
-    # Initialize create form with created_by and updated_by pre-populated
-    else:
-        instance = SubjectGroup()
-    form = SubjectGroupForm(request.POST or None, instance=instance)
-    if request.method == "POST":
-        if form.is_valid():
-            new_instance = form.save()
-            return redirect(f"/school/school_details/{new_instance.school.school_code}")
-    context = {
-        "header": "Edit Subject Group" if code else "Create Subject Group",
-        "form": form,
-    }
-    context = _add_side_navigation_context(request.user, context)
-    return render(request, "form.html", context)
-
-
-def subject_form(request, code=None):
-    # Render edit form
-    if code:
-        subject_query = SubjectGroup.objects.filter(id=code)
-        # Invalid student code
-        if not subject_query.exists():
-            return redirect("/school/districts")
-        instance = subject_query.first()
-    # Initialize create form with created_by and updated_by pre-populated
-    else:
-        instance = Subject()
-    form = SubjectForm(request.POST or None, instance=instance)
-    if request.method == "POST":
-        if form.is_valid():
-            new_instance = form.save()
-            return redirect(f"/school/school_details/{new_instance.school.school_code}")
-    context = {
-        "header": "Edit Subject" if code else "Create Subject",
-        "form": form,
-    }
-    context = _add_side_navigation_context(request.user, context)
-    return render(request, "form.html", context)
-
-
-def assignment_form(request, code=None):
-    # Render edit form
-    if code:
-        assignment_query = Assignment.objects.filter(id=code)
-        # Invalid student code
-        if not assignment_query.exists():
-            return redirect("/school/districts")
-        instance = assignment_query.first()
-    # Initialize create form with created_by and updated_by pre-populated
-    else:
-        instance = Assignment()
-    form = AssignmentForm(request.POST or None, instance=instance)
-    if request.method == "POST":
-        if form.is_valid():
-            new_instance = form.save()
-            return redirect(
-                f"/school/teacher/{new_instance.course.teacher.id}/course/{new_instance.course.id}"
-            )
-    context = {
-        "header": "Edit Assignment" if code else "Create Assignment",
-        "form": form,
-    }
-    context = _add_side_navigation_context(request.user, context)
-    return render(request, "form.html", context)
-
-
-def delete_assignment(request, code=None):
-    # check permission
-    try:
-        assignment = Assignment.objects.get(id=code)
-    except Assignment.DoesNotExist:
-        return redirect("/school")
-
-    teacher_id = assignment.course.teacher.id
-    course_id = assignment.course.id
-
-    assignment.delete()
-
-    return redirect(f"/school/teacher/{teacher_id}/course/{course_id}")
-
-
 def principal_form(request, code=None):
     # Render edit form
     if code:
@@ -530,7 +431,7 @@ def principal_appraisal_form(request, code=None):
         if form.is_valid():
             new_instance = form.save()
             return redirect(
-                f"/school/district/{new_instance.principal.school.school_code}"
+                f"/school/district/{new_instance.principal.school.district_name.district_code}"
             )
     context = {
         "header": "Edit Principal Appraisal" if code else "Create Principal Appraisal",
@@ -556,10 +457,36 @@ def teacher_appraisal_form(request, code=None):
         if form.is_valid():
             new_instance = form.save()
             return redirect(
-                f"/school/district/{new_instance.teacher.school.school_code}"
+                f"/school/school_details/{new_instance.teacher.school.school_code}"
             )
     context = {
         "header": "Edit Teacher Appraisal" if code else "Create Teacher Appraisal",
+        "form": form,
+    }
+    context = _add_side_navigation_context(request.user, context)
+    return render(request, "form.html", context)
+
+
+def course_outcome_form(request, code=None):
+    # Render edit form
+    if code:
+        course_outcome_query = CourseOutcome.objects.filter(id=code)
+        # Invalid id
+        if not course_outcome_query.exists():
+            return redirect("/school/districts")
+        instance = course_outcome_query.first()
+    # Initialize create form with created_by and updated_by pre-populated
+    else:
+        instance = CourseOutcome()
+    form = CourseOutcomeForm(request.POST or None, instance=instance)
+    if request.method == "POST":
+        if form.is_valid():
+            new_instance = form.save()
+            return redirect(
+                f"/school/teacher/{new_instance.course.teacher.id}/course/{new_instance.course.id}"
+            )
+    context = {
+        "header": "Edit Course Outcome" if code else "Create Course Outcome",
         "form": form,
     }
     context = _add_side_navigation_context(request.user, context)

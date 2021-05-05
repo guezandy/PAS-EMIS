@@ -647,3 +647,17 @@ def store_scores(data, required_fields, user_data, type):
         result['n_scores'] = succeeded
         result['failed'] = failed
     return result
+
+def csec_summary(data):
+    df = pd.DataFrame(data.values())
+    possible_scores = df['OVERALL_GRADE'].drop_duplicates()
+    scores = {}
+    for s in possible_scores:
+        scores[s] = 0
+    for index, row in df.iterrows():
+        score = row['OVERALL_GRADE']
+        scores[score] += 1
+    plt.plot(scores.values())
+    plt.tight_layout()
+    graph = get_image()
+    return graph

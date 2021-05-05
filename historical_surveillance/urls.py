@@ -102,6 +102,10 @@ urlpatterns = [
         "upload_scores",
         views.upload_scores,
         name ="upload_scores"),
+    path(
+        "csec_exam",
+        views.csec_exam,
+        name ="csec_exam"),
     # enrollment analysis summary
     path("enrollment_summary", views.enrollment_summary, name="enrollment_summary"),
     # Annual special education questionnaire

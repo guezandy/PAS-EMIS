@@ -971,3 +971,9 @@ def upload_scores(request):
     context['cee_by_year'] = [item['test_yr'] for item in CEEResults.objects.values('test_yr').distinct()]
     context['csec_by_year'] = [item['EXAM_PERIOD'] for item in CSECResults.objects.values('EXAM_PERIOD').distinct()]
     return render(request, "upload_scores.html", context)
+
+def csec_exam(request):
+    context = {}
+    data = CSECResults.objects.all()
+    context['graph'] = csec_summary(data)
+    return render(request, "csec_exam.html", context)

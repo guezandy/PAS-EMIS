@@ -1,0 +1,44 @@
+﻿{% extends "base.html" %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+{% block page_content %}
+<main>
+    <div class="card bg-secondary text-white mb-4">
+        <div class="card-header">
+            <h1>Caribbean Secondary Education Certificate (CSEC)</h1>
+        </div>
+        <div class="card-body">
+        </div>
+        <div class="card-footer">
+            Filter results
+            <form action="" method="POST">
+                {% csrf_token %}
+
+                <label class="small mb-1" for="sex"> Sex </label>
+                <select name="sex" id="sex">
+                    <option value="" selected>[Choose Here]</option>
+                    {% for item in sex %}
+                    <option value={{ item.id }}> {{ item.sex }}</option>
+                    {% endfor %}
+                </select>
+                <label class="small mb-1" for="district"> District</label>
+                <select name="district_name" id="district">
+                    <option value="" selected>[Choose Here]</option>
+                    {% for item in districts_names %}
+                    <option value={{ item.id }}> {{ item.district_name }}</option>
+                    {% endfor %}
+                </select>
+
+                <label class="small mb-1" for="district"> Subject </label>
+                <select name="district_name" id="district">
+                    <option value="" selected>[Choose Here]</option>
+                    {% for item in subjects %}
+                    <option value={{ item.id }}> {{ item.subject }}</option>
+                    {% endfor %}
+                </select>
+
+
+                <br /><input type="submit" name="submit" class="btn btn-primary" value="Show Results" />
+            </form>
+        </div>
+{% endblock page_content %}

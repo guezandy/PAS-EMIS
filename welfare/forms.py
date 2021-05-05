@@ -1,5 +1,6 @@
 from django import forms
-
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Submit, Row, Column, HTML
 from .models import StudentSupportAssoc, SupportService
 from school.models import Student
 
@@ -12,6 +13,9 @@ class SupportServiceForm(forms.ModelForm):
             "created_by": forms.TextInput(attrs={"readonly": "readonly"}),
             "updated_by": forms.TextInput(attrs={"readonly": "readonly"}),
         }
+    helper = FormHelper()
+    helper.add_input(Submit('submit', 'Submit', css_class='btn-primary'))
+    helper.form_method = 'POST'
 
 
 class StudentSupportAssocForm(forms.ModelForm):
@@ -83,3 +87,6 @@ class StudentSupportAssocForm(forms.ModelForm):
             "end_date": forms.TextInput(attrs={"type": "date"}),
             "comment": forms.Textarea(attrs={"rows": 3, "cols": 20}),
         }
+    helper = FormHelper()
+    helper.add_input(Submit('submit', 'Submit', css_class='btn-primary'))
+    helper.form_method = 'POST'

@@ -139,10 +139,17 @@ class CSECForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(CSECForm, self).__init__(*args, **kwargs)
+        self.fields['PROFILE1_GRADE'].required = False
+        self.fields['PROFILE2_GRADE'].required = False
+        self.fields['PROFILE3_GRADE'].required = False
+        self.fields['PROFILE4_GRADE'].required = False
+        self.fields['SEX'].required = False
+
         self.fields["PROFILE1_GRADE"].required = False
         self.fields["PROFILE2_GRADE"].required = False
         self.fields["PROFILE3_GRADE"].required = False
         self.fields["PROFILE4_GRADE"].required = False
+
 
 
 class CEEForm(forms.ModelForm):

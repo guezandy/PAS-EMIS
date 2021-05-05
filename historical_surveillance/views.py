@@ -1,4 +1,6 @@
 import json
+from django.http.response import HttpResponseRedirect
+from django.urls.base import reverse
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.datetime_safe import date
@@ -34,8 +36,6 @@ def district(request):
 
 
 # This is for creating and editing a district
-
-
 def edit_district(request, code=None):
     # Render edit form
     if code:
@@ -51,24 +51,21 @@ def edit_district(request, code=None):
             model_instance = form.save(commit=False)
             model_instance.updated_by = request.user.username
             model_instance.save()
-            return redirect("/historical/districts")
+            return HttpResponseRedirect(reverse("surveillance:districts"))
     context = {
         "header": "Edit District" if code else "Create District", "form": form}
     # context = _add_side_navigation_context(request.user, context)
-    return render(request, "form.html", context)
+    return render(request, "historical_form.html", context)
 
 
 # This is for showing a list of all schools
-
-
 def school(request):
     data = School.objects.all()
     context = {"schools": data}
     return render(request, "schools.html", context)
 
 
-# This is for creating and editing a district
-
+# This is for creating and editing a school
 def edit_school(request, code=None):
     # Render edit form
     if code:
@@ -81,97 +78,70 @@ def edit_school(request, code=None):
     # Process submit
     if request.method == 'POST':
         form = SchoolForms(request.POST)
-
         if form.is_valid():
             model_instance = form.save(commit=False)
             model_instance.updated_by = request.user.username
             model_instance.save()
-        return redirect("/historical/schools")
+            return HttpResponseRedirect(reverse("surveillance:schools"))
     context = {"header": "Edit School" if code else "Create School", "form": form}
-    return render(request, 'form.html', context)
+    return render(request, 'historical_form.html', context)
 
 
 # Enrollment by grade and sex
 def enrollment(request):
     data = Enrollment.objects.all()
-    districts_names = District.objects.values('district_code', 'district_name')
-    instance = Enrollment(
-        created_by=request.user.username,
-        updated_by=request.user.username
-    )
-    form = EnrollmentForms(request.POST or None, instance=instance)
-    if request.method == "POST":
-        if form.is_valid():
-            school = form.cleaned_data['school']
-            grade = form.cleaned_data['grade']
-            sex = form.cleaned_data['sex']
-            year = form.cleaned_data['year']
-            if not Enrollment.objects.filter(school=school,
-                                             grade=grade,
-                                             sex=sex,
-                                             year=year).exists():
-                form.save()
-            return redirect("/historical/enrollment")
-    context = {"form": form, "district_names": districts_names,
-               "name_of_school": data}
+    context = {"enrollments": data}
     return render(request, "enrollment.html", context)
 
 
 # update enrollment by grade and sex
 def update_enrollment(request, code=None):
-    school_to_update = get_object_or_404(Enrollment, pk=code)
+     # Render edit form
+    if code:
+        instance = get_object_or_404(Enrollment, pk=code)
+    # Render create form
+    else:
+        instance = Enrollment(created_by=request.user.username,
+                          updated_by=request.user.username)
+    form = EnrollmentForms(request.POST or None, instance=instance)
+    # Process submit
     if request.method == 'POST':
-        form = EnrollmentForms(request.POST)
-        if not form.is_valid():
-            school_to_update.grade = form.cleaned_data['grade']
-            school_to_update.enrollment = form.cleaned_data['enrollment']
-            school_to_update.sex = form.cleaned_data['sex']
-            school_to_update.minimum_age = form.cleaned_data['minimum_age']
-            school_to_update.maximum_age = form.cleaned_data['maximum_age']
-            school_to_update.updated_at = date.today().strftime("%Y-%m-%d")
-            school_to_update.updated_by = request.user.username
-            school_to_update.save()
-        return redirect("/historical/enrollment")
-    return render(request, 'edit_enrollment.html', {'school_to_update': school_to_update})
+        if form.is_valid():
+            model_instance = form.save(commit=False)
+            model_instance.updated_by = request.user.username
+            model_instance.save()
+            return HttpResponseRedirect(reverse("surveillance:enrollments"))
+    context = {
+        "header": "Edit Enrollment" if code else "Add Enrollment Record", "form": form}
+    return render(request, 'historical_form.html', context)
 
 
 # This function controls the total enrollment and school capacity form
-
-def enroll_class(request):
+def aggregate_enrollment(request):
     data = AggregateEnrollment.objects.all()
-    instance = AggregateEnrollment(
-        created_by=request.user.username,
-        updated_by=request.user.username
-    )
-    form = AggregateEnrollmentForms(request.POST or None, instance=instance)
-    if request.method == "POST":
-        if form.is_valid():
-            name_of_school = form.cleaned_data['name_of_school']
-            academic_year = form.cleaned_data['academic_year']
-            if not AggregateEnrollment.objects.filter(name_of_school=name_of_school,
-                                                      academic_year=academic_year).exists():
-                form.save()
-            return redirect("/historical/enroll_class")
-    context = {"form": form, "name_of_school": data}
-    return render(request, "enroll_class.html", context)
+    context = {"enrollments": data}
+    return render(request, "aggregate_enrollment.html", context)
 
 
 # used to update the enrollment versus class capacity entries
-def update_enroll_class(request, code=None):
-    school_to_update = get_object_or_404(AggregateEnrollment, pk=code)
+def update_aggregate_enrollment(request, code=None):
+    if code:
+        instance = get_object_or_404(AggregateEnrollment, pk=code)
+    # Render create form
+    else:
+        instance = AggregateEnrollment(created_by=request.user.username,
+                          updated_by=request.user.username)
+    form = AggregateEnrollmentForms(request.POST or None, instance=instance)
+    # Process submit
     if request.method == 'POST':
-        form = AggregateEnrollmentForms(request.POST)
-        if not form.is_valid():
-            school_to_update.academic_year = form.cleaned_data['academic_year']
-            school_to_update.capacity_of_school = form.cleaned_data['capacity_of_school']
-            school_to_update.total_enrollment = form.cleaned_data['total_enrollment']
-            school_to_update.minimum_age = form.cleaned_data['minimum_age']
-            school_to_update.maximum_age = form.cleaned_data['maximum_age']
-            school_to_update.updated_at = date.today().strftime("%Y-%m-%d")
-            school_to_update.updated_by = request.user.username
-            school_to_update.save()
-        return redirect("/historical/enroll_class")
-    return render(request, 'update_enroll_class.html', {'school_to_update': school_to_update})
+        if form.is_valid():
+            model_instance = form.save(commit=False)
+            model_instance.updated_by = request.user.username
+            model_instance.save()
+            return HttpResponseRedirect(reverse("surveillance:aggregate-enrollments"))
+    context = {
+        "header": "Edit Aggregate Enrollment" if code else "Add Aggregate Enrollment Record", "form": form}
+    return render(request, 'historical_form.html', context)
 
 
 # change this to get a form to select the district and pass it as a parameter to present filter the table and present
@@ -1010,6 +980,7 @@ def upload_scores(request):
     context['cee_count'] = CEEResults.objects.count()
     context['csec_count'] = CSECResults.objects.count()
     return render(request, "upload_scores.html", context)
+
 
 
 # ======================================================================

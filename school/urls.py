@@ -26,14 +26,6 @@ urlpatterns = [
     path("edit_course/<str:code>", views.course_form, name="edit_course"),
     path("create_student", views.student_form, name="create_student"),
     path("edit_student/<str:code>", views.student_form, name="edit_student"),
-    path("create_subject_group", views.subject_group_form, name="create_subject_group"),
-    path(
-        "edit_subject_group/<str:code>",
-        views.subject_group_form,
-        name="edit_subject_group",
-    ),
-    path("create_subject", views.subject_form, name="create_subject"),
-    path("edit_subject/<str:code>", views.subject_form, name="edit_subject"),
     path(
         "create_course_outcome", views.course_outcome_form, name="create_course_outcome"
     ),

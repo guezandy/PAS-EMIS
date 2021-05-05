@@ -9,16 +9,14 @@ from .models import *
 class DistrictForms(forms.ModelForm):
     class Meta:
         model = District
-        fields = [
-            "district_name",
-            "district_code",
-            "updated_by",
-            "created_by",
-        ]
+        fields = "__all__"
         widgets = {
             "created_by": TextInput(attrs={"readonly": "readonly"}),
             "updated_by": TextInput(attrs={"readonly": "readonly"}),
         }
+    helper = FormHelper()
+    helper.add_input(Submit('submit', 'Submit', css_class='btn-primary'))
+    helper.form_method = 'POST'
 
 
 class AggregateEnrollmentForms(forms.ModelForm):
@@ -37,24 +35,22 @@ class AggregateEnrollmentForms(forms.ModelForm):
                                            attrs={'class': 'form-control'})
         }
         """
+    helper = FormHelper()
+    helper.add_input(Submit('submit', 'Submit', css_class='btn-primary'))
+    helper.form_method = 'POST'
 
 
 class SchoolForms(forms.ModelForm):
     class Meta:
         model = School
-        fields = [
-            "school_code",
-            "school_name",
-            "district_name",
-            "category_of_school",
-            "updated_by",
-            "created_by",
-        ]
-        # fields = "__all__"
+        fields = "__all__"
         widgets = {
             "created_by": TextInput(attrs={"readonly": "readonly"}),
             "updated_by": TextInput(attrs={"readonly": "readonly"}),
         }
+    helper = FormHelper()
+    helper.add_input(Submit('submit', 'Submit', css_class='btn-primary'))
+    helper.form_method = 'POST'
 
 
 class EnrollmentForms(forms.ModelForm):
@@ -63,22 +59,20 @@ class EnrollmentForms(forms.ModelForm):
         fields = "__all__"
         widgets = {
             "created_by": TextInput(attrs={"readonly": "readonly"}),
+            "updated_by": TextInput(attrs={"readonly": "readonly"}),
         }
-        """
-        widgets = {
-            'district': forms.Select(choices=District.objects.values_list('district_name', flat=True),
-                                     attrs={'class': 'form-control'}),
-            'school': forms.Select(choices=School.objects.values_list('school_name', flat=True),
-                                   attrs={'class': 'form-control'})
-
-        }
-        """
+    helper = FormHelper()
+    helper.add_input(Submit('submit', 'Submit', css_class='btn-primary'))
+    helper.form_method = 'POST'
 
 
 class NationalGenderEnrollmentForms(forms.ModelForm):
     class Meta:
         model = NationalGenderEnrollment
         fields = "__all__"
+    helper = FormHelper()
+    helper.add_input(Submit('submit', 'Submit', css_class='btn-primary'))
+    helper.form_method = 'POST'
 
 
 class NationalEducationCensusForms(forms.ModelForm):

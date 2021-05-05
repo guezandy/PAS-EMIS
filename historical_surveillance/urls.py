@@ -123,23 +123,18 @@ urlpatterns = [
         "district_performance",
         views.district_performance,
         name="district_performance"),
-    path(
-        "upload_scores",
-        views.upload_scores,
 
-        name="upload_scores"),
     # Grade 6 national examination
     path(
         "cee_results",
         views.cee_results,
         name="cee-results"),
-        
     path(
         "update_cee/<int:id>",
         views.update_cee,
         name="update-cee"),
-    
-     path(
+
+    path(
         "cee_results/create",
         views.update_cee,
         name="create-cee"),
@@ -151,15 +146,14 @@ urlpatterns = [
         name="csec-results"),
 
     path(
-    "update_csec/<int:id>",
-    views.update_csec,
-    name="update-csec"),
-    
-     path(
+        "update_csec/<int:id>",
+        views.update_csec,
+        name="update-csec"),
+
+    path(
         "csec_results/create",
         views.update_csec,
         name="create-csec"),
-
 
     path(
         "examination_summary",

@@ -51,4 +51,5 @@ class TeacherForm(forms.ModelForm):
                 Column("qualifications", css_class="form-group col-md-4 mb-0"),
                 css_class="form-row",
             ),
+            Submit('submit', 'Submit')
         )

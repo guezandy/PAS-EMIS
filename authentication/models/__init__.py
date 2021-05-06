@@ -12,3 +12,15 @@ from .permissions import (
     SupportServices,
     ExternalAssessment,
 )
+from .users import (
+    SchoolAdministrator,
+    Teacher,
+    SchoolPrincipal,
+    DistrictEducationOfficer,
+    SchoolSuperviser,
+    StatisticianAdmin,
+    EvaluationAdmin,
+    EarlyChildhoodEducator,
+    SupportServicesAdmin,
+    ExternalAccessor,
+)

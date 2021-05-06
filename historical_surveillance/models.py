@@ -268,7 +268,7 @@ class CEE(models.Model):
     created_at = models.DateField(auto_now_add=True, null=True)
     created_by = models.CharField(max_length=255, blank=True)
     age_at_test = models.IntegerField(null=True)
-    test_yr = models.DateField(auto_now_add=True, null=True)
+    test_yr = models.CharField(max_length=255, null=True)
     district = models.ForeignKey(District, on_delete=models.CASCADE)
     stud_id = models.CharField(max_length=255, blank=True)
     sex = models.CharField(max_length=255, choices=SEX_CHOICES)

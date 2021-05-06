@@ -1,4 +1,3 @@
-
 import base64
 from io import BytesIO
 
@@ -16,6 +15,7 @@ from .forms import CEEForm
 
 import numpy as np
 import pandas as pd
+
 
 def get_image() -> object:
     # create a byte buffer for the image to save
@@ -218,26 +218,19 @@ def get_plot(chart_type, **kwargs):
     return graph
 
 
-
 def get_outlier_district_plot(**kwargs):
-
     plt.switch_backend('AGG')
 
-    
     school_enrollment = kwargs.get('x')
     school_name = kwargs.get('y')
-    
+
     datamean = kwargs.get('data_mean')
     input_school_type = kwargs.get('input_school_type')
     academic_year = kwargs.get('academic_year')
     district_input = kwargs.get('input_district')
-    
 
+    fig, ax1 = plt.subplots(figsize=(10, 6))
 
-
-    fig, ax1 = plt.subplots(figsize=(10,6))
-
-    
     ax1.set_title('Enrollment for District')
     ax1.set_xlabel('School_Name')
     ax1.set_ylabel('School_Scores')
@@ -245,15 +238,16 @@ def get_outlier_district_plot(**kwargs):
     ax1.bar(school_name, school_enrollment, color='#7CFC00', edgecolor='#000000')
 
     for tick in ax1.xaxis.get_major_ticks():
-            tick.label.set_fontsize(14)
-            tick.label.set_rotation('vertical')
-    plt.plot(school_name, datamean, linewidth = 5, ls = 'solid', color = '#4B0082' )
-    
+        tick.label.set_fontsize(14)
+        tick.label.set_rotation('vertical')
+    plt.plot(school_name, datamean, linewidth=5, ls='solid', color='#4B0082')
 
     plt.xlabel("School Name")
-    plt.ylabel("Enrollment") 
-      
-    plt.title("Enrollment for " + input_school_type +" schools for district " + district_input + " and "+  academic_year +  " academic year ")
+    plt.ylabel("Enrollment")
+
+    plt.title(
+        "Enrollment for " + input_school_type + " schools for district " + district_input + " and " + academic_year + " academic year ")
+
 
 def get_plot_boys_primary(**kwargs):
     plt.switch_backend('AGG')
@@ -314,47 +308,40 @@ def get_plot_girls_primary(**kwargs):
                     textcoords='offset points')
     # adjust legend
 
-
     plt.tight_layout()
     graph = get_image()
     return graph
 
 
-#==========================================================================
-#Outlier detection at national level
-#==========================================================================
+# ==========================================================================
+# Outlier detection at national level
+# ==========================================================================
 
 def get_outlier_national_plot(**kwargs):
-
     plt.switch_backend('AGG')
 
-    
     school_enrollment = kwargs.get('x')
     school_name = kwargs.get('y')
-    
+
     datamean = kwargs.get('data_mean')
     input_school_type = kwargs.get('input_school_type')
     academic_year = kwargs.get('academic_year')
-    
 
-    fig, ax1 = plt.subplots(figsize=(11,6))
-
-
+    fig, ax1 = plt.subplots(figsize=(11, 6))
 
     ax1.set_title('Enrollment for Selected Year')
     ax1.set_xlabel('School_Name')
-    
 
     ax1.bar(school_name, school_enrollment, color='#7CFC00', edgecolor='#000000')
     for tick in ax1.xaxis.get_major_ticks():
-            tick.label.set_fontsize(14)
-            tick.label.set_rotation('vertical')
-    plt.plot(school_name, datamean, linewidth = 5, ls = 'solid', color = '#4B0082')
-    
+        tick.label.set_fontsize(14)
+        tick.label.set_rotation('vertical')
+    plt.plot(school_name, datamean, linewidth=5, ls='solid', color='#4B0082')
 
     plt.xlabel("School Name")
-    plt.ylabel("Enrollment")    
-    plt.title("Enrollment for " + input_school_type +" schools for year " + academic_year)
+    plt.ylabel("Enrollment")
+    plt.title("Enrollment for " + input_school_type + " schools for year " + academic_year)
+
 
 def get_plot_primary(**kwargs):
     plt.switch_backend('AGG')
@@ -473,7 +460,6 @@ def get_plot_secondary(**kwargs):
     return graph
 
 
-
 def get_plot_regression(**kwargs):
     plt.switch_backend('AGG')
     data = kwargs.get('data')
@@ -490,12 +476,12 @@ def primary_performance_plot(data, district_1, district_2):
     years = [int(y[1]) for y in years]
     min_year = min(years)
 
-    N_DISTRICTS=District.objects.count()
+    N_DISTRICTS = District.objects.count()
 
     tests = np.zeros((len(years), N_DISTRICTS), dtype=int)
     above_avg = np.zeros((len(years), N_DISTRICTS), dtype=int)
     performance = np.zeros((len(years), N_DISTRICTS), dtype=float)
-    
+
     for index, row in df.iterrows():
         year = int(row['academic_year'].split('/')[1])
         school_code = row['school_id']
@@ -505,22 +491,22 @@ def primary_performance_plot(data, district_1, district_2):
         n_above_avg = int(row['above_average_scores'])
         if np.isnan(n_tests) or np.isnan(n_above_avg):
             continue
-        tests[year-min_year][district-1] += n_tests
-        above_avg[year-min_year][district-1] += n_above_avg
+        tests[year - min_year][district - 1] += n_tests
+        above_avg[year - min_year][district - 1] += n_above_avg
 
     for y in range(len(years)):
-        performance[y] = 100 * above_avg[y]/tests[y]
+        performance[y] = 100 * above_avg[y] / tests[y]
     performance = pd.DataFrame(performance)
-    labels = ['District ' + str(d+1) for d in range(N_DISTRICTS)]
+    labels = ['District ' + str(d + 1) for d in range(N_DISTRICTS)]
     if not (district_1 and district_2):
         for d in range(N_DISTRICTS):
             plt.plot(years, performance[d])
     else:
-        plt.plot(years, performance[district_1-1])
-        plt.plot(years, performance[district_2-1])
-        labels = ['District '+ str(district_1), 'District' + str(district_2)]
+        plt.plot(years, performance[district_1 - 1])
+        plt.plot(years, performance[district_2 - 1])
+        labels = ['District ' + str(district_1), 'District' + str(district_2)]
     plt.xticks([min(years), max(years)])
-    plt.legend(labels, loc = 'upper left', bbox_to_anchor=(1, 1.05))
+    plt.legend(labels, loc='upper left', bbox_to_anchor=(1, 1.05))
     plt.title("Percentage of Students Scoring Above Mean (CEE)")
     plt.tight_layout()
     graph = get_image()
@@ -528,18 +514,20 @@ def primary_performance_plot(data, district_1, district_2):
     plt.clf()
     performance = performance.T
     performance.columns = np.arange(1999, 2018, step=1)
-    performance.index = ['District ' + str(d+1) for d in range(N_DISTRICTS)]
+    performance.index = ['District ' + str(d + 1) for d in range(N_DISTRICTS)]
     ax = sns.heatmap(performance, annot=True)
     ax.set_title("Percentage of Students Scoring above Mean (CEE)")
     plt.tight_layout()
     heatmap = get_image()
     return [graph, heatmap]
 
+
 def clean_secondary_name(name):
     name = re.sub("[^a-zA-Z]+", "", name)
     name = name.lower().replace('secondary', "")
     name = name.replace('school', "")
     return ' '.join(name.split())
+
 
 def match_name(name, schools, district_dict):
     for school in schools:
@@ -548,6 +536,7 @@ def match_name(name, schools, district_dict):
             district_dict[name] = district_code
             return district_code
     return None
+
 
 def csec_performance_plot(data, district_1, district_2):
     left_out = set()
@@ -560,8 +549,8 @@ def csec_performance_plot(data, district_1, district_2):
     min_year = min(years)
 
     schools = School.objects.filter(category_of_school='public secondary')
-    
-    N_DISTRICTS=District.objects.count()
+
+    N_DISTRICTS = District.objects.count()
     scores = np.zeros((len(years), N_DISTRICTS))
     n_tests = np.zeros((len(years), N_DISTRICTS))
     passing_scores = np.zeros((len(years), N_DISTRICTS))
@@ -579,24 +568,24 @@ def csec_performance_plot(data, district_1, district_2):
             left_out.add(row['SCHOOL'])
             continue
         year = int(extract_year(row['EXAM_PERIOD'])) - min_year
-        n_tests[year][district-1] += 1
+        n_tests[year][district - 1] += 1
         score = row['OVERALL_GRADE']
-        if score=='I' or score=='II' or score=='III':
-            scores[year][district-1] += 1
+        if score == 'I' or score == 'II' or score == 'III':
+            scores[year][district - 1] += 1
 
-    passing_scores = 100 * scores/n_tests
+    passing_scores = 100 * scores / n_tests
     passing_scores = pd.DataFrame(passing_scores)
 
-    labels = ['District ' + str(d+1) for d in range(N_DISTRICTS)]
+    labels = ['District ' + str(d + 1) for d in range(N_DISTRICTS)]
     if not (district_1 and district_2):
         for d in range(N_DISTRICTS):
             plt.plot(years, passing_scores[d])
     else:
-        plt.plot(years, passing_scores[district_1-1])
-        plt.plot(years, passing_scores[district_2-1])
-        labels = ['District '+ str(district_1), 'District' + str(district_2)]
+        plt.plot(years, passing_scores[district_1 - 1])
+        plt.plot(years, passing_scores[district_2 - 1])
+        labels = ['District ' + str(district_1), 'District' + str(district_2)]
     plt.xticks([min(years), max(years)])
-    plt.legend(labels, loc = 'upper left', bbox_to_anchor=(1, 1.05))
+    plt.legend(labels, loc='upper left', bbox_to_anchor=(1, 1.05))
     plt.title("Percentage of Passing Scores (CSEC)")
     plt.tight_layout()
     graph = get_image()
@@ -604,15 +593,17 @@ def csec_performance_plot(data, district_1, district_2):
     plt.clf()
     passing_scores = passing_scores.T
     passing_scores.columns = years
-    passing_scores.index = ['District ' + str(d+1) for d in range(N_DISTRICTS)]
+    passing_scores.index = ['District ' + str(d + 1) for d in range(N_DISTRICTS)]
     ax = sns.heatmap(passing_scores, annot=True)
     plt.tight_layout()
     heatmap = get_image()
     return [graph, heatmap, left_out]
 
+
 def extract_year(period):
     year_string = re.findall(r'\d+', period)
     return year_string[0]
+
 
 def store_scores(data, required_fields, user_data, type):
     result = {}
@@ -648,6 +639,7 @@ def store_scores(data, required_fields, user_data, type):
         result['n_scores'] = succeeded
         result['failed'] = failed
     return result
+
 
 import base64
 import re
@@ -1567,3 +1559,164 @@ def get_boxplot_national_plot(**kwargs):
     graph = get_image()
     return graph
 
+
+def plot_national_ratio_trend(**kwargs):
+    plt.switch_backend('AGG')
+    data_primary = kwargs.get('data_primary')
+    data_secondary = kwargs.get('data_secondary')
+    for _ in data_secondary.shape:
+        school_enrollment = data_secondary.total_enrollment
+        total_number_of_teachers_secondary = data_secondary.total_number_of_teachers
+        academic_year = data_secondary.academic_year
+        student_teacher_ratio_secondary = (
+            (school_enrollment / total_number_of_teachers_secondary).replace(np.inf, 0)).astype(float)
+        fig, ax = plt.subplots(figsize=(12, 10))
+        ax.bar(academic_year, student_teacher_ratio_secondary, width=0.8, color='b',
+               label='Student to teacher ratio in Secondary Schools'
+               , alpha=0.5)
+        ax.set_ylabel("Student - Teacher Ratio (7-11)")
+
+        for tick in ax.xaxis.get_major_ticks():
+            tick.label.set_fontsize(10)
+            tick.label.set_rotation(45)
+        for bar in ax.patches:
+            plt.annotate(format(bar.get_height(), '.2f'),
+                         (bar.get_x() + bar.get_width() / 2,
+                          bar.get_height()), ha='center', va='center',
+                         size=7, xytext=(0, 5),
+                         textcoords='offset points')
+            plt.title("Student to Teacher Ratio Trends in Secondary Schools")
+            plt.xlabel('Academic Year')
+            ax.set_ylim([0, max(student_teacher_ratio_secondary) + 100])
+
+            ax.legend()
+
+    plt.tight_layout()
+    # plt.grid()
+    graph = get_image()
+    return graph
+
+
+def plot_national_ratio_trend_primary(**kwargs):
+    plt.switch_backend('AGG')
+    data_primary = kwargs.get('data_primary')
+    for _ in data_primary.shape:
+        school_enrollment = data_primary.total_enrollment
+        total_number_of_teachers_primary = data_primary.total_number_of_teachers
+        academic_year = data_primary.academic_year
+        student_teacher_ratio_primary = (
+            (school_enrollment / total_number_of_teachers_primary).replace(np.inf, 0)).astype(float)
+        fig, ax = plt.subplots(figsize=(12, 10))
+        ax.bar(academic_year, student_teacher_ratio_primary, width=0.8, color='g',
+               label='Student to teacher ratio in Primary Schools'
+               , alpha=0.5)
+        ax.set_ylabel("Student - Teacher Ratio (k-6)")
+
+    for tick in ax.xaxis.get_major_ticks():
+        tick.label.set_fontsize(10)
+        tick.label.set_rotation(45)
+    for bar in ax.patches:
+        plt.annotate(format(bar.get_height(), '.2f'),
+                     (bar.get_x() + bar.get_width() / 2,
+                      bar.get_height()), ha='center', va='center',
+                     size=7, xytext=(0, 5),
+                     textcoords='offset points')
+        plt.title("Student to Teacher Ratio Trends in Primary Schools")
+        plt.xlabel('Academic Year')
+        ax.set_ylim([0, max(student_teacher_ratio_primary) + 100])
+
+        ax.legend()
+    plt.tight_layout()
+    # plt.grid()
+    graph = get_image()
+    return graph
+
+
+def national_ratio_hist(**kwargs):
+    plt.switch_backend('AGG')
+    data = kwargs.get('data')
+    mu_total_enrollment = mean(data['total_enrollment'])
+    mu_number_of_trained_male_teachers = mean(data['number_of_trained_male_teachers'])
+    mu_number_of_trained_female_teachers = mean(data['number_of_trained_female_teachers'])
+    mu_number_of_untrained_male_teachers = mean(data['number_of_untrained_male_teachers'])
+    mu_number_of_untrained_female_teachers = mean(data['number_of_untrained_female_teachers'])
+    mu_total_no_of_teachers = mean(data['total_number_of_teachers'])
+
+    sigma_total_enrollment = std(data['total_enrollment'])
+    sigma_number_of_trained_male_teachers = std(data['number_of_trained_male_teachers'])
+    sigma_number_of_trained_female_teachers = std(data['number_of_trained_female_teachers'])
+    sigma_number_of_untrained_male_teachers = std(data['number_of_untrained_male_teachers'])
+    sigma_number_of_untrained_female_teachers = std(data['number_of_untrained_female_teachers'])
+    sigma_total_no_of_teachers = std(data['total_number_of_teachers'])
+
+    x_mu_total_enrollment = mu_total_enrollment + sigma_total_enrollment * np.random.randn(437)
+    x_mu_number_of_trained_male_teachers = mu_number_of_trained_male_teachers + sigma_number_of_trained_male_teachers * np.random.randn(
+        437)
+    x_mu_number_of_trained_female_teachers = mu_number_of_trained_female_teachers + sigma_number_of_trained_female_teachers * np.random.randn(
+        437)
+    x_mu_number_of_untrained_male_teachers = mu_number_of_untrained_male_teachers + sigma_number_of_untrained_male_teachers * np.random.randn(
+        437)
+    x_mu_number_of_untrained_female_teachers = mu_number_of_untrained_female_teachers + sigma_number_of_untrained_female_teachers * np.random.randn(
+        437)
+    x_mu_total_no_of_teachers = mu_total_no_of_teachers + sigma_total_no_of_teachers * np.random.randn(
+        437)
+    num_bins = 50
+
+    # fig, ax = plt.subplots()
+
+    fig, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(6, figsize=(15, 15))
+
+    # the histogram of the data
+    n_total_enrollment, bins_total_enrollment, patches_total_enrollment = \
+        ax1.hist(x_mu_total_enrollment, num_bins, density=True)
+    n_number_of_trained_male_teachers, bins_number_of_trained_male_teachers, patches_number_of_trained_male_teachers = \
+        ax2.hist(x_mu_number_of_trained_male_teachers, num_bins, density=True)
+    n_number_of_trained_female_teachers, bins_number_of_trained_female_teachers, patches_number_of_trained_female_teachers = \
+        ax3.hist(x_mu_number_of_trained_female_teachers, num_bins, density=True)
+    n_number_of_untrained_male_teachers, bins_number_of_untrained_male_teachers, patches_number_of_untrained_male_teachers = \
+        ax4.hist(x_mu_number_of_untrained_male_teachers, num_bins, density=True)
+    n_number_of_untrained_female_teachers, bins_number_of_untrained_female_teachers, patches_number_of_untrained_female_teachers = \
+        ax5.hist(x_mu_number_of_untrained_female_teachers, num_bins, density=True)
+    n_total_number_of_teachers, bins_total_number_of_teachers, patches_total_number_of_teachers = \
+        ax6.hist(x_mu_total_no_of_teachers, num_bins, density=True)
+    # add a 'best fit' line
+    y_total_enrollment = ((1 / (np.sqrt(2 * np.pi) * sigma_total_enrollment)) *
+                          np.exp(-0.5 * (1 / sigma_total_enrollment * (
+                                  bins_total_enrollment - mu_total_enrollment)) ** 2))
+    y_number_of_trained_male_teachers = ((1 / (np.sqrt(2 * np.pi) * sigma_number_of_trained_male_teachers)) *
+                                         np.exp(-0.5 * (1 / sigma_number_of_trained_male_teachers * (
+                                                 bins_number_of_trained_male_teachers - mu_number_of_trained_male_teachers)) ** 2))
+    y_number_of_trained_female_teachers = ((1 / (np.sqrt(2 * np.pi) * sigma_number_of_trained_female_teachers)) *
+                                           np.exp(-0.5 * (1 / sigma_number_of_trained_female_teachers * (
+                                                   bins_number_of_trained_female_teachers - mu_number_of_trained_female_teachers)) ** 2))
+    y_number_of_untrained_male_teachers = ((1 / (np.sqrt(2 * np.pi) * sigma_number_of_untrained_male_teachers)) *
+                                           np.exp(-0.5 * (1 / sigma_number_of_untrained_male_teachers * (
+                                                   bins_number_of_untrained_male_teachers - mu_number_of_untrained_male_teachers)) ** 2))
+    y_number_of_untrained_female_teachers = ((1 / (np.sqrt(2 * np.pi) * sigma_number_of_untrained_female_teachers)) *
+                                             np.exp(-0.5 * (1 / sigma_number_of_untrained_female_teachers * (
+                                                     bins_number_of_untrained_female_teachers - mu_number_of_untrained_female_teachers)) ** 2))
+    y_total_no_of_teachers = ((1 / (np.sqrt(2 * np.pi) * sigma_total_no_of_teachers)) *
+                              np.exp(-0.5 * (1 / sigma_total_no_of_teachers * (
+                                      bins_total_number_of_teachers - mu_total_no_of_teachers)) ** 2))
+
+    ax1.plot(bins_total_enrollment, y_total_enrollment, '--')
+    ax1.set_title('Total Enrollment')
+
+    ax2.plot(bins_number_of_trained_male_teachers, y_number_of_trained_male_teachers, '--')
+    ax2.set_title('Number of Trained Male Teachers')
+
+    ax3.plot(bins_number_of_trained_female_teachers, y_number_of_trained_female_teachers, '--')
+    ax3.set_title('Number of Trained Female Teachers')
+
+    ax4.plot(bins_number_of_untrained_male_teachers, y_number_of_untrained_male_teachers, '--')
+    ax4.set_title('Number of Untrained Male Teachers')
+
+    ax5.plot(bins_number_of_untrained_female_teachers, y_number_of_untrained_female_teachers, '--')
+    ax5.set_title('Untrained Female Teachers')
+
+    ax6.plot(bins_total_number_of_teachers, y_total_no_of_teachers, '--')
+    ax6.set_title('Total Number of Teachers')
+
+    plt.tight_layout()
+    graph = get_image()
+    return graph

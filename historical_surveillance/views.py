@@ -440,17 +440,17 @@ def nationalgenderenrollment(request):
     if 'national_enrollment_trend' in request.POST:
         data = pd.DataFrame(NationalGenderEnrollment.objects.values().all())
         data_male_primary = pd.DataFrame(NationalGenderEnrollment.objects. \
-                                         filter(sex='male', category_of_school='primary').all().values())
+                                         filter(sex='males', category_of_school='primary').all().values())
 
-        data_male_secondary = pd.DataFrame(NationalGenderEnrollment.objects.filter(sex='male',
+        data_male_secondary = pd.DataFrame(NationalGenderEnrollment.objects.filter(sex='males',
                                                                                    category_of_school='secondary'). \
                                            all().values())
 
-        data_female_primary = pd.DataFrame(NationalGenderEnrollment.objects.filter(sex='female',
+        data_female_primary = pd.DataFrame(NationalGenderEnrollment.objects.filter(sex='females',
                                                                                    category_of_school='primary'). \
                                            all().values())
 
-        data_female_secondary = pd.DataFrame(NationalGenderEnrollment.objects.filter(sex='female',
+        data_female_secondary = pd.DataFrame(NationalGenderEnrollment.objects.filter(sex='females',
                                                                                      category_of_school='secondary'). \
                                              all().values())
 
@@ -620,6 +620,33 @@ def national_teacher_ratio(request):
                                                               category_of_school=category_of_school).exists():
                 form.save()
             return redirect("/historical/national_teacher_ratio")
+
+        if 'national_ratio_trend' in request.POST:
+            data = pd.DataFrame(
+                NationalStudentTeacherRatio.objects.values().all())
+            data_primary = pd.DataFrame(
+                NationalStudentTeacherRatio.objects.filter(category_of_school='primary').values().all())
+            data_secondary = pd.DataFrame(
+                NationalStudentTeacherRatio.objects.filter(category_of_school='secondary').values().all())
+
+            # function to get the graph
+            # for _ in range(data[data.columns[0]].count()):
+            graph_primary = plot_national_ratio_trend_primary(data_primary=data_primary)
+
+            graph_secondary = plot_national_ratio_trend(data_secondary=data_secondary)
+            graph_hist = national_ratio_hist(data=data)
+            graph_all = {
+                "graph": graph_secondary,
+                "graph_primary": graph_primary,
+                "graph_secondary": graph_secondary,
+                'data_primary': data_primary,
+                'data_secondary': data_secondary,
+                'graph_hist': graph_hist,
+
+            }
+
+        return render(request, "national_teacher_student_ratio.html", graph_all)
+
     context = {"form": form, "ratio_data": data}
     return render(request, "national_teacher_ratio.html", context)
 

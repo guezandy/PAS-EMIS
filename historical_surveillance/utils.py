@@ -9,7 +9,7 @@ import re
 from sklearn.linear_model import LinearRegression
 from .models import School
 from .models import District
-from .models import CSECResults
+from .models import CSEC
 
 from .forms import CSECForm
 from .forms import CEEForm
@@ -660,7 +660,6 @@ from pandas import to_numeric
 from sklearn.linear_model import LinearRegression
 from .models import School
 from .models import District
-from .models import CSECResults
 
 from .forms import CSECForm
 from .forms import CEEForm
@@ -1473,6 +1472,11 @@ def extract_year(period):
     year_string = re.findall(r'\d+', period)
     return year_string[0]
 
+def get_sex(character):
+    if character == "F":
+        return "female"
+    else:
+        return "male"
 
 def store_scores(data, required_fields, user_data, type):
     result = {}
@@ -1494,7 +1498,17 @@ def store_scores(data, required_fields, user_data, type):
                 fields = line.split(",")
                 data = {}
                 for required_field in required_fields:
-                    data[required_field] = fields[field_names.index(required_field)]
+                    if required_field == "school_id":
+                        data["school"] = fields[field_names.index("school_id")]
+                    elif required_field == "primsch_id":
+                        data["primsch"] = fields[field_names.index("primsch_id")]
+                    elif required_field == "secsch_id":
+                        data["secsch"] = fields[field_names.index("secsch_id")]
+                    elif required_field == "district_id":
+                        data["district"] = fields[field_names.index("district_id")]
+                    elif required_field == "sex":
+                        data["sex"] = get_sex(fields[field_names.index(required_field)])
+                    else: data[required_field] = fields[field_names.index(required_field)]
                 data = {**data, **user_data}
                 if type == "CEE":
                     form = CEEForm(data)

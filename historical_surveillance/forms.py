@@ -121,50 +121,39 @@ class csecForms(forms.ModelForm):
 
 class CSECForm(forms.ModelForm):
     class Meta:
-        model = CSECResults
+        model = CSEC
         fields = [
-            "CANDIDATE_NBR",
-            "EXAM_PERIOD",
-            "OVERALL_GRADE",
-            "PROFICIENCY",
-            "PROFILE1_GRADE",
-            "PROFILE2_GRADE",
-            "PROFILE3_GRADE",
-            "PROFILE4_GRADE",
-            "SCHOOL",
-            "SEX",
-            "SUBJECT",
-            "TERRITORY",
+            "year",
+            "candidate_number",
+            "sex",
+            "subject",
+            "proficiency",
+            "profile1",
+            "profile2",
+            "profile3",
+            "profile4",
+            "overall_grade",
+            "school"
         ]
 
     def __init__(self, *args, **kwargs):
         super(CSECForm, self).__init__(*args, **kwargs)
-        self.fields['PROFILE1_GRADE'].required = False
-        self.fields['PROFILE2_GRADE'].required = False
-        self.fields['PROFILE3_GRADE'].required = False
-        self.fields['PROFILE4_GRADE'].required = False
-        self.fields['SEX'].required = False
-
-        self.fields["PROFILE1_GRADE"].required = False
-        self.fields["PROFILE2_GRADE"].required = False
-        self.fields["PROFILE3_GRADE"].required = False
-        self.fields["PROFILE4_GRADE"].required = False
+        self.fields['sex'].required = False
+        self.fields['profile1'].required = False
+        self.fields['profile2'].required = False
+        self.fields['profile3'].required = False
+        self.fields['profile4'].required = False
 
 
 
 class CEEForm(forms.ModelForm):
     class Meta:
-        model = CEEResults
+        model = CEE
         fields = [
-            "stud_id",
-            "schcode",
-            "engb1",
-            "engb2",
-            "mathsb1",
-            "mathsb2",
+            "age_at_test",
             "test_yr",
+            "stud_id",
             "sex",
-            "form",
             "genparaw",
             "genpbraw",
             "genpcraw",
@@ -179,8 +168,16 @@ class CEEForm(forms.ModelForm):
             "vocab_raw",
             "read_raw",
             "sent_raw",
+            "rank",
             "engcomp",
             "mathcomp",
             "gpcomp",
             "totcomp",
+            "district",
+            "primsch",
+            "secsch",
         ]
+
+        def __init__(self, *args, **kwargs):
+            super(CSEEForm, self).__init__(*args, **kwargs)
+            self.fields['sex'].required = False

@@ -984,20 +984,32 @@ UNIVERSAL_FIELDS = {'id', 'created_at', 'created_by', 'updated_at', 'updated_by'
 
 def upload_scores(request):
     context = {}
-    cee_field_names = CEEResults._meta.get_fields()
+    cee_field_names = CEE._meta.get_fields()
     cee_field_names = [str(f).split('.')[-1] for f in cee_field_names]
     cee_field_names = list(set(cee_field_names) - UNIVERSAL_FIELDS)
     cee_field_names.sort()
 
-    csec_field_names = CSECResults._meta.get_fields()
+    csec_field_names = CSEC._meta.get_fields()
     csec_field_names = [str(f).split('.')[-1] for f in csec_field_names]
     csec_field_names = list(set(csec_field_names) - UNIVERSAL_FIELDS)
+    csec_field_names.remove("school")
+    csec_field_names.append("school_id")
     csec_field_names.sort()
     context['cee_field_names'] = cee_field_names
     context['csec_field_names'] = csec_field_names
 
-    context['cee_count'] = CEEResults.objects.count()
-    context['csec_count'] = CSECResults.objects.count()
+    context['cee_count'] = CEE.objects.count()
+    context['csec_count'] = CSEC.objects.count()
+
+    cee_by_year = [item['test_yr'] for item in CEE.objects.values('test_yr').distinct()]
+    csec_by_year = [item['year'] for item in CSEC.objects.values('year').distinct()]
+    cee_by_year.sort()
+    csec_by_year.sort()
+    context['cee_by_year'] = cee_by_year
+    context['csec_by_year'] = csec_by_year
+
+    if 'submit' in request.POST:
+        print(request.POST['submit'])
 
     if "GET" == request.method:
         return render(request, "upload_scores.html", context)
@@ -1018,26 +1030,35 @@ def upload_scores(request):
             return render(request, "upload_scores.html", context)
         csv_file = request.FILES["cee_file"]
 
-    if not csv_file.name.endswith('.csv'):
-        context['error_message'] = 'Could not upload file. File must be CSV type.'
-        return render(request, "upload_scores.html", context)
-    scores = csv_file.read().decode("utf-8", 'ignore')
-    user_data = {'created_by': request.user.username,
-                 'updated_by': request.user.username,
-                 'created_at': date.today().strftime("%Y-%m-%d"),
-                 'updated_at': date.today().strftime("%Y-%m-%d")}
-    result = store_scores(scores, field_names, user_data, type)
-    if 'error_message' in result:
-        context['error_message'] = result['error_message']
-    if 'missing_fields' in result:
-        context['missing_fields'] = result['missing_fields']
-    n_scores = 0
-    if 'n_scores' in result:
-        context['n_scores'] = result['n_scores']
-    if 'failed' in result:
-        context['failed'] = result['failed']
-    context['cee_count'] = CEEResults.objects.count()
-    context['csec_count'] = CSECResults.objects.count()
+    if request.POST['submit'].startswith("delete_cee"):
+        time_period = request.POST['submit'][10:]
+        CEE.objects.filter(test_yr=int(time_period)).delete()
+    elif request.POST['submit'].startswith("delete_csec"):
+        time_period = request.POST['submit'][11:]
+        CSEC.objects.filter(year=int(time_period)).delete()
+    else:
+        if not csv_file.name.endswith('.csv'):
+            context['error_message'] = 'Could not upload file. File must be CSV type.'
+            return render(request, "upload_scores.html", context)
+        scores = csv_file.read().decode("utf-8", 'ignore')
+        user_data = {'created_by': request.user.username,
+                     'updated_by': request.user.username,
+                     'created_at': date.today().strftime("%Y-%m-%d"),
+                     'updated_at': date.today().strftime("%Y-%m-%d")}
+        result = store_scores(scores, field_names, user_data, type)
+        if 'error_message' in result:
+            context['error_message'] = result['error_message']
+        if 'missing_fields' in result:
+            context['missing_fields'] = result['missing_fields']
+        n_scores = 0
+        if 'n_scores' in result:
+            context['n_scores'] = result['n_scores']
+        if 'failed' in result:
+            context['failed'] = result['failed']
+    context['cee_count'] = CEE.objects.count()
+    context['csec_count'] = CSEC.objects.count()
+    context['cee_by_year'] = [item['test_yr'] for item in CEE.objects.values('test_yr').distinct()]
+    context['csec_by_year'] = [item['year'] for item in CSEC.objects.values('year').distinct()]
     return render(request, "upload_scores.html", context)
 
 # ======================================================================

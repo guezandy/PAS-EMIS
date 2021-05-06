@@ -518,7 +518,7 @@ def primary_performance_plot(data, district_1, district_2):
     else:
         plt.plot(years, performance[district_1-1])
         plt.plot(years, performance[district_2-1])
-        labels = ['District '+ str(district_1), 'District' + str(district_2)]
+        labels = ['District '+ str(district_1), 'District ' + str(district_2)]
     plt.xticks([min(years), max(years)])
     plt.legend(labels, loc = 'upper left', bbox_to_anchor=(1, 1.05))
     plt.title("Percentage of Students Scoring Above Mean (CEE)")
@@ -589,7 +589,7 @@ def csec_performance_plot(data, district_1, district_2):
     else:
         plt.plot(years, passing_scores[district_1-1])
         plt.plot(years, passing_scores[district_2-1])
-        labels = ['District '+ str(district_1), 'District' + str(district_2)]
+        labels = ['District '+ str(district_1), 'District ' + str(district_2)]
     plt.xticks([min(years), max(years)])
     plt.legend(labels, loc = 'upper left', bbox_to_anchor=(1, 1.05))
     plt.title("Percentage of Passing Scores (CSEC)")

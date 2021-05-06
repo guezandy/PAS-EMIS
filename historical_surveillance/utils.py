@@ -460,15 +460,6 @@ def get_plot_secondary(**kwargs):
     return graph
 
 
-def get_plot_regression(**kwargs):
-    plt.switch_backend('AGG')
-    data = kwargs.get('data')
-    data_boys_primary = kwargs.get('data_boys_primary')
-    data_girls_primary = kwargs.get('data_girls_primary')
-    data_boys_secondary = kwargs.get('data_boys_secondary')
-    data_girls_secondary = kwargs.get('data_girls_secondary')
-
-
 def clean_secondary_name(name):
     name = re.sub("[^a-zA-Z]+", "", name)
     name = name.lower().replace('secondary', "")
@@ -493,6 +484,7 @@ def get_district(school_code, schools, district_dict):
             return district
     return None
 
+
 def csec_performance_plot(data, district_1, district_2):
     left_out = set()
 
@@ -504,8 +496,8 @@ def csec_performance_plot(data, district_1, district_2):
 
     schools = School.objects.all()
     # schools = School.objects.filter(category_of_school='public secondary')
-    
-    N_DISTRICTS=District.objects.count()
+
+    N_DISTRICTS = District.objects.count()
     scores = np.zeros((len(years), N_DISTRICTS))
     n_tests = np.zeros((len(years), N_DISTRICTS))
     passing_scores = np.zeros((len(years), N_DISTRICTS))
@@ -523,24 +515,24 @@ def csec_performance_plot(data, district_1, district_2):
             left_out.add(row['school_id'])
             continue
         year = int(row['year']) - min_year
-        n_tests[year][district-1] += 1
+        n_tests[year][district - 1] += 1
         score = row['overall_grade']
-        if score=='I' or score=='II' or score=='III':
-            scores[year][district-1] += 1
+        if score == 'I' or score == 'II' or score == 'III':
+            scores[year][district - 1] += 1
 
-    passing_scores = 100 * scores/n_tests
+    passing_scores = 100 * scores / n_tests
     passing_scores = pd.DataFrame(passing_scores)
 
-    labels = ['District ' + str(d+1) for d in range(N_DISTRICTS)]
+    labels = ['District ' + str(d + 1) for d in range(N_DISTRICTS)]
     if not (district_1 and district_2):
         for d in range(N_DISTRICTS):
             plt.plot(years, passing_scores[d])
     else:
-        plt.plot(years, passing_scores[district_1-1])
-        plt.plot(years, passing_scores[district_2-1])
-        labels = ['District '+ str(district_1), 'District ' + str(district_2)]
+        plt.plot(years, passing_scores[district_1 - 1])
+        plt.plot(years, passing_scores[district_2 - 1])
+        labels = ['District ' + str(district_1), 'District ' + str(district_2)]
     plt.xticks([min(years), max(years)])
-    plt.legend(labels, loc = 'upper left', bbox_to_anchor=(1, 1.05))
+    plt.legend(labels, loc='upper left', bbox_to_anchor=(1, 1.05))
     plt.title("Percentage of Passing Scores (CSEC)")
     plt.tight_layout()
     graph = get_image()
@@ -548,7 +540,7 @@ def csec_performance_plot(data, district_1, district_2):
     plt.clf()
     passing_scores = passing_scores.T
     passing_scores.columns = years
-    passing_scores.index = ['District ' + str(d+1) for d in range(N_DISTRICTS)]
+    passing_scores.index = ['District ' + str(d + 1) for d in range(N_DISTRICTS)]
     ax = sns.heatmap(passing_scores, annot=True)
     plt.tight_layout()
     heatmap = get_image()
@@ -570,7 +562,6 @@ def get_image() -> object:
     # free the memory of the buffer
     buffer.close()
     return graph
-
 
 
 import base64
@@ -1057,10 +1048,12 @@ def get_plot_secondary(**kwargs):
 def get_plot_regression(**kwargs):
     plt.switch_backend('AGG')
     data = kwargs.get('data')
-    data_boys_primary = kwargs.get('data_boys_primary')
-    data_girls_primary = kwargs.get('data_girls_primary')
-    data_boys_secondary = kwargs.get('data_boys_secondary')
-    data_girls_secondary = kwargs.get('data_girls_secondary')
+    sns.set_theme(color_codes=True)
+    sns.regplot(x=data.enrollment, y=data.gdp_millions, data=data, x_estimator=np.mean);
+
+    plt.tight_layout()
+    graph = get_image()
+    return graph
 
 
 def plot_national_gender_enrollment(**kwargs):
@@ -1391,11 +1384,13 @@ def primary_performance_plot(data, district_1, district_2):
     heatmap = get_image()
     return [graph, heatmap]
 
+
 def get_sex(character):
     if character == "F":
         return "female"
     else:
         return "male"
+
 
 def store_scores(data, required_fields, user_data, type):
     result = {}
@@ -1427,7 +1422,8 @@ def store_scores(data, required_fields, user_data, type):
                         data["district"] = fields[field_names.index("district_id")]
                     elif required_field == "sex":
                         data["sex"] = get_sex(fields[field_names.index(required_field)])
-                    else: data[required_field] = fields[field_names.index(required_field)]
+                    else:
+                        data[required_field] = fields[field_names.index(required_field)]
                 data = {**data, **user_data}
                 if type == "CEE":
                     form = CEEForm(data)
@@ -1441,6 +1437,7 @@ def store_scores(data, required_fields, user_data, type):
         result['n_scores'] = succeeded
         result['failed'] = failed
     return result
+
 
 # =======================================================================================
 # Box plots at district level

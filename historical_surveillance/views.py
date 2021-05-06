@@ -1010,9 +1010,6 @@ def upload_scores(request):
     context['cee_by_year'] = cee_by_year
     context['csec_by_year'] = csec_by_year
 
-    if 'submit' in request.POST:
-        print(request.POST['submit'])
-
     if "GET" == request.method:
         return render(request, "upload_scores.html", context)
     type = "CEE"

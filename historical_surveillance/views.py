@@ -67,7 +67,7 @@ def update_csec(request, id=None):
 
 # This is the examination Analysis
 def examination_summary(request):
-    cee_data = CEEResults.objects.values().all()
+    cee_data = CEE.objects.values().all()
     context = {'d': cee_data,
                }
     return render(request, 'examination_summary.html', context)

@@ -712,14 +712,14 @@ def enrollment_summary(request):
                             'graph_girls_primary': graph_girls_primary}
         return render(request, 'ger.html', data_all_primary)
     if 'ger_secondary' in request.POST:
-        data_boys_1 = df.query("sex=='male' and category_of_school == 'secondary'")
+        data_boys_1 = df.query("sex=='males' and category_of_school == 'secondary'")
 
         json_records = data_boys_1.reset_index().to_json(orient='records')
         data_boys_secondary = json.loads(json_records)
         # function to get the graph
         graph_boys_secondary = get_plot_boys_secondary(data=data_boys_1)
 
-        data_girls_1 = df.query("sex=='female' and category_of_school == 'secondary'")
+        data_girls_1 = df.query("sex=='females' and category_of_school == 'secondary'")
 
         json_records = data_girls_1.reset_index().to_json(orient='records')
         data_girls_secondary = json.loads(json_records)

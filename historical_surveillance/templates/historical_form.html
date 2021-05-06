@@ -6,9 +6,9 @@
 <div class="container-fluid">
     <div class="row">
         {% if form.errors %}
-        {% for error in form.errors %}
+        {% for error in form.non_field_errors %}
         <div class="alert alert-danger">
-            <strong>Error in field: {{ error|escape }}</strong>
+            <strong>{{ error|escape }}</strong>
         </div>
         {% endfor %}
         {% endif %}

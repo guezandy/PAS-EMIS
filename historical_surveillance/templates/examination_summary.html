@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+{% block page_content %}
+<div id="container-fluid bg-info">
+    <main>
+        <div class="container-fluid bg-transparent pt-3 text-dark">
+            <h3>Enrollment Summary</h3>
+                   <div class="row">
+   <div class="col-xl-5 col-md-5">
+
+                    </div>
+                  </div>
+                <div class="col-xl-7 col-md-7">
+            <div class="card bg-primary text-white mb-4">
+                        <div class="card-body">Examination Summary
+
+                             <div class="table-responsive card bg-body mb-4">
+                            <table class="table table-bordered" id="dataTable" max-width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Student ID</th>
+                                        <th>Sex</th>
+                                        <th>Test Year</th>
+                                        <th>Eng Comp</th>
+                                        <th>Math Comp</th>
+                                        <th>General Paper Comp</th>
+                                        <th>Total Comp</th>
+
+                                    </tr>
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                       <th>Student ID</th>
+                                        <th>Sex</th>
+                                        <th>Test Year</th>
+                                        <th>Eng Comp</th>
+                                        <th>Math Comp</th>
+                                        <th>General Paper Comp</th>
+                                        <th>Total Comp</th>
+                                    </tr>
+                                </tfoot>
+                                <tbody>
+                                    {% for row in d %}
+                                    <tr>
+                                        <td>{{ row.stud_id}}</td>
+                                        <td>{{ row.sex }}</td>
+                                        <td>{{ row.test_yr }}</td>
+                                        <td>{{ row.engcomp}}</td>
+                                        <td>{{ row.mathcomp }}</td>
+                                        <td>{{ row.gpcomp }}</td>
+                                        <td>{{ row.totcomp }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                </div>
+
+
+
+
+</div>
+        </div>
+
+    </main>
+</div>
+{% endblock %}

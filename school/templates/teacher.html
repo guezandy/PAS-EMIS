@@ -23,25 +23,25 @@
                         <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0">
                             <thead>
                                 <tr>
-                                    <th>Subject Group</th>
                                     <th>Subject</th>
                                     <th>Student count</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tfoot>
                                 <tr>
-                                    <th>Subject Group</th>
                                     <th>Subject</th>
                                     <th>Student count</th>
+                                    <th></th>
                                 </tr>
                             </tfoot>
                             <tbody>
                                 {% for course in courses %}
-                                <tr class="clickable-row"
-                                    data-href="/school/teacher/{{teacher_code}}/course/{{course.course_code}}">
-                                    <td>{{course.subject_group}}</td>
+                                <tr>
                                     <td>{{course.subject}}</td>
                                     <td>{{course.student_count}}</td>
+                                    <td><a href="/school/teacher/{{teacher_code}}/course/{{course.course_code}}"><button
+                                                type="button" class="btn btn-primary mb-2">Details</button></a></td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

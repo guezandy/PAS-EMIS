@@ -13,6 +13,8 @@
                 </button>
                 <div class="dropdown-menu">
                     <a class="dropdown-item" href="{% url 'school:create_teacher' %}">Create Teacher</a>
+                    <a class="dropdown-item" href="{% url 'school:create_teacher_appraisal' %}">Create Teacher
+                        Appraisal</a>
                     <a class="dropdown-item" href="{% url 'school:create_student' %}">Create Student</a>
                     <a class="dropdown-item" href="{% url 'school:create_course' %}">Create Course</a>
                     <div class="dropdown-divider"></div>
@@ -95,6 +97,7 @@
                                     <th>Name</th>
                                     <th>Course count</th>
                                     <th></th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tfoot>
@@ -103,17 +106,20 @@
                                     <th>Name</th>
                                     <th>Course count</th>
                                     <th></th>
+                                    <th></th>
                                 </tr>
                             </tfoot>
                             <tbody>
                                 {% for teacher in teachers %}
-                                <tr class="clickable-row" data-href="/school/teacher/{{teacher.teacher_code}}">
+                                <tr>
                                     <td>{{teacher.teacher_code}}</td>
                                     <td>{{teacher.name}}</td>
                                     <td>{{teacher.course_count}}</td>
                                     <td><a href="{% url 'school:edit_teacher' teacher.teacher_code %}"><Button
                                                 class="btn btn-primary">Edit</Button></a>
                                     </td>
+                                    <td><a href="/school/teacher/{{teacher.teacher_code}}"><button type="button"
+                                                class="btn btn-primary mb-2">Details</button></a></td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -132,7 +138,6 @@
                         <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0">
                             <thead>
                                 <tr>
-                                    <th>Subject Group</th>
                                     <th>Subject</th>
                                     <th>Teacher</th>
                                     <th></th>
@@ -140,7 +145,6 @@
                             </thead>
                             <tfoot>
                                 <tr>
-                                    <th>Subject Group</th>
                                     <th>Subject</th>
                                     <th>Teacher</th>
                                     <th></th>
@@ -149,7 +153,6 @@
                             <tbody>
                                 {% for course in courses %}
                                 <tr>
-                                    <td>{{course.subject_group}}</td>
                                     <td>{{course.subject}}</td>
                                     <td>{{course.teacher}}</td>
                                     <td><a href="{% url 'school:edit_course' course.course_code %}"><Button
@@ -197,6 +200,43 @@
                         </table>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <div class="card-header">
+            Teacher Appraisals
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Teacher name</th>
+                            <th>Appraisal period</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Teacher name</th>
+                            <th>Appraisal period</th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% for appraisal in teacher_appraisals %}
+                        <tr>
+                            <td>{{appraisal.teacher.first_name}} {{appraisal.teacher.last_name}}</td>
+                            <td>{{appraisal.evaluation_period_start}} - {{appraisal.evaluation_period_end}}</td>
+                            <td>
+                                <a href="{% url 'school:edit_teacher_appraisal' appraisal.id %}"><Button
+                                        class="btn btn-primary">Edit</Button></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

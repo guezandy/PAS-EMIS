@@ -5,7 +5,7 @@
     <h2>Log In</h2>
     {% csrf_token %}
     {{ form|crispy }}
-    <button type="submit" class="btn btn-primary">Log In</button>
-    <a class="pt-2 d-block" href="{% url 'authentication:forgot-password' %}">Forgot Password?</a>
+    <button type="submit" class="btn btn-primary mt-2">Log In</button>
+    <a class="mt-3 d-block" href="{% url 'authentication:forgot-password' %}">Forgot Password?</a>
 </form>
 {% endblock body %}

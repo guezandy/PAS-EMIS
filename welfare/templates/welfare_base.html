@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block page_content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class='col-md-6'>
+            {% block page_title %}{% endblock %}
+        </div>
+        {% if can_view_service_defs %}
+        <div class="col-md-6 action-button-group">
+            <a href="{% url 'welfare:view_services' %}"><button type="button"
+                class="btn btn-dark mb-2">View Service Definitions</button></a>
+        </div>
+        {% endif %}
+    </div>
+    <div class="row">
+        <div class="col-xl-3 col-md-6">
+            <div class="card text-center bg-primary text-white mb-4">
+                <div class="card-body">
+                    <h5 class='card-header'>Girls: {{girl_count}}, Boys: {{boy_count}}</h5>
+                    <div class='stat'>{{student_count}}</div>
+                    <div class='stat-label'>Total Students</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card text-center bg-success text-white mb-4">
+                <div class="card-body">
+                    <h5 class='card-header'>{{students_with_services_percent|stringformat:".2f"}}%</h5>
+                    <div class='stat'>{{students_with_services_count}}</div>
+                    <div class='stat-label'>Students with Services</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card text-center bg-warning text-white mb-4">
+                <div class="card-body">
+                    <h5 class='card-header'>{{girls_with_services_percent|stringformat:".2f"}}%</h5>
+                    <div class='stat'>{{girls_with_services_count}}</div>
+                    <div class='stat-label'>Girls with Services</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card text-center bg-info text-white mb-4">
+                <div class="card-body">
+                    <h5 class='card-header'>{{boys_with_services_percent|stringformat:".2f"}}%</h5>
+                    <div class='stat'>{{boys_with_services_count}}</div>
+                    <div class='stat-label'>Boys with Services</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <div class="card-header">Details by Service Type</div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="align-middle">Service name</th>
+                            <th class="align-middle">Students w/ service</th>
+                            <th class="align-middle">Girls w/ service</th>
+                            <th class="align-middle">Boys w/ service</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for service_info in services_info %}
+                        <tr>
+                            <td>{{service_info.service_name}}</td>
+                            <td>{{service_info.students_with_services_count}} ({{service_info.students_with_services_percent|stringformat:".1f"}}%)</td>
+                            <td>{{service_info.girls_with_services_count}} ({{service_info.girls_with_services_percent|stringformat:".1f"}}%)</td>
+                            <td>{{service_info.boys_with_services_count}} ({{service_info.boys_with_services_percent|stringformat:".1f"}}%)</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <div class="card-header">Per-{{breakdown_topic}} Breakdown</div>
+        <div class="card-body">
+            <div class="table-responsive">
+            {% block table_details %}{% endblock %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock page_content %}

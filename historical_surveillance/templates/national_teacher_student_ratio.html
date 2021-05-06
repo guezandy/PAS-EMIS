@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+{% block page_content %}
+<!-- This form handles the creation of schools in each district.
+The error handling needs to be reviewed for now, it takes the error messaged passed as a dictionary
+from the school view and displays to the user preventing duplicate data entry.
+The form is redirected to the home page of the app when a data is inserted to prevent double insert
+of the same data which is also handled by the error message displayed.
+-->
+<main>
+
+<div class="row">
+  <div class="col-xl-8 col-md-8">
+     <div class="card mb-4">
+                <div class="card-body">
+                    {% if request.POST %}
+                {% if graph_primary %}
+                <img src="data:image/png;base64, {{ graph_primary| safe}}" alt="analysis Image" />
+                {%endif%}
+                {% endif%}
+                </div>
+            </div>
+        </div>
+<div class="col-xl-4 col-md-4">
+     <div class="card mb-4">
+                <div class="card-body">
+                    <label><strong> Summary Statistics for  Student Teacher Ratio: </strong></label>
+                    <p><i>Mean of number of teachers in Primary School: </i><strong>{{ data_primary.total_number_of_teachers.mean | floatformat}}</strong></p>
+                    <p><i>Mean of number of teachers in Secondary School: </i><strong>{{ data_secondary.total_number_of_teachers.mean | floatformat}}</strong></p>
+                     <p><i>Standard deviation of number of teachers in Primary School: </i><strong>{{ data_primary.total_number_of_teachers.std | floatformat}}</strong></p>
+                    <p><i>Standard deviation of teachers in Secondary School: </i><strong>{{ data_secondary.total_number_of_teachers.std | floatformat}}</strong></p>
+                    <p><i>Median Number of Teachers: </i><strong>{{ data_primary.total_number_of_teachers.median | floatformat}}</strong></p>
+                    <p><i>Median Number of Teachers: </i><strong>{{ data_secondary.total_number_of_teachers.median | floatformat}}</strong></p>
+
+
+                    <p><i>Minimum Number of Teachers in Primary School: </i><strong>{{ data_primary.total_number_of_teachers.min | floatformat}}</strong></p>
+                    <p><i>Minimum Number of Teachers in Secondary School: </i><strong>{{ data_secondary.total_number_of_teachers.min | floatformat}}</strong></p>
+
+                    <p><i>Maximum Number of Teachers in Primary School: </i><strong>{{ data_primary.total_number_of_teachers.max | floatformat}}</strong></p>
+                    <p><i>Maximum Number of Teachers in Secondary School: </i><strong>{{ data_secondary.total_number_of_teachers.max | floatformat}}</strong></p>
+                </div>
+     </div>
+</div>
+
+</div>
+
+
+<div class="row">
+  <div class="col-xl-12 col-md-12">
+     <div class="card mb-4">
+                <div class="card-body">
+                    {% if request.POST %}
+                {% if graph_secondary %}
+                <img src="data:image/png;base64, {{ graph_secondary | safe}}" alt="analysis Image" />
+                {%endif%}
+                {% endif%}
+                </div>
+            </div>
+        </div>
+
+</div>
+
+
+
+<div class="row">
+  <div class="col-xl-12 col-md-12">
+     <div class="card mb-4">
+                <div class="card-body">
+                    {% if request.POST %}
+                {% if graph_hist %}
+                <img src="data:image/png;base64, {{ graph_hist | safe}}" alt="analysis Image" />
+                {%endif%}
+                {% endif%}
+                </div>
+            </div>
+        </div>
+
+</div>
+
+
+</main>
+
+
+
+
+
+{% endblock%}

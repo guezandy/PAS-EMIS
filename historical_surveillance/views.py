@@ -1,7 +1,6 @@
 import json
 from django.http.response import HttpResponseRedirect
 from django.urls.base import reverse
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.datetime_safe import date
 from .forms import *
@@ -13,6 +12,7 @@ def cee_results(request):
     data = CEE.objects.all()
     context = {"results": data}
     return render(request, 'cee_results.html', context)
+
 
 def update_cee(request, id=None):
     # Render edit form
@@ -34,7 +34,6 @@ def update_cee(request, id=None):
         "header": "Edit CEE Record" if id else "Create CEE Record", "form": form}
     # context = _add_side_navigation_context(request.user, context)
     return render(request, "historical_form.html", context)
-
 
 
 def csec_results(request):
@@ -441,17 +440,17 @@ def nationalgenderenrollment(request):
     if 'national_enrollment_trend' in request.POST:
         data = pd.DataFrame(NationalGenderEnrollment.objects.values().all())
         data_male_primary = pd.DataFrame(NationalGenderEnrollment.objects. \
-                                         filter(sex='male', category_of_school='primary').all().values())
+                                         filter(sex='males', category_of_school='primary').all().values())
 
-        data_male_secondary = pd.DataFrame(NationalGenderEnrollment.objects.filter(sex='male',
+        data_male_secondary = pd.DataFrame(NationalGenderEnrollment.objects.filter(sex='males',
                                                                                    category_of_school='secondary'). \
                                            all().values())
 
-        data_female_primary = pd.DataFrame(NationalGenderEnrollment.objects.filter(sex='female',
+        data_female_primary = pd.DataFrame(NationalGenderEnrollment.objects.filter(sex='females',
                                                                                    category_of_school='primary'). \
                                            all().values())
 
-        data_female_secondary = pd.DataFrame(NationalGenderEnrollment.objects.filter(sex='female',
+        data_female_secondary = pd.DataFrame(NationalGenderEnrollment.objects.filter(sex='females',
                                                                                      category_of_school='secondary'). \
                                              all().values())
 
@@ -621,6 +620,33 @@ def national_teacher_ratio(request):
                                                               category_of_school=category_of_school).exists():
                 form.save()
             return redirect("/historical/national_teacher_ratio")
+
+        if 'national_ratio_trend' in request.POST:
+            data = pd.DataFrame(
+                NationalStudentTeacherRatio.objects.values().all())
+            data_primary = pd.DataFrame(
+                NationalStudentTeacherRatio.objects.filter(category_of_school='primary').values().all())
+            data_secondary = pd.DataFrame(
+                NationalStudentTeacherRatio.objects.filter(category_of_school='secondary').values().all())
+
+            # function to get the graph
+            # for _ in range(data[data.columns[0]].count()):
+            graph_primary = plot_national_ratio_trend_primary(data_primary=data_primary)
+
+            graph_secondary = plot_national_ratio_trend(data_secondary=data_secondary)
+            graph_hist = national_ratio_hist(data=data)
+            graph_all = {
+                "graph": graph_secondary,
+                "graph_primary": graph_primary,
+                "graph_secondary": graph_secondary,
+                'data_primary': data_primary,
+                'data_secondary': data_secondary,
+                'graph_hist': graph_hist,
+
+            }
+
+        return render(request, "national_teacher_student_ratio.html", graph_all)
+
     context = {"form": form, "ratio_data": data}
     return render(request, "national_teacher_ratio.html", context)
 
@@ -665,7 +691,6 @@ def enrollment_summary(request):
         # function to get the graph
         graph_boys_primary = get_plot_boys_primary(data=data_boys_1)
 
-
         data_girls_1 = df.query("sex=='females' and category_of_school == 'primary'")
         json_records = data_girls_1.reset_index().to_json(orient='records')
         data_girls_primary = json.loads(json_records)
@@ -687,14 +712,14 @@ def enrollment_summary(request):
                             'graph_girls_primary': graph_girls_primary}
         return render(request, 'ger.html', data_all_primary)
     if 'ger_secondary' in request.POST:
-        data_boys_1 = df.query("sex=='male' and category_of_school == 'secondary'")
+        data_boys_1 = df.query("sex=='males' and category_of_school == 'secondary'")
 
         json_records = data_boys_1.reset_index().to_json(orient='records')
         data_boys_secondary = json.loads(json_records)
         # function to get the graph
         graph_boys_secondary = get_plot_boys_secondary(data=data_boys_1)
 
-        data_girls_1 = df.query("sex=='female' and category_of_school == 'secondary'")
+        data_girls_1 = df.query("sex=='females' and category_of_school == 'secondary'")
 
         json_records = data_girls_1.reset_index().to_json(orient='records')
         data_girls_secondary = json.loads(json_records)
@@ -982,6 +1007,7 @@ def district_performance(request):
 
 UNIVERSAL_FIELDS = {'id', 'created_at', 'created_by', 'updated_at', 'updated_by'}
 
+
 # ======================================================================
 # View for box plots at district level
 # ======================================================================
@@ -1094,5 +1120,3 @@ def boxplot_national(request):
     }
 
     return render(request, 'boxplots_national_page.html', stu)
-
-

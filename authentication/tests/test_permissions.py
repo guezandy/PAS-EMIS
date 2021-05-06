@@ -11,7 +11,7 @@ from emis.permissions import (
     get_code,
     get_permissions_by_area,
 )
-from emis.groups import PERMISSIONS_BY_GROUP, TEACHERS_GROUP, build_groups
+from emis.groups import PERMISSIONS_BY_GROUP, ADMIN_GROUP, build_groups
 from helpers.testing.TestCases import create_user_in_group, ViewTestCase
 from authentication.views.sysadmin import create_user
 from helpers.testing.mocks import generate_school
@@ -62,23 +62,23 @@ class GroupPermissionTests(ViewTestCase):
 
     def test_perm_ui_created_user(self):
         """
-        Creates a Teacher through the new user form, and verifies that
+        Creates a school admin through the new user form, and verifies that
         known-applicable and known-unapplicable permissions can be checked
         via user.has_perm and EmisPermission convenience methods.
         """
-        user_name = "teacher"
+        user_name = "school_admin"
 
-        # Determine the position of the TEACHERS_GROUP entry within the combobox
-        teacher_group_pos = list(PERMISSIONS_BY_GROUP.keys()).index(TEACHERS_GROUP) + 1
+        # Determine the position of the ADMIN_GROUP entry within the combobox
+        admin_group_pos = list(PERMISSIONS_BY_GROUP.keys()).index(ADMIN_GROUP) + 1
 
         response = self.client.post(
-            "/auth/sysadmin/users/create/teacher",
+            "/auth/sysadmin/users/create/school_admin",
             data={
                 "username": user_name,
-                "first_name": "teacher",
+                "first_name": "school_admin",
                 "last_name": "test",
-                "email": "teacher@test.com",
-                "groups": [str(teacher_group_pos)],
+                "email": "school_adm@test.com",
+                "groups": [str(admin_group_pos)],
                 "school": self.school.id,
             },
         )
@@ -92,7 +92,7 @@ class GroupPermissionTests(ViewTestCase):
         user.is_active = True
 
         # A teacher should have full permissions to their area granted by group
-        for permission in get_permissions_by_area(EmisPermArea.TEACHING):
+        for permission in get_permissions_by_area(EmisPermArea.SCHOOL_ADMIN):
             self.assertTrue(user.has_perm(permission.get_create_code()))
             self.assertTrue(user.has_perm(permission.get_update_code()))
             self.assertTrue(user.has_perm(permission.get_view_code()))

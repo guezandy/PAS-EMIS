@@ -126,7 +126,7 @@ urlpatterns = [
     path(
         "upload_scores",
         views.upload_scores,
-        name="upload_scores"),
+        name ="upload_scores"),
 
     # Grade 6 national examination
     path(

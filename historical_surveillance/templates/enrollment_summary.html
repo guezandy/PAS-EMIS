@@ -39,7 +39,15 @@
 
                     <form method = "POST" action="">
                          {% csrf_token %}
-                        <input type="submit" name="ger_gdp" class="btn btn-secondary" value="Get GER - Regression" />
+                        <select name = 'feature'>
+                            <option value = '' selected disabled>[choose here]</option>
+                            <option value = 'census'>Census Population</option>
+                            <option value = 'educational_expenditure'>Educational Expenditure</option>
+                            <option value = 'school capacity'>Capacity Surplus</option>
+                        </select>
+
+
+                        <input type="submit" name="ger_gdp" class="btn btn-secondary" value="Enrollment Factors" />
                         <br/><br/>
 
                     </form>

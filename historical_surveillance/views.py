@@ -939,43 +939,45 @@ def district_performance(request):
             if request.POST['submit'] == 'Compare All Districts (CSEC)':
                 chart_title = "CSEC Comparison, All Districts"
                 context['chart_title'] = chart_title
-                data = CSECResults.objects.all()
-                [graph, heatmap] = csec_performance_plot(data, None, None)
+                data = CSEC.objects.all()
+                [graph, heatmap, left_out] = csec_performance_plot(data, None, None)
                 context['graph'] = graph
                 context['heatmap'] = heatmap
                 return render(request, 'district_performance.html', context)
 
-            # Compare CEE between 2 districts
-            district_1 = request.POST.get('district_1_name', False)
-            district_2 = request.POST.get('district_2_name', False)
-            if not (district_1 and district_2) or district_1 == district_2:
-                error_message = "Please select 2 different districts to compare."
-                context['error_message'] = error_message
-                return render(request, 'district_performance.html', context)
             if request.POST['submit'] == 'Compare CEE Results':
-                chart_title = "CEE Comparison, Districts " + district_1 + " and " + district_2
-                context['chart_title'] = chart_title
-                data = PrimaryPerformance.objects.all()
-                [graph, heatmap] = primary_performance_plot(data, int(district_1), int(district_2))
-                context['graph'] = graph
-                context['heatmap'] = heatmap
-                return render(request, 'district_performance.html', context)
+                # Compare CEE between 2 districts
+                district_1 = request.POST.get('district_1_name', False)
+                district_2 = request.POST.get('district_2_name', False)
+                if not (district_1 and district_2) or district_1 == district_2:
+                    error_message = "Please select 2 different districts to compare."
+                    context['error_message'] = error_message
+                    return render(request, 'district_performance.html', context)
+                else:
+                    chart_title = "CEE Comparison, Districts " + district_1 + " and " + district_2
+                    context['chart_title'] = chart_title
+                    data = PrimaryPerformance.objects.all()
+                    [graph, heatmap] = primary_performance_plot(data, int(district_1), int(district_2))
+                    context['graph'] = graph
+                    context['heatmap'] = heatmap
+                    return render(request, 'district_performance.html', context)
 
-            # Compare CSEC between 2 districts
-            district_3 = request.POST.get('district_3_name', False)
-            district_4 = request.POST.get('district_4_name', False)
-            if not (district_3 and district_4) or district_3 == district_4:
-                error_message = "Please select 2 different districts to compare."
-                context['error_message'] = error_message
-                return render(request, 'district_performance.html', context)
             if request.POST['submit'] == 'Compare CSEC Results':
-                chart_title = "CSEC Comparison, Districts " + district_3 + " and " + district_4
-                context['chart_title'] = chart_title
-                data = CSECResults.objects.all()
-                [graph, heatmap] = csec_performance_plot(data, int(district_3), int(district_4))
-                context['graph'] = graph
-                context['heatmap'] = heatmap
-                return render(request, 'district_performance.html', context)
+                # Compare CSEC between 2 districts
+                district_3 = request.POST.get('district_3_name', False)
+                district_4 = request.POST.get('district_4_name', False)
+                if not (district_3 and district_4) or district_3 == district_4:
+                    error_message = "Please select 2 different districts to compare."
+                    context['error_message'] = error_message
+                    return render(request, 'district_performance.html', context)
+                if request.POST['submit'] == 'Compare CSEC Results':
+                    chart_title = "CSEC Comparison, Districts " + district_3 + " and " + district_4
+                    context['chart_title'] = chart_title
+                    data = CSEC.objects.all()
+                    [graph, heatmap, left_out] = csec_performance_plot(data, int(district_3), int(district_4))
+                    context['graph'] = graph
+                    context['heatmap'] = heatmap
+                    return render(request, 'district_performance.html', context)
         else:
             return render(request, 'district_performance.html', context)
 

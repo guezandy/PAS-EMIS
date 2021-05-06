@@ -535,18 +535,13 @@ def primary_performance_plot(data, district_1, district_2):
     heatmap = get_image()
     return [graph, heatmap]
 
-def clean_secondary_name(name):
-    name = re.sub("[^a-zA-Z]+", "", name)
-    name = name.lower().replace('secondary', "")
-    name = name.replace('school', "")
-    return ' '.join(name.split())
 
-def match_name(name, schools, district_dict):
+def get_district(school_code, schools, district_dict):
     for school in schools:
-        if clean_secondary_name(name) == clean_secondary_name(getattr(school, 'school_name')):
-            district_code = getattr(school, 'district_name_id')
-            district_dict[name] = district_code
-            return district_code
+        if int(getattr(school, 'school_code')) == school_code:
+            district = getattr(school, 'district_name_id')
+            district_dict[school_code] = district
+            return district
     return None
 
 def csec_performance_plot(data, district_1, district_2):
@@ -554,12 +549,12 @@ def csec_performance_plot(data, district_1, district_2):
 
     df = pd.DataFrame(data.values())
     plt.switch_backend('AGG')
-    years = [extract_year(ys) for ys in df['EXAM_PERIOD'].drop_duplicates()]
-    years = [int(y) for y in years]
+    years = [int(y) for y in df['year'].drop_duplicates()]
     years.sort()
     min_year = min(years)
 
-    schools = School.objects.filter(category_of_school='public secondary')
+    schools = School.objects.all()
+    # schools = School.objects.filter(category_of_school='public secondary')
     
     N_DISTRICTS=District.objects.count()
     scores = np.zeros((len(years), N_DISTRICTS))
@@ -570,17 +565,17 @@ def csec_performance_plot(data, district_1, district_2):
     district_dict = {}
 
     for index, row in df.iterrows():
-        name = row['SCHOOL']
-        if name in district_dict:
-            district = district_dict[name]
+        school_code = int(row['school_id'])
+        if school_code in district_dict:
+            district = district_dict[school_code]
         else:
-            district = match_name(name, schools, district_dict)
+            district = get_district(school_code, schools, district_dict)
         if not district:
-            left_out.add(row['SCHOOL'])
+            left_out.add(row['school_id'])
             continue
-        year = int(extract_year(row['EXAM_PERIOD'])) - min_year
+        year = int(row['year']) - min_year
         n_tests[year][district-1] += 1
-        score = row['OVERALL_GRADE']
+        score = row['overall_grade']
         if score=='I' or score=='II' or score=='III':
             scores[year][district-1] += 1
 
@@ -609,64 +604,6 @@ def csec_performance_plot(data, district_1, district_2):
     plt.tight_layout()
     heatmap = get_image()
     return [graph, heatmap, left_out]
-
-def extract_year(period):
-    year_string = re.findall(r'\d+', period)
-    return year_string[0]
-
-def store_scores(data, required_fields, user_data, type):
-    result = {}
-    lines = data.replace("\r", "").split("\n")
-    field_names = lines[0].split(",")
-    if not set(required_fields).issubset(set(field_names)):
-        diff = set(required_fields) - set(field_names)
-        missing_fields = []
-        for d in diff:
-            missing_fields.append(d)
-        result['missing_fields'] = missing_fields
-        result['error_message'] = 'The following fields are missing:\n'
-        result['n_scores'] = 0
-    else:
-        succeeded = 0
-        failed = 0
-        for line in lines[1:]:
-            if line:
-                fields = line.split(",")
-                data = {}
-                for required_field in required_fields:
-                    data[required_field] = fields[field_names.index(required_field)]
-                data = {**data, **user_data}
-                if type == "CEE":
-                    form = CEEForm(data)
-                if type == "CSEC":
-                    form = CSECForm(data)
-                if form.is_valid():
-                    form.save()
-                    succeeded += 1
-                else:
-                    failed += 1
-        result['n_scores'] = succeeded
-        result['failed'] = failed
-    return result
-
-import base64
-import re
-from io import BytesIO
-import matplotlib.pyplot as plt
-import numpy as np
-import seaborn as sns
-from numpy import mean, std
-from pandas import to_numeric
-from sklearn.linear_model import LinearRegression
-from .models import School
-from .models import District
-
-from .forms import CSECForm
-from .forms import CEEForm
-
-import numpy as np
-import pandas as pd
-
 
 def get_image() -> object:
     # create a byte buffer for the image to save
@@ -1466,11 +1403,6 @@ def primary_performance_plot(data, district_1, district_2):
     plt.tight_layout()
     heatmap = get_image()
     return [graph, heatmap]
-
-
-def extract_year(period):
-    year_string = re.findall(r'\d+', period)
-    return year_string[0]
 
 def get_sex(character):
     if character == "F":

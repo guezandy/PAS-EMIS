@@ -67,9 +67,30 @@ def update_csec(request, id=None):
 
 # This is the examination Analysis
 def examination_summary(request):
-    cee_data = CEE.objects.values().all()
-    context = {'d': cee_data,
+    cee_data = pd.DataFrame(CEE.objects.values().all())
+    csec_data = pd.DataFrame(CSEC.objects.values().all())
+    corv = csec_data[['subject', 'proficiency', 'profile1', 'profile2', 'profile3', 'profile4', 'overall_grade']]
+    #graph = covariance(corv=corv)
+    context = {'d': cee_data.to_html(),
+               'summary_age' : cee_data[['age_at_test']].describe().to_html(),
+               'summary_engcomp': cee_data[['engcomp']].astype(int).describe().to_html(),
+               'summary_mathcomp': cee_data[['mathcomp']].astype(int).describe().to_html(),
+               'summary_gpcomp': cee_data[['gpcomp']].astype(int).describe().to_html(),
+               'summary_totcomp': cee_data[['totcomp']].astype(float).describe().to_html(),
+               'summary_sex': cee_data[['sex']].describe().to_html(),
+               'score_corr': cee_data[['engcomp', 'mathcomp', 'gpcomp', 'totcomp']].astype(float).corr().to_html(),
+               'summary_sex_secondary': csec_data[['sex']].describe().to_html(),
+               'summary_subject_secondary': csec_data[['subject']].describe().to_html(),
+               'summary_proficiency_secondary': csec_data[['proficiency']].describe().to_html(),
+               'summary_profile1_secondary': csec_data[['profile1']].describe().to_html(),
+               'summary_profile2_secondary': csec_data[['profile2']].describe().to_html(),
+               'summary_profile3_secondary': csec_data[['profile3']].describe().to_html(),
+               'summary_profile4_secondary': csec_data[['profile4']].describe().to_html(),
+               #'graph' : graph,
+
+
                }
+
     return render(request, 'examination_summary.html', context)
 
 

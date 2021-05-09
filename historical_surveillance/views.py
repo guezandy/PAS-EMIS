@@ -1,13 +1,31 @@
+from historical_surveillance.tables import AggregateEnrollmentTable, AggregateEnrollmentFilter
 import json
 from django.http.response import HttpResponseRedirect
 from django.urls.base import reverse
-
+from django_tables2 import RequestConfig
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.datetime_safe import date
 from .forms import *
 from .models import *
 from .utils import *
 
+from django_filters.views import FilterView
+from django_tables2.views import SingleTableMixin
+from django_tables2.export import ExportMixin
+
+
+class FilteredAggregateEnrollmentListView(ExportMixin, SingleTableMixin, FilterView):
+    table_class = AggregateEnrollmentTable
+    model = AggregateEnrollment
+    template_name = "data_list.html"
+    filterset_class = AggregateEnrollmentFilter
+    table_pagination = {
+        "per_page": 10
+    }
+    extra_context={"listTitle": "Aggregate Enrollment", 
+    "createButtonName": "Add Record", 
+    "createViewName": "surveillance:create-aggregate-enrollment",
+    "export_formats":["csv"]}
 
 def cee_results(request):
     data = CEE.objects.all()

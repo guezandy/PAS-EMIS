@@ -43,7 +43,7 @@ urlpatterns = [
 
     # Enrollment/Capacity page
     # for the enrollment/capacity page
-    path("aggregate-enrollments", views.aggregate_enrollment, name="aggregate-enrollments"),
+    path("aggregate-enrollments", views.FilteredAggregateEnrollmentListView.as_view(), name="aggregate-enrollments"),
     # to update the enrollment / capacity
     path(
         "aggregate-enrollments/<int:code>",

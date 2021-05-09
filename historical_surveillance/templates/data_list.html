@@ -1,0 +1,136 @@
+{% extends "base.html" %} {% load crispy_forms_filters %} {% load crispy_forms_tags %}{% load render_table from django_tables2 %} 
+{% load export_url from django_tables2 %} 
+{% block page_content %}
+<!-- This form handles the creation of schools in each district.
+The error handling needs to be reviewed for now, it takes the error messaged passed as a dictionary
+from the school view and displays to the user preventing duplicate data entry.
+The form is redirected to the home page of the app when a data is inserted to prevent double insert
+of the same data which is also handled by the error message displayed.
+-->
+<main>
+  <div class="row mb-2">
+    <div class="col-md-6">
+      <h1>{{listTitle}}</h1>
+    </div>
+    <div class="col-md-6 action-button-group">
+        <a href="{% url createViewName %}">
+            <button type="button" class="btn btn-success mb-2">
+                <i class="fa fa-plus" aria-hidden="true"></i> {{createButtonName}}
+            </button>
+        </a>
+        {% for format in export_formats %}
+        <a href="{% export_url format %}">
+            <button type="button" class="btn btn-secondary mb-2 mr-3">
+                <i class="fa fa-download" aria-hidden="true"></i> Export All Data ({{format}})
+            </button>
+        </a>
+        {% endfor %}
+    </div>
+  </div>
+
+<a class="text-muted" id="show-filter-btn" role="button" aria-expanded="true" aria-controls="filter-form" >
+    Show Filters <i class="fa fa-chevron-down" aria-hidden="true"></i>
+</a>
+<a class="text-muted" id="hide-filter-btn" role="button" aria-expanded="false" aria-controls="filter-form" style="display:none">
+    Hide Filters  <i class="fa fa-chevron-up" aria-hidden="true"></i>
+</a>
+<div class="filter-form mb-3" id="filters" style="display:none">
+  <div class="card card-body">
+   <div class="row my-3">
+    <div class="col-md-12">
+      {% if filter %}
+      <form method="get" class="form">
+       {{ filter.form | crispy }}
+       <div style="display:none">
+        <label>Show Filter: </label> <input id="show-filter-checkbox" type="checkbox" name="show_filter" value="true"/>
+        </div>
+        <button type="submit" class="btn btn-secondary"><i class="fa fa-filter" aria-hidden="true"></i> Filter Data</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+  </div>
+</div>
+  
+
+  <div class="row mt-2">
+    <div class="col-md-12">{% render_table table %}</div>
+  </div>
+</main>
+<script>
+
+$(document).ready(function(){
+    var getUrlParameter = function getUrlParameter(sParam) {
+    var sPageURL = window.location.search.substring(1),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return typeof sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+        }
+    }
+    return false;
+};
+
+    var toggleFiltersByParams = function (){
+        if(getUrlParameter("show_filter") === 'true'){
+                $("#filters").show();
+                $("#show-filter-btn").hide();
+                $("#hide-filter-btn").show();
+                $("#show-filter-checkbox").attr('checked', true);
+            }
+            else{
+                $("#filters").hide();
+                $("#show-filter-btn").show();
+                $("#hide-filter-btn").hide();
+                 $("#show-filter-checkbox").attr('checked', false);
+            }
+    }
+
+   
+    $("#show-filter-btn").on('click',function(){
+        var url = window.location.href;
+
+        if(getUrlParameter('show_filter')){
+             url = url.toString().replace('show_filter=false','show_filter=true');
+        }
+        else{
+            if (url.indexOf('?') > -1){
+                url += '&show_filter=true'
+            }else{
+                url += '?show_filter=true'
+            }
+        }
+       
+        window.location.href = url;
+    });
+
+     $("#hide-filter-btn").on('click',function(){
+        var url = window.location.href;
+ 
+       if(getUrlParameter('show_filter')){
+            url = url.toString().replace('show_filter=true','show_filter=false');
+        }
+        else{
+            if (url.indexOf('?') > -1){
+                url += '&show_filter=false'
+            }else{
+                url += '?show_filter=false'
+            }
+        }
+
+         window.location.href = url;
+    });
+
+    toggleFiltersByParams();
+
+
+    
+   
+});
+</script>
+{% endblock%}

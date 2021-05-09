@@ -9,10 +9,10 @@ of the same data which is also handled by the error message displayed.
 -->
 <main>
   <div class="row mb-2">
-    <div class="col-md-6">
+    <div class="col-12 col-lg-8">
       <h1>{{listTitle}}</h1>
     </div>
-    <div class="col-md-6 action-button-group">
+    <div class="col-12 col-lg-4 action-button-group">
         <a href="{% url createViewName %}">
             <button type="button" class="btn btn-success mb-2">
                 <i class="fa fa-plus" aria-hidden="true"></i> {{createButtonName}}
@@ -37,7 +37,7 @@ of the same data which is also handled by the error message displayed.
 <div class="filter-form mb-3" id="filters" style="display:none">
   <div class="card card-body">
    <div class="row my-3">
-    <div class="col-md-12">
+    <div class="col-12">
       {% if filter %}
       <form method="get" class="form">
        {{ filter.form | crispy }}
@@ -54,7 +54,7 @@ of the same data which is also handled by the error message displayed.
   
 
   <div class="row mt-2">
-    <div class="col-md-12">{% render_table table %}</div>
+    <div class="col-12">{% render_table table %}</div>
   </div>
 </main>
 <script>

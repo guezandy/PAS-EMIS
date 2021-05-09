@@ -22,7 +22,7 @@ class FilteredAggregateEnrollmentListView(ExportMixin, SingleTableMixin, FilterV
     table_pagination = {
         "per_page": 10
     }
-    extra_context={"listTitle": "Aggregate Enrollment", 
+    extra_context={"listTitle": "National Enrollment and School Capacity", 
     "createButtonName": "Add Record", 
     "createViewName": "surveillance:create-aggregate-enrollment",
     "export_formats":["csv"]}
@@ -210,7 +210,7 @@ def update_aggregate_enrollment(request, code=None):
             model_instance.save()
             return HttpResponseRedirect(reverse("surveillance:aggregate-enrollments"))
     context = {
-        "header": "Edit Aggregate Enrollment" if code else "Add Aggregate Enrollment Record", "form": form}
+        "header": "Edit National Enrollment and School Capacity" if code else "Add National Enrollment and School Capacity", "form": form}
     return render(request, 'historical_form.html', context)
 
 

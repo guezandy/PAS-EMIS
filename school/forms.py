@@ -18,9 +18,10 @@ class DistrictForm(forms.ModelForm):
     class Meta:
         model = District
         fields = ["district_name", "district_code"]
+
     helper = FormHelper()
-    helper.add_input(Submit('submit', 'Submit', css_class='btn-primary'))
-    helper.form_method = 'POST'
+    helper.add_input(Submit("submit", "Submit", css_class="btn-primary"))
+    helper.form_method = "POST"
 
 
 class SchoolForm(forms.ModelForm):
@@ -31,9 +32,10 @@ class SchoolForm(forms.ModelForm):
             "created_by": TextInput(attrs={"readonly": "readonly"}),
             "updated_by": TextInput(attrs={"readonly": "readonly"}),
         }
+
     helper = FormHelper()
-    helper.add_input(Submit('submit', 'Submit', css_class='btn-primary'))
-    helper.form_method = 'POST'
+    helper.add_input(Submit("submit", "Submit", css_class="btn-primary"))
+    helper.form_method = "POST"
 
 
 class StudentForm(forms.ModelForm):
@@ -52,6 +54,10 @@ class StudentForm(forms.ModelForm):
             "clubs_or_sports": "Please list any clubs or sports teams your child belongs to",
             "improvements_requested": "What academic improvements would you like to see in your child by the end of the first term",
             "school_expectations": "Expectations of school",
+            "device_access": "Does the child have access to a device?",
+            "is_device_personal": "Is the device the child's personal device?",
+            "steady_internet": "Does the child have access  steady internet connection?",
+            "type_of_device": "Type of device the child has",
         }
         widgets = {
             "date_of_birth": TextInput(attrs={"type": "date"}),
@@ -87,6 +93,7 @@ class StudentForm(forms.ModelForm):
             "last_school_attended",
             "school",
             "graduation_year",
+            HTML("<h5>Parent/Guardian</h5>"),
             "father_name",
             Row(
                 Column("father_work_telephone", css_class="form-group col-md-4 mb-0"),
@@ -123,6 +130,7 @@ class StudentForm(forms.ModelForm):
                 Column("guardian_home_address", css_class="form-group col-md-4 mb-0"),
                 css_class="form-row",
             ),
+            HTML("<h5>Medical Information</h5>"),
             Row(
                 Column("doctor_name", css_class="form-group col-md-4 mb-0"),
                 Column("doctor_contact", css_class="form-group col-md-4 mb-0"),
@@ -134,6 +142,17 @@ class StudentForm(forms.ModelForm):
                 Column("dietary_requirements", css_class="form-group col-md-4 mb-0"),
                 css_class="form-row",
             ),
+            HTML("<h5>Device information</h5>"),
+            Row(
+                Column("device_access", css_class="form-group col-md-4 mb-0"),
+                Column("type_of_device", css_class="form-group col-md-4 mb-0"),
+                css_class="form-row",
+            ),
+            Row(
+                Column("is_device_personal", css_class="form-group col-md-4 mb-0"),
+                Column("steady_internet", css_class="form-group col-md-4 mb-0"),
+                css_class="form-row",
+            ),
             "home_supervision",
             "parent_help",
             "discipline_history",
@@ -142,7 +161,7 @@ class StudentForm(forms.ModelForm):
             "clubs_or_sports",
             "improvements_requested",
             "school_expectations",
-            Submit('submit', 'Submit')
+            Submit("submit", "Submit"),
         )
 
 
@@ -151,9 +170,10 @@ class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
         fields = "__all__"
+
     helper = FormHelper()
-    helper.add_input(Submit('submit', 'Submit', css_class='btn-primary'))
-    helper.form_method = 'POST'
+    helper.add_input(Submit("submit", "Submit", css_class="btn-primary"))
+    helper.form_method = "POST"
 
 
 class CourseOutcomeForm(forms.ModelForm):
@@ -163,9 +183,10 @@ class CourseOutcomeForm(forms.ModelForm):
         widgets = {
             "notes": Textarea(attrs={"rows": 3, "cols": 20}),
         }
+
     helper = FormHelper()
-    helper.add_input(Submit('submit', 'Submit', css_class='btn-primary'))
-    helper.form_method = 'POST'
+    helper.add_input(Submit("submit", "Submit", css_class="btn-primary"))
+    helper.form_method = "POST"
 
 
 class PrincipalForm(forms.ModelForm):
@@ -199,7 +220,7 @@ class PrincipalForm(forms.ModelForm):
             "sex",
             "date_of_birth",
             "qualifications",
-            Submit('submit', 'Submit')
+            Submit("submit", "Submit"),
         )
 
 
@@ -530,7 +551,7 @@ class PrincipalAppraisalForm(forms.ModelForm):
             "principals_comments",
             "district_education_officer_comments",
             "chief_education_officer_comments",
-            Submit('submit', 'Submit')
+            Submit("submit", "Submit"),
         )
 
 
@@ -810,5 +831,5 @@ class TeacherAppraisalForm(forms.ModelForm):
             "teacher_comments",
             "district_officer_comments",
             "district_officer_recommendations",
-            Submit('submit', 'Submit')
+            Submit("submit", "Submit"),
         )

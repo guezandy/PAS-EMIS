@@ -18,13 +18,20 @@
                         <tr>
                             <th style="width: 30%">Service name</th>
                             <th style="width: 70%">Description</th>
+                            {% if can_edit_service_defs %}
+                            <th></th>
+                            {% endif %}
                         </tr>
                     </thead>
                     <tbody>
                         {% for service in services %}
-                        <tr class='clickable-row' data-href="/welfare/edit_service/{{service.id}}">
+                        <tr>
                             <td style="width: 30%">{{service.name}}</td>
                             <td style="width: 70%">{{service.description}}</td>
+                            {% if can_edit_service_defs %}
+                            <td><a href="/welfare/edit_service/{{service.id}}"><button type="button"
+                                class="btn btn-primary mb-2">Edit</button></a></td>
+                            {% endif %}
                         </tr>
                         {% endfor %}
                     </tbody>

@@ -194,7 +194,7 @@ def single_school_view(request, code):
         "teacher_count": Teacher.objects.filter(school=school).count(),
         "student_count": Student.objects.filter(school=school).count(),
         "course_count": Course.objects.filter(school=school).count(),
-        "enrollment": Student.objects.all()
+        "enrollment": Student.objects.filter(school=school)
         .values("graduation_year")
         .annotate(student_count=Count("graduation_year"))
         .order_by("graduation_year"),

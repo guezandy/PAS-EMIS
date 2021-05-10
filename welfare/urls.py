@@ -15,6 +15,6 @@ urlpatterns = [
     path("student/<int:code>", views.student_view, name="welfare_student"),
     path("student/<int:student_code>/add_service", views.student_service_form,
           name="add_student_service"),
-    path("student/<int:student_code>/edit_service/<int:service_code>",
+    path("student/<int:student_code>/edit_service/<int:assoc_id>",
          views.student_service_form, name="edit_student_service"),
 ]

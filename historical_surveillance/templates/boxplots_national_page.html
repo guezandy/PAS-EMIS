@@ -6,54 +6,52 @@
 <main>
     <div class="row">
 
-        <div class="col-xl-12 col-md-12">
-            <div class="card bg-secondary text-white mb-4">
-                <div class="card-body">Box Plot / National Enrollment <br />
-                    <h1 class="text-info">{% if error_message %} {{ error_message }} {% endif%}</h1>
-                </div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    {% if request.POST %}
-                    {% if graph %}
+          <div class="col-xl-4 col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">Box Plot National<br />
 
-                    <img src="data:image/png;base64, {{ graph | safe}}" alt="analysis Image" />
-                    
-                    {%endif%}
+                    {% if error_message %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        {{ error_message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
+                    </div>
                     {% endif%}
-
                     <form action="" method="POST">
                         {% csrf_token %}
-                        <div class="form-row">
 
-                            <div class="col-md-6">
                                 <label class="small mb-1" for="school">Select school type</label>
-                                <select name="school_type" id="school_type" required>
+                                <select name="school_type" id="school_type" required class ='form-control'>
                                     <option value="" selected>[Choose Here]</option>
                                     {% for item in school_list %}
                                     <option value="{{ item }}">{{ item }}</option>
                                     {% endfor %}
                                 </select>
-                            </div>
-                            
-                            <div class="col-md-4">
+
                                 <label class="small mb-1" for="year">Academic year</label>
-                                <select name="year" id="year" required>
+                                <select name="year" id="year" required class = 'form-control'>
                                     <option value="" selected>[Choose Here]</option>
                                     {% for item in year_list %}
                                     <option value="{{ item }}">{{ item}}</option>
                                     {% endfor %}
                                 </select>
-                            </div>
 
-
-                            
-
-
-                        </div>
                         <br /><input type="submit" name="submit" class="btn btn-primary" value="Submit" />
                     </form>
                 </div>
             </div>
         </div>
+   <div class="col-xl-8 col-md-8">
+            <div class="card-body d-flex align-items-center justify-content-between">
+               {% if request.POST %}
+                    {% if graph %}
+                    <img src="data:image/png;base64, {{ graph| safe}}" alt="No record found" />
+                    {%endif%}
+                    {% endif%}
+
+            </div>
+    </div>
+
+
     </div>
 
 

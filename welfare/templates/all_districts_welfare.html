@@ -3,41 +3,39 @@
 <h1>All Districts</h1>
 {% endblock %}
 {% block table_details %}
-<table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0">
-    <thead>
-        <tr>
-            <th class="align-middle">District code</th>
-            <th class="align-middle">District name</th>
-            <th class="align-middle">Students</th>
-            <th class="align-middle">Girls</th>
-            <th class="align-middle">Boys</th>
-            <th class="align-middle">Students w/ services</th>
-            <th class="align-middle">%</th>
-            <th class="align-middle">Girls w/ services</th>
-            <th class="align-middle">%</th>
-            <th class="align-middle">Boys w/ services</th>
-            <th class="align-middle">%</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for district in districts %}
-        <tr>
-            <td>{{district.district_code}}</td>
-            <td>{{district.district_name}}</td>
-            <td>{{district.student_count}}</td>
-            <td>{{district.girl_count}}</td>
-            <td>{{district.boy_count}}</td>
-            <td>{{district.students_with_services_count}}</td>
-            <td>{{district.students_with_services_percent|stringformat:".1f"}}</td>
-            <td>{{district.girls_with_services_count}}</td>
-            <td>{{district.girls_with_services_percent|stringformat:".1f"}}</td>
-            <td>{{district.boys_with_services_count}}</td>
-            <td>{{district.boys_with_services_percent|stringformat:".1f"}}</td>
-            <td><a href="/welfare/district/{{district.district_code}}"><button type="button"
-                class="btn btn-primary mb-2">Details</button></a></td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<thead>
+    <tr>
+        <th class="align-middle">District code</th>
+        <th class="align-middle">District name</th>
+        <th class="align-middle">Students</th>
+        <th class="align-middle">Girls</th>
+        <th class="align-middle">Boys</th>
+        <th class="align-middle">Students w/ services</th>
+        <th class="align-middle">%</th>
+        <th class="align-middle">Girls w/ services</th>
+        <th class="align-middle">%</th>
+        <th class="align-middle">Boys w/ services</th>
+        <th class="align-middle">%</th>
+        <th></th>
+    </tr>
+</thead>
+<tbody>
+    {% for district in districts %}
+    <tr>
+        <td>{{district.district_code}}</td>
+        <td>{{district.district_name}}</td>
+        <td>{{district.student_count}}</td>
+        <td>{{district.girl_count}}</td>
+        <td>{{district.boy_count}}</td>
+        <td>{{district.students_with_services_count}}</td>
+        <td>{{district.students_with_services_percent|stringformat:".1f"}}</td>
+        <td>{{district.girls_with_services_count}}</td>
+        <td>{{district.girls_with_services_percent|stringformat:".1f"}}</td>
+        <td>{{district.boys_with_services_count}}</td>
+        <td>{{district.boys_with_services_percent|stringformat:".1f"}}</td>
+        <td><a href="/welfare/district/{{district.district_code}}"><button type="button"
+            class="btn btn-primary mb-2">Details</button></a></td>
+    </tr>
+    {% endfor %}
+</tbody>
 {% endblock table_details %}

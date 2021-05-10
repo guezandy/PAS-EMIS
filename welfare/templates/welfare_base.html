@@ -87,7 +87,9 @@
         <div class="card-header">Per-{{breakdown_topic}} Breakdown</div>
         <div class="card-body">
             <div class="table-responsive">
-            {% block table_details %}{% endblock %}
+                <table class="table table-bordered dataTable" id="detailTable" width="100%" cellspacing="0">
+                    {% block table_details %}{% endblock %}
+                </table>
             </div>
         </div>
     </div>

@@ -3,41 +3,39 @@
 <h1>{{district_name}}</h1>
 {% endblock %}
 {% block table_details %}
-<table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0">
-    <thead>
-        <tr>
-            <th class="align-middle">School code</th>
-            <th class="align-middle">School name</th>
-            <th class="align-middle">Students</th>
-            <th class="align-middle">Girls</th>
-            <th class="align-middle">Boys</th>
-            <th class="align-middle">Students w/ services</th>
-            <th class="align-middle">%</th>
-            <th class="align-middle">Girls w/ services</th>
-            <th class="align-middle">%</th>
-            <th class="align-middle">Boys w/ services</th>
-            <th class="align-middle">%</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for school in schools %}
-        <tr>
-            <td>{{school.school_code}}</td>
-            <td>{{school.school_name}}</td>
-            <td>{{school.student_count}}</td>
-            <td>{{school.girl_count}}</td>
-            <td>{{school.boy_count}}</td>
-            <td>{{school.students_with_services_count}}</td>
-            <td>{{school.students_with_services_percent|stringformat:".1f"}}</td>
-            <td>{{school.girls_with_services_count}}</td>
-            <td>{{school.girls_with_services_percent|stringformat:".1f"}}</td>
-            <td>{{school.boys_with_services_count}}</td>
-            <td>{{school.boys_with_services_percent|stringformat:".1f"}}</td>
-            <td><a href="/welfare/school/{{school.school_code}}"><button type="button"
-                class="btn btn-primary mb-2">Details</button></a></td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<thead>
+    <tr>
+        <th class="align-middle">School code</th>
+        <th class="align-middle">School name</th>
+        <th class="align-middle">Students</th>
+        <th class="align-middle">Girls</th>
+        <th class="align-middle">Boys</th>
+        <th class="align-middle">Students w/ services</th>
+        <th class="align-middle">%</th>
+        <th class="align-middle">Girls w/ services</th>
+        <th class="align-middle">%</th>
+        <th class="align-middle">Boys w/ services</th>
+        <th class="align-middle">%</th>
+        <th></th>
+    </tr>
+</thead>
+<tbody>
+    {% for school in schools %}
+    <tr>
+        <td>{{school.school_code}}</td>
+        <td>{{school.school_name}}</td>
+        <td>{{school.student_count}}</td>
+        <td>{{school.girl_count}}</td>
+        <td>{{school.boy_count}}</td>
+        <td>{{school.students_with_services_count}}</td>
+        <td>{{school.students_with_services_percent|stringformat:".1f"}}</td>
+        <td>{{school.girls_with_services_count}}</td>
+        <td>{{school.girls_with_services_percent|stringformat:".1f"}}</td>
+        <td>{{school.boys_with_services_count}}</td>
+        <td>{{school.boys_with_services_percent|stringformat:".1f"}}</td>
+        <td><a href="/welfare/school/{{school.school_code}}"><button type="button"
+            class="btn btn-primary mb-2">Details</button></a></td>
+    </tr>
+    {% endfor %}
+</tbody>
 {% endblock table_details %}

@@ -1,23 +1,17 @@
 import base64
 from io import BytesIO
-
 import matplotlib.pyplot as plt
-import numpy as np
 import seaborn as sns
 import re
-
 from numpy import mean, std
 from sklearn.linear_model import LinearRegression
-from .models import School
-from .models import District
-from .models import CSEC
-
-from .forms import CSECForm
-from .forms import CEEForm
-
+from .models import *
+from .forms import *
 import numpy as np
 import pandas as pd
 
+
+# function to get the Image and plot
 
 def get_image() -> object:
     # create a byte buffer for the image to save
@@ -36,139 +30,7 @@ def get_image() -> object:
     return graph
 
 
-def get_grade_plot(**kwargs):
-    plt.switch_backend('AGG')
-    # the enrollment
-    x = kwargs.get('x')
-    # year = the academic year
-    year = kwargs.get('academic_year')
-    # the grade
-    z = kwargs.get('z')
-
-    school_name = kwargs.get('name_of_school')
-    fig, ax = plt.subplots(figsize=(10, 8))
-    ax.bar(z, x, width=0.40, color='g', label='if data exist by gender,bottom values ='
-                                              ' female enrollment, one value (male = female)'
-           , alpha=0.5)
-    ax.set_ylabel("Enrollment / Grade / Sex")
-
-    for tick in ax.xaxis.get_major_ticks():
-        tick.label.set_fontsize(14)
-        # specify integer or one of preset strings, e.g.
-        # tick.label.set_fontsize('x-small')
-        tick.label.set_rotation('vertical')
-    for bar in ax.patches:
-        # Using Matplotlib annotate function and
-        # passing the coordinates where the annotation shall be done
-        # x-coordinate: bar.get_x() + bar.get_width() / 2
-        # y-coordinate: bar.get_height()
-        # free space to be left to make graph pleasing: (0, 8)
-        # ha and va stand for the horizontal and vertical alignment
-        plt.annotate(format(bar.get_height(), '.2f'),
-                     (bar.get_x() + bar.get_width() / 2,
-                      bar.get_height()), ha='center', va='center',
-                     size=7, xytext=(0, 5),
-                     textcoords='offset points')
-        school_title = School.objects.filter(id=school_name).distinct().values_list('school_name', flat=True)
-        school_name_title = school_title[0]
-        plt.title("Enrollment for " + school_name_title + " - Academic Year " + year)
-        plt.xlabel('Grades')
-        ax.set_ylim([0, max(x) + 12])
-
-        ax.legend()
-    plt.tight_layout()
-    # plt.grid()
-    graph = get_image()
-    return graph
-
-
-def get_district_grade_plot(**kwargs):
-    plt.switch_backend('AGG')
-    # the enrollment
-    x = kwargs.get('x')
-    # year = the academic year
-    academic_year = kwargs.get('academic_year')
-    # the grade
-    z = kwargs.get('z')
-    school = kwargs.get('name_of_school')
-    district = kwargs.get('district')
-    fig, ax = plt.subplots(figsize=(12, 10))
-    ax.bar(school, x, width=0.40, color='g', label='if data exist by gender,bottom values ='
-                                                   ' female enrollment, one value (male = female)'
-           , alpha=0.5)
-    ax.set_ylabel("District Enrollment / Grade / Sex")
-
-    for tick in ax.xaxis.get_major_ticks():
-        tick.label.set_fontsize(14)
-        # specify integer or one of preset strings, e.g.
-        # tick.label.set_fontsize('x-small')
-        tick.label.set_rotation('vertical')
-    for bar in ax.patches:
-        # Using Matplotlib annotate function and
-        # passing the coordinates where the annotation shall be done
-        # x-coordinate: bar.get_x() + bar.get_width() / 2
-        # y-coordinate: bar.get_height()
-        # free space to be left to make graph pleasing: (0, 8)
-        # ha and va stand for the horizontal and vertical alignment
-        plt.annotate(format(bar.get_height(), '.2f'),
-                     (bar.get_x() + bar.get_width() / 2,
-                      bar.get_height()), ha='center', va='center',
-                     size=7, xytext=(0, 5),
-                     textcoords='offset points')
-        plt.title(
-            "Enrollment/School for Grade " + z + " for the academic year " + academic_year +
-            " of district  " + district)
-
-    plt.legend()
-    plt.xlabel('School')
-    ax.set_ylim([0, max(x) + 10])
-
-    plt.tight_layout()
-    graph = get_image()
-    return graph
-
-
-def get_pairs(**kwargs):
-    plt.switch_backend('AGG')
-    # total enrollment
-    x = kwargs.get('x')
-    # y = capacity of school
-    y = kwargs.get('y')
-    # selected year
-
-    year = kwargs.get('academic_year')
-    school = kwargs.get('name_of_school')
-    district = kwargs.get('district_name')
-    fig, ax = plt.subplots(figsize=(16, 8))
-    ax.bar(school, y, width=0.50, color='b', label='capacity of school', alpha=0.5)
-    ax.bar(school, x, width=0.25, color='g', label='total enrollment')
-    ax.set_ylabel("Total Enrollment / Capacity")
-    for tick in ax.xaxis.get_major_ticks():
-        tick.label.set_fontsize(14)
-        # specify integer or one of preset strings, e.g.
-        # tick.label.set_fontsize('x-small')
-        tick.label.set_rotation('vertical')
-    for bar in ax.patches:
-        # Using Matplotlib annotate function and
-        # passing the coordinates where the annotation shall be done
-        # x-coordinate: bar.get_x() + bar.get_width() / 2
-        # y-coordinate: bar.get_height()
-        # free space to be left to make graph pleasing: (0, 8)
-        # ha and va stand for the horizontal and vertical alignment
-        plt.annotate(format(bar.get_height(), '.2f'),
-                     (bar.get_x() + bar.get_width() / 2,
-                      bar.get_height()), ha='center', va='center',
-                     size=8, xytext=(0, 3),
-                     textcoords='offset points')
-        plt.title("Enrollment/capacity for the academic year " + year + " of district  " + district)
-
-    plt.legend()
-
-    plt.tight_layout()
-    graph = get_image()
-    return graph
-
-
+# enrollment capacity by school trend
 def get_plot(chart_type, **kwargs):
     plt.switch_backend('AGG')
     # academic year
@@ -181,11 +43,11 @@ def get_plot(chart_type, **kwargs):
 
     if chart_type == 'barplot':
         fig, ax = plt.subplots(figsize=(10, 8))
-        ax.bar(x, z, width=0.50, color='b', label='capacity of school', alpha=0.5)
+        ax.bar(x, z, width=0.50, color='gray', label='capacity of school')
         ax.bar(x, y, width=0.25, color='g', label='total enrollment')
         ax.set_ylabel("Total Enrollment / Capacity")
         for tick in ax.xaxis.get_major_ticks():
-            tick.label.set_fontsize(14)
+            tick.label.set_fontsize(10)
             # specify integer or one of preset strings, e.g.
             # tick.label.set_fontsize('x-small')
             tick.label.set_rotation('vertical')
@@ -220,35 +82,186 @@ def get_plot(chart_type, **kwargs):
     return graph
 
 
-def get_outlier_district_plot(**kwargs):
+# This graph plots trends of enrollment versus school capacity  for schools in a district for a select academic year
+def get_pairs(**kwargs):
     plt.switch_backend('AGG')
+    # total enrollment
+    x = kwargs.get('x')
+    # y = capacity of school
+    y = kwargs.get('y')
+    # selected year
+    year = kwargs.get('academic_year')
+    school = kwargs.get('name_of_school')
+    district = kwargs.get('district_name')
+    fig, ax = plt.subplots(figsize=(10, 8))
+    ax.bar(school, y, width=0.50, color='gray', label='capacity of school')
+    ax.bar(school, x, width=0.25, color='g', label='total enrollment')
+    ax.set_ylabel("Total Enrollment / Capacity")
+    for tick in ax.xaxis.get_major_ticks():
+        tick.label.set_fontsize(10)
+        # specify integer or one of preset strings, e.g.
+        # tick.label.set_fontsize('x-small')
+        tick.label.set_rotation(45)
+    for bar in ax.patches:
+        # Using Matplotlib annotate function and
+        # passing the coordinates where the annotation shall be done
+        # x-coordinate: bar.get_x() + bar.get_width() / 2
+        # y-coordinate: bar.get_height()
+        # free space to be left to make graph pleasing: (0, 8)
+        # ha and va stand for the horizontal and vertical alignment
+        plt.annotate(format(bar.get_height(), '.2f'),
+                     (bar.get_x() + bar.get_width() / 2,
+                      bar.get_height()), ha='center', va='center',
+                     size=8, xytext=(0, 3),
+                     textcoords='offset points')
+        plt.title("Enrollment/capacity for the academic year " + year + " of district  " + district)
 
-    school_enrollment = kwargs.get('x')
-    school_name = kwargs.get('y')
+    plt.legend()
 
-    datamean = kwargs.get('data_mean')
-    input_school_type = kwargs.get('input_school_type')
-    academic_year = kwargs.get('academic_year')
-    district_input = kwargs.get('input_district')
+    plt.tight_layout()
+    graph = get_image()
+    return graph
 
-    fig, ax1 = plt.subplots(figsize=(10, 6))
 
-    ax1.set_title('Enrollment for District')
-    ax1.set_xlabel('School_Name')
-    ax1.set_ylabel('School_Scores')
+def get_grade_plot(**kwargs):
+    plt.switch_backend('AGG')
+    # the  selected academic year
+    year = kwargs.get('academic_year')
 
-    ax1.bar(school_name, school_enrollment, color='#7CFC00', edgecolor='#000000')
+    # the selected school
+    school_name = kwargs.get('name_of_school')
+    data_boys = kwargs.get('data_boys')
+    data_girls = kwargs.get('data_girls')
+    data_none = kwargs.get('data')
 
+    # get subplots for boys, girls and single gender
+
+    if len(data_none) > 0:
+        fig, ax1 = plt.subplots(1, figsize=(10, 8))
+        ax1.plot(data_none['grade'], data_none['enrollment'], 'ro')
+        ax1.set_title('Enrollment')
+        school_title = School.objects.filter(id=school_name).distinct().values_list('school_name', flat=True)
+        school_name_title = school_title[0]
+        fig.suptitle("Enrollment for " + school_name_title + " - Academic Year " + year)
+        plt.xlabel('Grades')
+        plt.tight_layout()
+        ax1.grid()
+        graph = get_image()
+        return graph
+
+    elif len(data_girls) > 0 and len(data_boys) > 0:
+        fig, (ax1, ax2) = plt.subplots(2, figsize=(10, 8))
+        ax1.plot(data_girls['grade'], data_girls['enrollment'], 'go')
+        ax1.set_title('Girls Enrollment')
+        ax2.plot(data_boys['grade'], data_boys['enrollment'], 'bo')
+        ax2.set_title('Boys Enrollment')
+
+
+        school_title = School.objects.filter(id=school_name).distinct().values_list('school_name', flat=True)
+        school_name_title = school_title[0]
+        fig.suptitle("Enrollment for " + school_name_title + " - Academic Year " + year)
+        plt.xlabel('Grades')
+        plt.tight_layout()
+        ax1.grid()
+        ax2.grid()
+        graph = get_image()
+        return graph
+    else:
+        graph = "No data recorded for the selected year"
+        return graph
+
+
+def get_district_grade_plot_girls(**kwargs):
+    plt.switch_backend('AGG')
+    # the  selected academic year
+    year = kwargs.get('academic_year')
+    grade = kwargs.get('grade')
+    # the selected school
+    district_name = kwargs.get('district')
+    data_girls = kwargs.get('data_girls')
+    school_girls = kwargs.get('school_girls')
+
+    # get subplots for boys, girls and single gender
+    fig, ax1 = plt.subplots(1, figsize=(10, 8))
+    ax1.plot(data_girls['enrollment'], school_girls, 'go')
+    ax1.set_title('Enrollment')
+    plt.xticks(np.arange(0, max(data_girls['enrollment']) + 5, 5.0))
     for tick in ax1.xaxis.get_major_ticks():
-        tick.label.set_fontsize(14)
-        tick.label.set_rotation('vertical')
-    plt.plot(school_name, datamean, linewidth=5, ls='solid', color='#4B0082')
+        tick.label.set_fontsize(10)
+        # specify integer or one of preset strings, e.g.
+        # tick.label.set_fontsize('x-small')
+        tick.label.set_rotation(60)
+    district_title = School.objects.filter(id=district_name).distinct().values_list('district_name', flat=True)
+    district_name_title = district_title[0]
+    fig.suptitle("Grade - " + str(grade) + " Girls Enrollment for Academic Year " + year + " for district" + str(district_name_title))
+    plt.xlabel('Enrollment')
+    plt.ylabel('School')
+    plt.tight_layout()
+    ax1.grid()
+    graph = get_image()
+    return graph
 
-    plt.xlabel("School Name")
-    plt.ylabel("Enrollment")
 
-    plt.title(
-        "Enrollment for " + input_school_type + " schools for district " + district_input + " and " + academic_year + " academic year ")
+def get_district_grade_plot_boys(**kwargs):
+    plt.switch_backend('AGG')
+    # the  selected academic year
+    year = kwargs.get('academic_year')
+    grade = kwargs.get('grade')
+    # the selected school
+    district_name = kwargs.get('district')
+    data_boys = kwargs.get('data_boys')
+    school_boys = kwargs.get('school_boys')
+
+    # get subplots for boys, girls and single gender
+    fig, ax1 = plt.subplots(1, figsize=(10, 8))
+    ax1.plot(data_boys['enrollment'], school_boys, 'bo')
+    ax1.set_title('Enrollment')
+    for tick in ax1.xaxis.get_major_ticks():
+        tick.label.set_fontsize(10)
+        # specify integer or one of preset strings, e.g.
+        # tick.label.set_fontsize('x-small')
+        tick.label.set_rotation(60)
+        plt.xticks(np.arange(0, max(data_boys['enrollment']) + 5, 5.0))
+    district_title = School.objects.filter(id=district_name).distinct().values_list('district_name', flat=True)
+    district_name_title = district_title[0]
+    fig.suptitle("Grade - " + str(grade) + " Boys Enrollment for Academic Year " + year + " for district" + str(district_name_title))
+    plt.xlabel('Enrollment')
+    plt.ylabel('School')
+    plt.tight_layout()
+    ax1.grid()
+    graph = get_image()
+    return graph
+
+
+def get_district_grade_plot_none(**kwargs):
+    plt.switch_backend('AGG')
+    # the  selected academic year
+    year = kwargs.get('academic_year')
+    grade = kwargs.get('grade')
+    # the selected school
+    district_name = kwargs.get('district')
+    data_none = kwargs.get('data_none')
+    school_none = kwargs.get('school_none')
+
+    # get subplots for boys, girls and single gender
+    fig, ax1 = plt.subplots(1, figsize=(10, 8))
+    ax1.plot(data_none['enrollment'],school_none, 'ro')
+    ax1.set_title('Enrollment')
+    plt.xticks(np.arange(0, max(data_none['enrollment']) + 5, 5.0))
+    for tick in ax1.xaxis.get_major_ticks():
+        tick.label.set_fontsize(10)
+        # specify integer or one of preset strings, e.g.
+        # tick.label.set_fontsize('x-small')
+        tick.label.set_rotation(60)
+    district_title = School.objects.filter(id=district_name).distinct().values_list('district_name', flat=True)
+    district_name_title = district_title[0]
+    fig.suptitle("Grade - " + str(grade) + " Total Enrollment for Academic Year " + year + " for district" + str(district_name_title))
+    plt.xlabel('Enrollment')
+    plt.ylabel('School')
+    plt.tight_layout()
+    ax1.grid()
+    graph = get_image()
+    return graph
 
 
 def get_plot_boys_primary(**kwargs):
@@ -313,36 +326,6 @@ def get_plot_girls_primary(**kwargs):
     plt.tight_layout()
     graph = get_image()
     return graph
-
-
-# ==========================================================================
-# Outlier detection at national level
-# ==========================================================================
-
-def get_outlier_national_plot(**kwargs):
-    plt.switch_backend('AGG')
-
-    school_enrollment = kwargs.get('x')
-    school_name = kwargs.get('y')
-
-    datamean = kwargs.get('data_mean')
-    input_school_type = kwargs.get('input_school_type')
-    academic_year = kwargs.get('academic_year')
-
-    fig, ax1 = plt.subplots(figsize=(11, 6))
-
-    ax1.set_title('Enrollment for Selected Year')
-    ax1.set_xlabel('School_Name')
-
-    ax1.bar(school_name, school_enrollment, color='#7CFC00', edgecolor='#000000')
-    for tick in ax1.xaxis.get_major_ticks():
-        tick.label.set_fontsize(14)
-        tick.label.set_rotation('vertical')
-    plt.plot(school_name, datamean, linewidth=5, ls='solid', color='#4B0082')
-
-    plt.xlabel("School Name")
-    plt.ylabel("Enrollment")
-    plt.title("Enrollment for " + input_school_type + " schools for year " + academic_year)
 
 
 def get_plot_primary(**kwargs):
@@ -1423,6 +1406,7 @@ def national_ratio_hist(**kwargs):
     graph = get_image()
     return graph
 
+
 """
 def covariance(**kwargs):
     plt.switch_backend('AGG')
@@ -1439,3 +1423,62 @@ def covariance(**kwargs):
     """
 
 
+# ==========================================================================
+# Outlier detection at national level
+# ==========================================================================
+
+def get_outlier_national_plot(**kwargs):
+    plt.switch_backend('AGG')
+
+    school_enrollment = kwargs.get('x')
+    school_name = kwargs.get('y')
+
+    datamean = kwargs.get('data_mean')
+    input_school_type = kwargs.get('input_school_type')
+    academic_year = kwargs.get('academic_year')
+
+    fig, ax1 = plt.subplots(figsize=(11, 6))
+
+    ax1.set_title('Enrollment for Selected Year')
+    ax1.set_xlabel('School_Name')
+
+    ax1.bar(school_name, school_enrollment, color='#7CFC00', edgecolor='#000000')
+    for tick in ax1.xaxis.get_major_ticks():
+        tick.label.set_fontsize(14)
+        tick.label.set_rotation('vertical')
+    plt.plot(school_name, datamean, linewidth=5, ls='solid', color='#4B0082')
+
+    plt.xlabel("School Name")
+    plt.ylabel("Enrollment")
+    plt.title("Enrollment for " + input_school_type + " schools for year " + academic_year)
+
+
+def get_outlier_district_plot(**kwargs):
+    plt.switch_backend('AGG')
+
+    school_enrollment = kwargs.get('x')
+    school_name = kwargs.get('y')
+
+    datamean = kwargs.get('data_mean')
+    input_school_type = kwargs.get('input_school_type')
+    academic_year = kwargs.get('academic_year')
+    district_input = kwargs.get('input_district')
+
+    fig, ax1 = plt.subplots(figsize=(10, 6))
+
+    ax1.set_title('Enrollment for District')
+    ax1.set_xlabel('School_Name')
+    ax1.set_ylabel('School_Scores')
+
+    ax1.bar(school_name, school_enrollment, color='#7CFC00', edgecolor='#000000')
+
+    for tick in ax1.xaxis.get_major_ticks():
+        tick.label.set_fontsize(14)
+        tick.label.set_rotation('vertical')
+    plt.plot(school_name, datamean, linewidth=5, ls='solid', color='#4B0082')
+
+    plt.xlabel("School Name")
+    plt.ylabel("Enrollment")
+
+    plt.title(
+        "Enrollment for " + input_school_type + " schools for district " + district_input + " and " + academic_year + " academic year ")

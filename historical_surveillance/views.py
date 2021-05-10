@@ -8,100 +8,12 @@ from .models import *
 from .utils import *
 
 
-# view to display the Common entrance examination data
-def cee_results(request):
-    data = CEE.objects.all()
-    context = {"results": data}
-    return render(request, 'cee_results.html', context)
-
-
-# view to add and update the common entrance examination data
-def update_cee(request, id=None):
-    # Render edit form
-    if id:
-        instance = get_object_or_404(CEE, pk=id)
-    # Render create form
-    else:
-        instance = CEE(created_by=request.user.username,
-                       updated_by=request.user.username)
-    form = ceeForms(request.POST or None, instance=instance)
-    # Process submit
-    if request.method == "POST":
-        if form.is_valid():
-            model_instance = form.save(commit=False)
-            model_instance.updated_by = request.user.username
-            model_instance.save()
-            return HttpResponseRedirect(reverse("surveillance:cee-results"))
-    context = {
-        "header": "Edit CEE Record" if id else "Create CEE Record", "form": form}
-    # context = _add_side_navigation_context(request.user, context)
-    return render(request, "historical_form.html", context)
-
-# view to display the CSEC data
-def csec_results(request):
-    data = CSEC.objects.all()
-    context = {"results": data}
-    return render(request, 'csec_results.html', context)
-
-
-# This is for creating and editing a csec record
-def update_csec(request, id=None):
-    # Render edit form
-    if id:
-        instance = get_object_or_404(CSEC, pk=id)
-    # Render create form
-    else:
-        instance = CSEC(created_by=request.user.username,
-                        updated_by=request.user.username)
-    form = csecForms(request.POST or None, instance=instance)
-    # Process submit
-    if request.method == "POST":
-        if form.is_valid():
-            model_instance = form.save(commit=False)
-            model_instance.updated_by = request.user.username
-            model_instance.save()
-            return HttpResponseRedirect(reverse("surveillance:csec-results"))
-    context = {
-        "header": "Edit CSEC Record" if id else "Create CSEC Record", "form": form}
-    # context = _add_side_navigation_context(request.user, context)
-    return render(request, "historical_form.html", context)
-
-
-# This is the examination Analysis
-def examination_summary(request):
-    cee_data = pd.DataFrame(CEE.objects.values().all())
-    csec_data = pd.DataFrame(CSEC.objects.values().all())
-    corv = csec_data[['subject', 'proficiency', 'profile1', 'profile2', 'profile3', 'profile4', 'overall_grade']]
-    # graph = covariance(corv=corv)
-    context = {'d': cee_data.to_html(),
-               'summary_age': cee_data[['age_at_test']].describe().to_html(),
-               'summary_engcomp': cee_data[['engcomp']].astype(float).describe().to_html(),
-               'summary_mathcomp': cee_data[['mathcomp']].astype(float).describe().to_html(),
-               'summary_gpcomp': cee_data[['gpcomp']].astype(float).describe().to_html(),
-               'summary_totcomp': cee_data[['totcomp']].astype(float).describe().to_html(),
-               'summary_sex': cee_data[['sex']].describe().to_html(),
-               'score_corr': cee_data[['engcomp', 'mathcomp', 'gpcomp', 'totcomp']].astype(float).corr().to_html(),
-               'summary_sex_secondary': csec_data[['sex']].describe().to_html(),
-               'summary_subject_secondary': csec_data[['subject']].describe().to_html(),
-               'summary_proficiency_secondary': csec_data[['proficiency']].describe().to_html(),
-               'summary_profile1_secondary': csec_data[['profile1']].describe().to_html(),
-               'summary_profile2_secondary': csec_data[['profile2']].describe().to_html(),
-               'summary_profile3_secondary': csec_data[['profile3']].describe().to_html(),
-               'summary_profile4_secondary': csec_data[['profile4']].describe().to_html(),
-               # 'graph' : graph,
-
-               }
-
-    return render(request, 'examination_summary.html', context)
-
-
 # This is the view for the home page of this app
 def index(request):
     return render(request, 'surv_home.html', {})
 
 
 # This is for showing a list of all districts
-
 def district(request):
     data = District.objects.all()
     context = {"district_created": data}
@@ -217,8 +129,7 @@ def update_aggregate_enrollment(request, code=None):
     return render(request, 'historical_form.html', context)
 
 
-# change this to get a form to select the district and pass it as a parameter to present filter the table and present
-# the data for each district
+# filter the enrollment / Capacity table by district
 def enrolled_district(request):
     error_message = None
 
@@ -244,6 +155,7 @@ def enrolled_district(request):
             return render(request, 'enrolled_district.html', {"districts_names": districts_names})
 
 
+# Get the trend of enrollment versus capacity for each selected school by the selected school and the type of chart
 def district_trend(request):
     error_message = None
     graph = None
@@ -285,6 +197,7 @@ def district_trend(request):
     return render(request, 'district_trend.html', stu)
 
 
+# This view present a page for comparing the trends of enrollment within schools in a select district in a select academic year
 def compare_trends(request):
     error_message = None
     graph = None
@@ -351,6 +264,7 @@ def district_grade(request):
             return render(request, 'district_grade.html', {"districts_names": districts_names})
 
 
+# Get enrollment for each class in a select school for a select academic year
 def district_grade_school(request):
     error_message = None
     graph = None
@@ -363,19 +277,40 @@ def district_grade_school(request):
             if not selected_school and not selected_year:
                 error_message = "Please select a school and an academic year"
             else:
-                enrollment_df = pd.DataFrame(Enrollment.objects.values().filter(school=selected_school,
-                                                                                year=selected_year))
-                enrollment_df.sort_values(by='sex', inplace=True)
-                if enrollment_df.empty:
-                    error_message = "No record was found for the selected school in the selected year"
-                else:
 
-                    # function to get the graph
-                    graph = get_grade_plot(x=enrollment_df['enrollment'],
-                                           z=enrollment_df['grade'],
-                                           data=enrollment_df,
-                                           academic_year=selected_year,
-                                           name_of_school=selected_school)
+                enrollment_df_girls = pd.DataFrame(Enrollment.objects.values('year', 'grade', 'sex', 'enrollment').
+                                                   filter(school=selected_school, year=selected_year, sex='female'))
+                if len(enrollment_df_girls) > 0:
+                    enrollment_df_girls = enrollment_df_girls
+                else:
+                    pass
+
+                enrollment_df_boys = pd.DataFrame(
+                    Enrollment.objects.values('grade', 'enrollment').filter(school=selected_school,
+                                                                            year=selected_year,
+                                                                            sex='male'))
+                if len(enrollment_df_boys) > 0:
+                    enrollment_df_boys = enrollment_df_boys
+                else:
+                    pass
+
+                enrollment_df = pd.DataFrame(
+                    Enrollment.objects.values('grade', 'enrollment').filter(school=selected_school,
+                                                                            year=selected_year,
+                                                                            sex=''))
+                if len(enrollment_df) > 0:
+                    enrollment_df = enrollment_df
+
+                else:
+                    pass
+
+                # function to get the graph
+                graph = get_grade_plot(
+                    data=enrollment_df,
+                    data_boys=enrollment_df_boys,
+                    data_girls=enrollment_df_girls,
+                    academic_year=selected_year,
+                    name_of_school=selected_school)
     else:
         error_message = "No records found"
 
@@ -401,35 +336,75 @@ def district_category_school(request):
         if not selected_district or not selected_grade or not selected_year:
             error_message = "Please select a chart type and school"
         else:
-            enrollment_grade_df = pd.DataFrame(Enrollment.objects.all().filter(grade=selected_grade,
-                                                                               year=selected_year,
-                                                                               district=selected_district).values())
-            if enrollment_grade_df.empty:
-                error_message = "No data found"
+            schools_df = pd.DataFrame(School.objects.all().values())
+            enrollment_grade_df_girls = pd.DataFrame(Enrollment.objects.all().filter(grade=selected_grade,
+                                                                                     year=selected_year,
+                                                                                     district=selected_district,
+                                                                                     sex='female').values())
+            enrollment_grade_df_boys = pd.DataFrame(Enrollment.objects.all().filter(grade=selected_grade,
+                                                                                    year=selected_year,
+                                                                                    district=selected_district,
+                                                                                    sex='male').values())
+            enrollment_grade_df_none = pd.DataFrame(Enrollment.objects.all().filter(grade=selected_grade,
+                                                                                    year=selected_year,
+
+                                                                                    district=selected_district,
+                                                                                    sex='').values())
+
+            if len(enrollment_grade_df_girls) > 0:
+                df_girls = pd.merge(left=enrollment_grade_df_girls, right=schools_df,
+                                    left_on='school_id', right_on='id')
+                graph_girls = get_district_grade_plot_girls(
+                    data_girls=df_girls,
+                    grade=selected_grade,
+                    academic_year=selected_year,
+                    district=selected_district,
+                    school_girls=df_girls['school_name'])
 
             else:
-                schools_df = pd.DataFrame(School.objects.all().values())
-                df = pd.merge(left=enrollment_grade_df, right=schools_df,
-                              left_on='school_id', right_on='id')
-                enrollment_grade_df.sort_values(by='sex', inplace=True)
+                graph_girls = "No data to display"
+
+            if len(enrollment_grade_df_boys) > 0:
+                df_boys = pd.merge(left=enrollment_grade_df_boys, right=schools_df,
+                                   left_on='school_id', right_on='id')
+                graph_boys = get_district_grade_plot_boys(
+                    data_boys=df_boys,
+                    grade=selected_grade,
+                    academic_year=selected_year,
+                    district=selected_district,
+                    school_boys=df_boys['school_name']
+                )
+
+            else:
+                graph_boys = "No data to display"
+                pass
+
+            if len(enrollment_grade_df_none) > 0:
+                df_none = pd.merge(left=enrollment_grade_df_none, right=schools_df,
+                                   left_on='school_id', right_on='id')
+                graph = get_district_grade_plot_none(data_none=df_none,
+                                                     grade=selected_grade,
+                                                     academic_year=selected_year,
+                                                     district=selected_district,
+                                                     school_none=df_none['school_name'])
+
+            else:
+                graph = "No data to display"
+                pass
 
                 # function to get the graph
-                # function to get the graph
-                graph = get_district_grade_plot(x=df['enrollment'],
-                                                z=selected_grade,
-                                                data=df,
-                                                academic_year=selected_year,
-                                                name_of_school=df['school_name'],
-                                                district=selected_district)
-                stu = {
-                    "graph": graph,
-                    "error_message": error_message,
-                    "district_list": district_df,
-                    "year_list": year_list,
-                    "grade_list": grade_list,
 
-                }
-                return render(request, 'district_category_school.html', stu)
+            stu = {
+                "graph": graph,
+                "graph_boys": graph_boys,
+                "graph_girls": graph_girls,
+                "error_message": error_message,
+                "district_list": district_df,
+                "year_list": year_list,
+                "grade_list": grade_list,
+
+            }
+            return render(request, 'district_category_school.html', stu)
     dat = {
         "error_message": error_message,
         "district_list": district_df,
@@ -1222,3 +1197,91 @@ def boxplot_national(request):
     }
 
     return render(request, 'boxplots_national_page.html', stu)
+
+
+# view to display the Common entrance examination data
+def cee_results(request):
+    data = CEE.objects.all()
+    context = {"results": data}
+    return render(request, 'cee_results.html', context)
+
+
+# view to add and update the common entrance examination data
+def update_cee(request, id=None):
+    # Render edit form
+    if id:
+        instance = get_object_or_404(CEE, pk=id)
+    # Render create form
+    else:
+        instance = CEE(created_by=request.user.username,
+                       updated_by=request.user.username)
+    form = ceeForms(request.POST or None, instance=instance)
+    # Process submit
+    if request.method == "POST":
+        if form.is_valid():
+            model_instance = form.save(commit=False)
+            model_instance.updated_by = request.user.username
+            model_instance.save()
+            return HttpResponseRedirect(reverse("surveillance:cee-results"))
+    context = {
+        "header": "Edit CEE Record" if id else "Create CEE Record", "form": form}
+    # context = _add_side_navigation_context(request.user, context)
+    return render(request, "historical_form.html", context)
+
+
+# view to display the CSEC data
+def csec_results(request):
+    data = CSEC.objects.all()
+    context = {"results": data}
+    return render(request, 'csec_results.html', context)
+
+
+# This is for creating and editing a csec record
+def update_csec(request, id=None):
+    # Render edit form
+    if id:
+        instance = get_object_or_404(CSEC, pk=id)
+    # Render create form
+    else:
+        instance = CSEC(created_by=request.user.username,
+                        updated_by=request.user.username)
+    form = csecForms(request.POST or None, instance=instance)
+    # Process submit
+    if request.method == "POST":
+        if form.is_valid():
+            model_instance = form.save(commit=False)
+            model_instance.updated_by = request.user.username
+            model_instance.save()
+            return HttpResponseRedirect(reverse("surveillance:csec-results"))
+    context = {
+        "header": "Edit CSEC Record" if id else "Create CSEC Record", "form": form}
+    # context = _add_side_navigation_context(request.user, context)
+    return render(request, "historical_form.html", context)
+
+
+# This is the examination Analysis
+def examination_summary(request):
+    cee_data = pd.DataFrame(CEE.objects.values().all())
+    csec_data = pd.DataFrame(CSEC.objects.values().all())
+    corv = csec_data[['subject', 'proficiency', 'profile1', 'profile2', 'profile3', 'profile4', 'overall_grade']]
+    # graph = covariance(corv=corv)
+    context = {'d': cee_data.to_html(),
+               'summary_age': cee_data[['age_at_test']].describe().to_html(),
+               'summary_engcomp': cee_data[['engcomp']].astype(float).describe().to_html(),
+               'summary_mathcomp': cee_data[['mathcomp']].astype(float).describe().to_html(),
+               'summary_gpcomp': cee_data[['gpcomp']].astype(float).describe().to_html(),
+               'summary_totcomp': cee_data[['totcomp']].astype(float).describe().to_html(),
+               'summary_sex': cee_data[['sex']].describe().to_html(),
+               'score_corr': cee_data[['engcomp', 'mathcomp', 'gpcomp', 'totcomp']].astype(float).corr().to_html(),
+               'summary_sex_secondary': csec_data[['sex']].describe().to_html(),
+               'summary_subject_secondary': csec_data[['subject']].describe().to_html(),
+               'summary_proficiency_secondary': csec_data[['proficiency']].describe().to_html(),
+               'summary_profile1_secondary': csec_data[['profile1']].describe().to_html(),
+               'summary_profile2_secondary': csec_data[['profile2']].describe().to_html(),
+               'summary_profile3_secondary': csec_data[['profile3']].describe().to_html(),
+               'summary_profile4_secondary': csec_data[['profile4']].describe().to_html(),
+               # 'graph' : graph,
+
+               }
+
+    return render(request, 'examination_summary.html', context)

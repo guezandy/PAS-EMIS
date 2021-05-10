@@ -5,59 +5,80 @@
 <main>
     <div class="row">
 
-        <div class="col-xl-12 col-md-12">
-            <div class="card bg-secondary text-white mb-4">
-                <div class="card-body">District Enrollment / Grade <br />
-                    <h1 class="text-info">{% if error_message %} {{ error_message }} {% endif%}</h1>
-                </div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    {% if request.POST %}
-                    {% if graph %}
-                    <img src="data:image/png;base64, {{ graph | safe}}" alt="analysis Image" />
-                    {%endif%}
+  <div class="col-xl-4 col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">Compare Enrollments within a district for a select grades and academic year<br />
+                <em class ='text-danger'>Red markers = total enrollment not recorded by sex of children</em><br/>
+                <em class ='text-primary'>Blue markers = total boys enrollments </em><br/>
+                <em class ='text-success'>Green markers = total girls enrollments</em><br/>
+                    {% if error_message %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        {{ error_message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
+                    </div>
                     {% endif%}
-
                     <form action="" method="POST">
                         {% csrf_token %}
-                        <div class="form-row">
-
-                            <div class="col-md-4">
                                 <label class="small mb-1" for="district">Select a district</label>
-                                <select name="district_name" id="district">
+                                <select name="district_name" class ='form-control' id="district">
                                     <option value="" selected>[Choose Here]</option>
                                     {% for item in district_list %}
                                     <option value={{ item.id }}> {{ item.district_name }}</option>
                                     {% endfor %}
                                 </select>
-                            </div>
 
-                            <div class="col-md-4">
+
+
                                 <label class="small mb-1" for="grade">Select a Grade</label>
-                                <select name="grade" id="grade">
+                                <select name="grade" id="grade" class ='form-control'>
                                     <option value="" selected>[Choose Here]</option>
                                     {% for item in grade_list %}
                                     <option value="{{ item.grade }}"> {{ item.grade}}</option>
                                     {% endfor %}
                                 </select>
-                            </div>
 
-                            <div class="col-md-4">
+
                                 <label class="small mb-1" for="year">Academic year</label>
-                                <select name="year" id="year" required>
+                                <select name="year" id="year" required class = 'form-control'>
                                     <option value="" selected>[Choose Here]</option>
                                     {% for item in year_list %}
                                     <option value="{{ item.year}}">{{ item.year }}</option>
                                     {% endfor %}
                                 </select>
-                            </div>
 
-
-                        </div>
                         <br /><input type="submit" name="submit" class="btn btn-primary" value="Get Trend" />
                     </form>
                 </div>
             </div>
         </div>
+
+      <div class="col-xl-8 col-md-8">
+            <div class="card-body d-flex align-items-center justify-content-between">
+               {% if request.POST %}
+                    {% if graph_boys %}
+                    <img src="data:image/png;base64, {{ graph_boys | safe}}" alt="No record marked as boys" />
+                    {%endif%}
+                    {% endif%}
+
+            </div>
+      <div class="card-body d-flex align-items-center justify-content-between">
+               {% if request.POST %}
+                    {% if graph_girls %}
+                    <img src="data:image/png;base64, {{ graph_girls | safe}}" alt="No record marked as girls" />
+                    {%endif%}
+                    {% endif%}
+
+            </div>
+      <div class="card-body d-flex align-items-center justify-content-between">
+               {% if request.POST %}
+                    {% if graph %}
+                    <img src="data:image/png;base64, {{ graph | safe}}" alt="Data Collected by Gender as above. Add boys and girls to get total" />
+                    {%endif%}
+                    {% endif%}
+
+            </div>
+        </div>
+
     </div>
 
 

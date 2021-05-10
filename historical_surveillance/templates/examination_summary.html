@@ -5,66 +5,136 @@
 <div id="container-fluid bg-info">
     <main>
         <div class="container-fluid bg-transparent pt-3 text-dark">
-            <h3>Enrollment Summary</h3>
-                   <div class="row">
-   <div class="col-xl-5 col-md-5">
+            <h3>Examination Summary</h3>
+            <div class="row">
+                <div class="col-xl-6 col-md-6">
+                    <div class="card bg-transparent  mb-4">
+                        <h4>Grade 6 National Examination</h4>
+                        <div class="card-body">
+                            <div class ='row'>
+                                 <div class="col-xl-3 col-md-3">
+                                     <label><b><i>Age of test takers</i></b></label>
+                                  {{ summary_age| safe }}
 
-                    </div>
-                  </div>
-                <div class="col-xl-7 col-md-7">
-            <div class="card bg-primary text-white mb-4">
-                        <div class="card-body">Examination Summary
+                             </div>
+                                  <div class="col-xl-3 col-md-3">
+                                      <label><b><i>Sex summary</i></b></label>
+                                  {{ summary_sex| safe }}
 
-                             <div class="table-responsive card bg-body mb-4">
-                            <table class="table table-bordered" id="dataTable" max-width="100%">
-                                <thead>
-                                    <tr>
-                                        <th>Student ID</th>
-                                        <th>Sex</th>
-                                        <th>Test Year</th>
-                                        <th>Eng Comp</th>
-                                        <th>Math Comp</th>
-                                        <th>General Paper Comp</th>
-                                        <th>Total Comp</th>
+                                  </div>
 
-                                    </tr>
-                                </thead>
-                                <tfoot>
-                                    <tr>
-                                       <th>Student ID</th>
-                                        <th>Sex</th>
-                                        <th>Test Year</th>
-                                        <th>Eng Comp</th>
-                                        <th>Math Comp</th>
-                                        <th>General Paper Comp</th>
-                                        <th>Total Comp</th>
-                                    </tr>
-                                </tfoot>
-                                <tbody>
-                                    {% for row in d %}
-                                    <tr>
-                                        <td>{{ row.stud_id}}</td>
-                                        <td>{{ row.sex }}</td>
-                                        <td>{{ row.test_yr }}</td>
-                                        <td>{{ row.engcomp}}</td>
-                                        <td>{{ row.mathcomp }}</td>
-                                        <td>{{ row.gpcomp }}</td>
-                                        <td>{{ row.totcomp }}</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+
+                                <div class="col-xl-6 col-md-6">
+                                    <label><b><i>Score Correlations</i></b></label>
+                                  {{ score_corr | safe }}
+
+                                  </div>
+
+
+
+                            </div>
+                     </div>
+                        <div class="card-body"><b><i>Composite Score Summary</i></b>
+                             <div class ='row'>
+                                 <div class="col-xl-3 col-md-3">
+                                 {{ summary_engcomp | safe }}
+                             </div>
+                                  <div class="col-xl-3 col-md-3">
+                                 {{ summary_mathcomp | safe }}
+                             </div>
+                                  <div class="col-xl-3 col-md-3">
+                                 {{ summary_gpcomp | safe }}
+                             </div>
+                                  <div class="col-xl-3 col-md-3">
+                                 {{ summary_totcomp | safe }}
+                             </div>
+
+                     </div>
+                </div>
+
                 </div>
                 </div>
+                 <div class="col-xl-6 col-md-6">
+                    <div class="card border-primary  mb-4">
+                        <div class="card-body"><h4>Caribbean Secondary School Exit Examination Summary</h4>
+                                 <div class ='row'>
+
+                                 <div class="col-xl-4 col-md-4">
+                                      <label><b><i>Sex summary</i></b></label>
+                                  {{ summary_sex_secondary | safe }}
+
+                             </div>
+
+                                     <div class="col-xl-4 col-md-4">
+                                      <label><b><i>Subject summary</i></b></label>
+                                  {{ summary_subject_secondary | safe }}
+
+                             </div>
+
+                                      <div class="col-xl-4 col-md-4">
+                                      <label><b><i>Proficiency summary</i></b></label>
+                                  {{ summary_proficiency_secondary | safe }}
+
+                             </div>
+                            </div>
+
+
+                               <div class ='row'>
+
+                                 <div class="col-xl-3 col-md-3">
+                                      <label><b><i>Profile 1 summary</i></b></label>
+                                  {{ summary_profile1_secondary | safe }}
+
+                             </div>
+
+                                     <div class="col-xl-3 col-md-3">
+                                      <label><b><i>Profile 2 summary</i></b></label>
+                                  {{ summary_profile2_secondary | safe }}
+
+                             </div>
+
+                                      <div class="col-xl-3 col-md-3">
+                                      <label><b><i>profile 3 summary</i></b></label>
+                                  {{ summary_profile3_secondary | safe }}
+
+                             </div>
+
+                                    <div class="col-xl-3 col-md-3">
+                                      <label><b><i>profile 4 summary</i></b></label>
+                                  {{ summary_profile4_secondary | safe }}
+
+                             </div>
+                            </div>
+
+
+                     </div>
+                </div>
+
+                </div>
+            </div>
 
 
 
 
 </div>
+        <div class ='row'>
+
+        <div class="col-xl-12 col-md-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                {% if graph %}
+                <img src="data:image/png;base64, {{ graph | safe}}" alt="analysis Image" />
+                {%endif%}
+
+                </div>
+            </div>
         </div>
+
+
+
+    </div>
 
     </main>
 </div>
+
 {% endblock %}

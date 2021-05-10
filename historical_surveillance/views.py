@@ -14,6 +14,40 @@ from django_tables2.views import SingleTableMixin
 from django_tables2.export import ExportMixin
 
 
+# This is the examination Analysis
+def examination_summary(request):
+    cee_data = pd.DataFrame(CEE.objects.values().all())
+    csec_data = pd.DataFrame(CSEC.objects.values().all())
+    corv = csec_data[['subject', 'proficiency', 'profile1', 'profile2', 'profile3', 'profile4', 'overall_grade']]
+    #graph = covariance(corv=corv)
+    context = {'d': cee_data.to_html(),
+               'summary_age' : cee_data[['age_at_test']].describe().to_html(),
+               'summary_engcomp': cee_data[['engcomp']].astype(int).describe().to_html(),
+               'summary_mathcomp': cee_data[['mathcomp']].astype(int).describe().to_html(),
+               'summary_gpcomp': cee_data[['gpcomp']].astype(int).describe().to_html(),
+               'summary_totcomp': cee_data[['totcomp']].astype(float).describe().to_html(),
+               'summary_sex': cee_data[['sex']].describe().to_html(),
+               'score_corr': cee_data[['engcomp', 'mathcomp', 'gpcomp', 'totcomp']].astype(float).corr().to_html(),
+               'summary_sex_secondary': csec_data[['sex']].describe().to_html(),
+               'summary_subject_secondary': csec_data[['subject']].describe().to_html(),
+               'summary_proficiency_secondary': csec_data[['proficiency']].describe().to_html(),
+               'summary_profile1_secondary': csec_data[['profile1']].describe().to_html(),
+               'summary_profile2_secondary': csec_data[['profile2']].describe().to_html(),
+               'summary_profile3_secondary': csec_data[['profile3']].describe().to_html(),
+               'summary_profile4_secondary': csec_data[['profile4']].describe().to_html(),
+               #'graph' : graph,
+
+
+               }
+
+    return render(request, 'examination_summary.html', context)
+
+
+# This is the view for the home page of this app
+def index(request):
+    return render(request, 'surv_home.html', {})
+
+
 # This is for showing a list of all districts
 class FilteredDistrictListView(ExportMixin, SingleTableMixin, FilterView):
     table_class = DistrictTable
@@ -223,14 +257,6 @@ def update_csec(request, id=None):
         "header": "Edit Form 5 Exit Examination Record" if id else "Create Form 5 Exit Examination Record", "form": form}
     # context = _add_side_navigation_context(request.user, context)
     return render(request, "historical_form.html", context)
-
-
-# This is the examination Analysis
-def examination_summary(request):
-    cee_data = CEEResults.objects.values().all()
-    context = {'d': cee_data,
-               }
-    return render(request, 'examination_summary.html', context)
 
 
 # This is the view for the home page of this app
@@ -483,17 +509,17 @@ def nationalgenderenrollment(request):
     if 'national_enrollment_trend' in request.POST:
         data = pd.DataFrame(NationalGenderEnrollment.objects.values().all())
         data_male_primary = pd.DataFrame(NationalGenderEnrollment.objects. \
-                                         filter(sex='male', category_of_school='primary').all().values())
+                                         filter(sex='males', category_of_school='primary').all().values())
 
-        data_male_secondary = pd.DataFrame(NationalGenderEnrollment.objects.filter(sex='male',
+        data_male_secondary = pd.DataFrame(NationalGenderEnrollment.objects.filter(sex='males',
                                                                                    category_of_school='secondary'). \
                                            all().values())
 
-        data_female_primary = pd.DataFrame(NationalGenderEnrollment.objects.filter(sex='female',
+        data_female_primary = pd.DataFrame(NationalGenderEnrollment.objects.filter(sex='females',
                                                                                    category_of_school='primary'). \
                                            all().values())
 
-        data_female_secondary = pd.DataFrame(NationalGenderEnrollment.objects.filter(sex='female',
+        data_female_secondary = pd.DataFrame(NationalGenderEnrollment.objects.filter(sex='females',
                                                                                      category_of_school='secondary'). \
                                              all().values())
 
@@ -663,6 +689,33 @@ def national_teacher_ratio(request):
                                                               category_of_school=category_of_school).exists():
                 form.save()
             return redirect("/historical/national_teacher_ratio")
+
+        if 'national_ratio_trend' in request.POST:
+            data = pd.DataFrame(
+                NationalStudentTeacherRatio.objects.values().all())
+            data_primary = pd.DataFrame(
+                NationalStudentTeacherRatio.objects.filter(category_of_school='primary').values().all())
+            data_secondary = pd.DataFrame(
+                NationalStudentTeacherRatio.objects.filter(category_of_school='secondary').values().all())
+
+            # function to get the graph
+            # for _ in range(data[data.columns[0]].count()):
+            graph_primary = plot_national_ratio_trend_primary(data_primary=data_primary)
+
+            graph_secondary = plot_national_ratio_trend(data_secondary=data_secondary)
+            graph_hist = national_ratio_hist(data=data)
+            graph_all = {
+                "graph": graph_secondary,
+                "graph_primary": graph_primary,
+                "graph_secondary": graph_secondary,
+                'data_primary': data_primary,
+                'data_secondary': data_secondary,
+                'graph_hist': graph_hist,
+
+            }
+
+        return render(request, "national_teacher_student_ratio.html", graph_all)
+
     context = {"form": form, "ratio_data": data}
     return render(request, "national_teacher_ratio.html", context)
 
@@ -707,7 +760,6 @@ def enrollment_summary(request):
         # function to get the graph
         graph_boys_primary = get_plot_boys_primary(data=data_boys_1)
 
-
         data_girls_1 = df.query("sex=='females' and category_of_school == 'primary'")
         json_records = data_girls_1.reset_index().to_json(orient='records')
         data_girls_primary = json.loads(json_records)
@@ -729,14 +781,14 @@ def enrollment_summary(request):
                             'graph_girls_primary': graph_girls_primary}
         return render(request, 'ger.html', data_all_primary)
     if 'ger_secondary' in request.POST:
-        data_boys_1 = df.query("sex=='male' and category_of_school == 'secondary'")
+        data_boys_1 = df.query("sex=='males' and category_of_school == 'secondary'")
 
         json_records = data_boys_1.reset_index().to_json(orient='records')
         data_boys_secondary = json.loads(json_records)
         # function to get the graph
         graph_boys_secondary = get_plot_boys_secondary(data=data_boys_1)
 
-        data_girls_1 = df.query("sex=='female' and category_of_school == 'secondary'")
+        data_girls_1 = df.query("sex=='females' and category_of_school == 'secondary'")
 
         json_records = data_girls_1.reset_index().to_json(orient='records')
         data_girls_secondary = json.loads(json_records)
@@ -981,48 +1033,128 @@ def district_performance(request):
             if request.POST['submit'] == 'Compare All Districts (CSEC)':
                 chart_title = "CSEC Comparison, All Districts"
                 context['chart_title'] = chart_title
-                data = CSECResults.objects.all()
-                [graph, heatmap] = csec_performance_plot(data, None, None)
+                data = CSEC.objects.all()
+                [graph, heatmap, left_out] = csec_performance_plot(data, None, None)
                 context['graph'] = graph
                 context['heatmap'] = heatmap
                 return render(request, 'district_performance.html', context)
 
-            # Compare CEE between 2 districts
-            district_1 = request.POST.get('district_1_name', False)
-            district_2 = request.POST.get('district_2_name', False)
-            if not (district_1 and district_2) or district_1 == district_2:
-                error_message = "Please select 2 different districts to compare."
-                context['error_message'] = error_message
-                return render(request, 'district_performance.html', context)
             if request.POST['submit'] == 'Compare CEE Results':
-                chart_title = "CEE Comparison, Districts " + district_1 + " and " + district_2
-                context['chart_title'] = chart_title
-                data = PrimaryPerformance.objects.all()
-                [graph, heatmap] = primary_performance_plot(data, int(district_1), int(district_2))
-                context['graph'] = graph
-                context['heatmap'] = heatmap
-                return render(request, 'district_performance.html', context)
+                # Compare CEE between 2 districts
+                district_1 = request.POST.get('district_1_name', False)
+                district_2 = request.POST.get('district_2_name', False)
+                if not (district_1 and district_2) or district_1 == district_2:
+                    error_message = "Please select 2 different districts to compare."
+                    context['error_message'] = error_message
+                    return render(request, 'district_performance.html', context)
+                else:
+                    chart_title = "CEE Comparison, Districts " + district_1 + " and " + district_2
+                    context['chart_title'] = chart_title
+                    data = PrimaryPerformance.objects.all()
+                    [graph, heatmap] = primary_performance_plot(data, int(district_1), int(district_2))
+                    context['graph'] = graph
+                    context['heatmap'] = heatmap
+                    return render(request, 'district_performance.html', context)
 
-            # Compare CSEC between 2 districts
-            district_3 = request.POST.get('district_3_name', False)
-            district_4 = request.POST.get('district_4_name', False)
-            if not (district_3 and district_4) or district_3 == district_4:
-                error_message = "Please select 2 different districts to compare."
-                context['error_message'] = error_message
-                return render(request, 'district_performance.html', context)
             if request.POST['submit'] == 'Compare CSEC Results':
-                chart_title = "CSEC Comparison, Districts " + district_3 + " and " + district_4
-                context['chart_title'] = chart_title
-                data = CSECResults.objects.all()
-                [graph, heatmap] = csec_performance_plot(data, int(district_3), int(district_4))
-                context['graph'] = graph
-                context['heatmap'] = heatmap
-                return render(request, 'district_performance.html', context)
+                # Compare CSEC between 2 districts
+                district_3 = request.POST.get('district_3_name', False)
+                district_4 = request.POST.get('district_4_name', False)
+                if not (district_3 and district_4) or district_3 == district_4:
+                    error_message = "Please select 2 different districts to compare."
+                    context['error_message'] = error_message
+                    return render(request, 'district_performance.html', context)
+                if request.POST['submit'] == 'Compare CSEC Results':
+                    chart_title = "CSEC Comparison, Districts " + district_3 + " and " + district_4
+                    context['chart_title'] = chart_title
+                    data = CSEC.objects.all()
+                    [graph, heatmap, left_out] = csec_performance_plot(data, int(district_3), int(district_4))
+                    context['graph'] = graph
+                    context['heatmap'] = heatmap
+                    return render(request, 'district_performance.html', context)
         else:
             return render(request, 'district_performance.html', context)
 
 
 UNIVERSAL_FIELDS = {'id', 'created_at', 'created_by', 'updated_at', 'updated_by'}
+
+def upload_scores(request):
+    context = {}
+    cee_field_names = CEE._meta.get_fields()
+    cee_field_names = [str(f).split('.')[-1] for f in cee_field_names]
+    cee_field_names = list(set(cee_field_names) - UNIVERSAL_FIELDS)
+    cee_field_names.sort()
+
+    csec_field_names = CSEC._meta.get_fields()
+    csec_field_names = [str(f).split('.')[-1] for f in csec_field_names]
+    csec_field_names = list(set(csec_field_names) - UNIVERSAL_FIELDS)
+    csec_field_names.remove("school")
+    csec_field_names.append("school_id")
+    csec_field_names.sort()
+    context['cee_field_names'] = cee_field_names
+    context['csec_field_names'] = csec_field_names
+
+    context['cee_count'] = CEE.objects.count()
+    context['csec_count'] = CSEC.objects.count()
+
+    cee_by_year = [item['test_yr'] for item in CEE.objects.values('test_yr').distinct()]
+    csec_by_year = [item['year'] for item in CSEC.objects.values('year').distinct()]
+    cee_by_year.sort()
+    csec_by_year.sort()
+    context['cee_by_year'] = cee_by_year
+    context['csec_by_year'] = csec_by_year
+
+    if "GET" == request.method:
+        return render(request, "upload_scores.html", context)
+    type = "CEE"
+    field_names = []
+    csv_file = None
+    if request.POST['submit'] == 'Upload CSEC Scores':
+        field_names = csec_field_names
+        if not "csec_file" in request.FILES:
+            context['error_message'] = 'Please select a file to upload.'
+            return render(request, "upload_scores.html", context)
+        csv_file = request.FILES["csec_file"]
+        type = "CSEC"
+    elif request.POST['submit'] == 'Upload CEE Scores':
+        field_names = cee_field_names
+        if not "cee_file" in request.FILES:
+            context['error_message'] = 'Please select a file to upload.'
+            return render(request, "upload_scores.html", context)
+        csv_file = request.FILES["cee_file"]
+
+    if request.POST['submit'].startswith("delete_cee"):
+        time_period = request.POST['submit'][10:]
+        CEE.objects.filter(test_yr=int(time_period)).delete()
+    elif request.POST['submit'].startswith("delete_csec"):
+        time_period = request.POST['submit'][11:]
+        CSEC.objects.filter(year=int(time_period)).delete()
+    else:
+        if not csv_file.name.endswith('.csv'):
+            context['error_message'] = 'Could not upload file. File must be CSV type.'
+            return render(request, "upload_scores.html", context)
+        scores = csv_file.read().decode("utf-8", 'ignore')
+        user_data = {'created_by': request.user.username,
+                     'updated_by': request.user.username,
+                     'created_at': date.today().strftime("%Y-%m-%d"),
+                     'updated_at': date.today().strftime("%Y-%m-%d")}
+        result = store_scores(scores, field_names, user_data, type)
+        if 'error_message' in result:
+            context['error_message'] = result['error_message']
+        if 'missing_fields' in result:
+            context['missing_fields'] = result['missing_fields']
+        n_scores = 0
+        if 'n_scores' in result:
+            context['n_scores'] = result['n_scores']
+        if 'failed' in result:
+            context['failed'] = result['failed']
+    context['cee_count'] = CEE.objects.count()
+    context['csec_count'] = CSEC.objects.count()
+    context['cee_by_year'] = [item['test_yr'] for item in CEE.objects.values('test_yr').distinct()]
+    context['csec_by_year'] = [item['year'] for item in CSEC.objects.values('year').distinct()]
+
+    return render(request, "upload_scores.html", context)
+
 
 # ======================================================================
 # View for box plots at district level
@@ -1136,5 +1268,3 @@ def boxplot_national(request):
     }
 
     return render(request, 'boxplots_national_page.html', stu)
-
-

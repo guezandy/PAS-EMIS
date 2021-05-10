@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 {% block page_content %}
 <main>
-    <div class="row">
+    <div class="col-xl-7 col-md-7">
         {% if error_message or n_scores %}
         <div class="alert alert-warning alert-dismissible fade show" role="alert">
             {% if error_message %}
@@ -23,9 +23,14 @@
             {% if failed %}
             {{ failed }} records could not be added.
             {% endif %}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
         {% endif%}
+    </div>
+
+    <div class="row">
 
         <div class="col-xl-7 col-md-7">
             <div class="card bg-primary text-white mb-4">
@@ -33,8 +38,17 @@
                     <h4>Upload CEE file. </h4>
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <input type="file" name="cee_file">
-                        <button type="submit" name="submit" class="rounded" onclick='save(); this.disabled = true' value="Upload CEE Scores" /> Upload CEE Scores </button>
+                        <table align="left" style="border: hidden;">
+                            <tr>
+                                <td style="border: hidden;">
+                                    <input type="file" name="cee_file">
+                                    <button type="submit" name="submit" class="rounded" onClick="this.style.display = 'none'; var button = document.getElementById('uploading-cee'); button.style.display = 'block'" value="Upload CEE Scores"> Upload CEE Scores </button>
+                                </td>
+                                <td style="border: hidden;">
+                                    <div id="uploading-cee" style="display: none">Uploading...</div>
+                                </td>
+                            </tr>
+                        </table>
                     </form>
                 </div>
             </div>
@@ -46,24 +60,33 @@
                     <h4>Upload CSEC file. </h4>
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <input type="file" name="csec_file">
-                        <button type="submit" name="submit" class ="rounded" onclick='save(); this.disabled = true;' value="Upload CSEC Scores" /> Upload CSEC Scores </button>
+                        <table align="left" style="border: hidden;">
+                            <tr>
+                                <td style="border: hidden;">
+                                    <input type="file" name="csec_file">
+                                    <button type="submit" name="submit" class="rounded" onClick="this.style.display = 'none'; var button = document.getElementById('uploading-csec'); button.style.display = 'block'" value="Upload CSEC Scores"> Upload CSEC Scores </button>
+                                </td>
+                                <td style="border: hidden;">
+                                    <div id="uploading-csec" style="display: none">Uploading...</div>
+                                </td>
+                            </tr>
+                        </table>
                     </form>
                 </div>
             </div>
-         </div>
+        </div>
 
         <div class="col-xl-7 col-md-7">
-            <div class="card bg-primary text-white mb-4">
+            <div class="card bg-white text-black mb-4">
                 <div class="card-body">
                     <h4>{{cee_count}} CEE Records </h4>
                     <ul class="list-group">
                         {% for item in cee_by_year %}
                         <li class="list-group-item">
-                            <form action="" method="POST" onsubmit="return confirm('Are you sure you want to delete all records from time period {{ item }}?');">
+                            <form style="color:black" action="" method="POST" onsubmit="return confirm('Are you sure you want to delete all records from time period {{ item }}?');">
                                 {% csrf_token %}
                                 <button type='submit' name='submit' class="rounded" value="delete_cee{{ item }}"> Delete </button>
-                                Time Period: {{ item }}
+                                Year: {{ item }}
                             </form>
                         </li>
                         {% endfor %}
@@ -73,16 +96,16 @@
         </div>
 
         <div class="col-xl-7 col-md-7">
-            <div class="card bg-primary text-white mb-4">
+            <div class="card bg-white text-black mb-4">
                 <div class="card-body">
                     <h4> {{csec_count}} CSEC Records </h4>
                     <ul class="list-group">
                         {% for item in csec_by_year %}
                         <li class="list-group-item">
-                            <form action="" method="POST" onsubmit="return confirm('Are you sure you want to delete all records from time period {{ item }}?');">
+                            <form style="color:black" action="" method="POST" onsubmit="return confirm('Are you sure you want to delete all records from time period {{ item }}?');">
                                 {% csrf_token %}
                                 <button type='submit' name='submit' class="rounded" value="delete_csec{{ item }}"> Delete </button>
-                                Time Period: {{ item }}
+                                Year: {{ item }}
                             </form>
                         </li>
                         {% endfor %}

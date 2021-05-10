@@ -5,16 +5,16 @@
 <main>
     <div class="row">
         <div class="col-xl-4 col-md-4">
-            <div class="card bg-secondary text-white mb-4">
+            <div class="card mb-4">
                 <div class="card-body">District Enrollment / Grade / Gender <br />
                     <h1 class="text-info">{% if error_message %} {{ error_message }} {% endif%}</h1>
                 </div>
                 <div class="card-footer d-flex align-items-center justify-content-between">
-                    <form action="" method="POST">
+                    <form  action="" method="POST">
                         {% csrf_token %}
 
                         <label class="small mb-1" for="district"> Get table by district</label>
-                        <select name="district_name" id="district">
+                        <select name="district_name" class ='form-control' id="district">
                             <option value="" selected>[Choose Here]</option>
                             {% for item in districts_names %}
                             <option value={{ item.id }}> {{ item.district_name }}</option>
@@ -22,7 +22,7 @@
                         </select>
 
 
-                        <br /><input type="submit" name="submit" class="btn btn-primary" value="Get Data" />
+                        <br /><br/><input type="submit" name="submit" class="btn btn-primary" value="Get Data" />
                     </form>
                 </div>
             </div>

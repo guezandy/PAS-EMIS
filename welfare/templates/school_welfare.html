@@ -11,16 +11,19 @@
             <th>Class</th>
             <th>Sex</th>
             <th>Using services?</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
         {% for student in students %}
-        <tr class='clickable-row' data-href="/welfare/student/{{student.student_id}}">
+        <tr>
             <td>{{student.student_last_name}}</td>
             <td>{{student.student_first_name}}</td>
             <td>{{student.student_class}}</td>
             <td>{{student.student_sex}}</td>
             <td>{{student.student_has_services}}</td>
+            <td><a href="/welfare/student/{{student.student_id}}"><button type="button"
+                class="btn btn-primary mb-2">Details</button></a></td>
         </tr>
         {% endfor %}
     </tbody>

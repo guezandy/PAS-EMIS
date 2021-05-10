@@ -50,7 +50,7 @@ def get_plot(chart_type, **kwargs):
             tick.label.set_fontsize(10)
             # specify integer or one of preset strings, e.g.
             # tick.label.set_fontsize('x-small')
-            tick.label.set_rotation('vertical')
+            tick.label.set_rotation('60')
         for bar in ax.patches:
             # Using Matplotlib annotate function and
             # passing the coordinates where the annotation shall be done
@@ -156,7 +156,6 @@ def get_grade_plot(**kwargs):
         ax2.plot(data_boys['grade'], data_boys['enrollment'], 'bo')
         ax2.set_title('Boys Enrollment')
 
-
         school_title = School.objects.filter(id=school_name).distinct().values_list('school_name', flat=True)
         school_name_title = school_title[0]
         fig.suptitle("Enrollment for " + school_name_title + " - Academic Year " + year)
@@ -193,7 +192,8 @@ def get_district_grade_plot_girls(**kwargs):
         tick.label.set_rotation(60)
     district_title = School.objects.filter(id=district_name).distinct().values_list('district_name', flat=True)
     district_name_title = district_title[0]
-    fig.suptitle("Grade - " + str(grade) + " Girls Enrollment for Academic Year " + year + " for district" + str(district_name_title))
+    fig.suptitle("Grade - " + str(grade) + " Girls Enrollment for Academic Year " + year + " for district" + str(
+        district_name_title))
     plt.xlabel('Enrollment')
     plt.ylabel('School')
     plt.tight_layout()
@@ -224,7 +224,8 @@ def get_district_grade_plot_boys(**kwargs):
         plt.xticks(np.arange(0, max(data_boys['enrollment']) + 5, 5.0))
     district_title = School.objects.filter(id=district_name).distinct().values_list('district_name', flat=True)
     district_name_title = district_title[0]
-    fig.suptitle("Grade - " + str(grade) + " Boys Enrollment for Academic Year " + year + " for district" + str(district_name_title))
+    fig.suptitle("Grade - " + str(grade) + " Boys Enrollment for Academic Year " + year + " for district" + str(
+        district_name_title))
     plt.xlabel('Enrollment')
     plt.ylabel('School')
     plt.tight_layout()
@@ -245,7 +246,7 @@ def get_district_grade_plot_none(**kwargs):
 
     # get subplots for boys, girls and single gender
     fig, ax1 = plt.subplots(1, figsize=(10, 8))
-    ax1.plot(data_none['enrollment'],school_none, 'ro')
+    ax1.plot(data_none['enrollment'], school_none, 'ro')
     ax1.set_title('Enrollment')
     plt.xticks(np.arange(0, max(data_none['enrollment']) + 5, 5.0))
     for tick in ax1.xaxis.get_major_ticks():
@@ -255,7 +256,8 @@ def get_district_grade_plot_none(**kwargs):
         tick.label.set_rotation(60)
     district_title = School.objects.filter(id=district_name).distinct().values_list('district_name', flat=True)
     district_name_title = district_title[0]
-    fig.suptitle("Grade - " + str(grade) + " Total Enrollment for Academic Year " + year + " for district" + str(district_name_title))
+    fig.suptitle("Grade - " + str(grade) + " Total Enrollment for Academic Year " + year + " for district" + str(
+        district_name_title))
     plt.xlabel('Enrollment')
     plt.ylabel('School')
     plt.tight_layout()
@@ -546,18 +548,18 @@ def get_outlier_district_plot(**kwargs):
     academic_year = kwargs.get('academic_year')
     district_input = kwargs.get('input_district')
 
-    fig, ax1 = plt.subplots(figsize=(10, 6))
+    fig, ax1 = plt.subplots(figsize=(10, 8))
 
     ax1.set_title('Enrollment for District')
     ax1.set_xlabel('School_Name')
     ax1.set_ylabel('School_Scores')
 
-    ax1.bar(school_name, school_enrollment, color='#7CFC00', edgecolor='#000000')
+    ax1.bar(school_name, school_enrollment, color='b')
 
     for tick in ax1.xaxis.get_major_ticks():
-        tick.label.set_fontsize(14)
-        tick.label.set_rotation('vertical')
-    plt.plot(school_name, datamean, linewidth=5, ls='solid', color='#4B0082')
+        tick.label.set_fontsize(8)
+        tick.label.set_rotation('15')
+    plt.plot(school_name, datamean, linewidth=5, ls='solid', color='r')
 
     plt.xlabel("School Name")
     plt.ylabel("Enrollment")
@@ -568,70 +570,6 @@ def get_outlier_district_plot(**kwargs):
     plt.tight_layout()
     graph = get_image()
     return graph
-
-    plt.tight_layout()
-    graph = get_image()
-    return graph
-
-
-def get_plot_boys_primary(**kwargs):
-    plt.switch_backend('AGG')
-    data = kwargs.get('data')
-    for _ in data.shape:
-        ger = (data['enrollment'] / data['age_5_to_11_years']) * 100
-        academic_year = data.academic_year
-    sns.set(font_scale=1)
-    sns.set_style("white")
-    ax = ger.plot.bar(figsize=(15, 6))
-    sns.despine(left=True, bottom=True)
-    # label and title
-    ax.set_xticklabels(np.arange(len(academic_year)))
-    ax.set_title('Gross Enrollment Ratio (%) for Boys in Primary School In St. Lucia', size=18)
-    ax.set_xticklabels(academic_year)
-    for tick in ax.get_xticklabels():
-        tick.set_rotation(-30)
-    ax.set(xlabel='Academic Year', ylabel='Gross enrollment rate (%)')
-
-    # annotations
-    for p in ax.patches:
-        ax.annotate(format(p.get_height(), '.2f'),
-                    (p.get_x() + p.get_width() / 2., p.get_height()),
-                    ha='center', va='center',
-                    xytext=(0, 9),
-                    textcoords='offset points')
-    # adjust legend
-
-    plt.tight_layout()
-    graph = get_image()
-    return graph
-
-
-def get_plot_girls_primary(**kwargs):
-    plt.switch_backend('AGG')
-    data = kwargs.get('data')
-    for _ in data.shape:
-        ger = (data['enrollment'] / data['age_5_to_11_years']) * 100
-        academic_year = data.academic_year
-    sns.set(font_scale=1)
-    sns.set_style("white")
-    ax = ger.plot.bar(figsize=(15, 6), color='green')
-    sns.despine(left=True, bottom=True)
-    # label and title
-    ax.set_xticklabels(np.arange(len(academic_year)))
-    ax.set_title('Gross Enrollment Ratio (%) for Girls in Primary School In St. Lucia', size=18)
-    ax.set_xticklabels(academic_year)
-    for tick in ax.get_xticklabels():
-        tick.set_rotation(-30)
-    ax.set(xlabel='Academic Year', ylabel='Gross enrollment rate (%)')
-
-    # annotations
-    for p in ax.patches:
-        ax.annotate(format(p.get_height(), '.2f'),
-                    (p.get_x() + p.get_width() / 2., p.get_height()),
-                    ha='center', va='center',
-                    xytext=(0, 9),
-                    textcoords='offset points')
-    # adjust legend
 
     plt.tight_layout()
     graph = get_image()
@@ -652,16 +590,16 @@ def get_outlier_national_plot(**kwargs):
     input_school_type = kwargs.get('input_school_type')
     academic_year = kwargs.get('academic_year')
 
-    fig, ax1 = plt.subplots(figsize=(11, 6))
+    fig, ax1 = plt.subplots(figsize=(12, 10))
 
     ax1.set_title('Enrollment for Selected Year')
     ax1.set_xlabel('School_Name')
 
-    ax1.bar(school_name, school_enrollment, color='#7CFC00', edgecolor='#000000')
+    ax1.bar(school_name,  school_enrollment, width = 0.1, color='b')
     for tick in ax1.xaxis.get_major_ticks():
-        tick.label.set_fontsize(14)
+        tick.label.set_fontsize(10)
         tick.label.set_rotation('vertical')
-    plt.plot(school_name, datamean, linewidth=5, ls='solid', color='#4B0082')
+    plt.plot(school_name, datamean, linewidth=3, ls='solid', color='r')
 
     plt.xlabel("School Name")
     plt.ylabel("Enrollment")
@@ -670,123 +608,6 @@ def get_outlier_national_plot(**kwargs):
     plt.tight_layout()
     graph = get_image()
     return graph
-
-    plt.tight_layout()
-    graph = get_image()
-    return graph
-
-
-def get_plot_primary(**kwargs):
-    plt.switch_backend('AGG')
-    data = kwargs.get('data')
-    data_boys = kwargs.get('data_boys')
-    data_girls = kwargs.get('data_girls')
-
-    for _ in data.shape:
-        ger_boys = (data_boys['enrollment'] / data_boys['age_5_to_11_years']) * 100
-        ger_girls = (data_girls['enrollment'] / data_girls['age_5_to_11_years']) * 100
-        academic_year = data_boys.academic_year
-        title = 'Trend of GER for Primary Schools in St. Lucia'
-        plt.figure(figsize=(10, 8))
-        plt.title(title)
-        plt.plot(academic_year, ger_boys, 'b-', label='boys')
-        plt.plot(academic_year, ger_girls, 'g-', label='girls')
-        plt.xticks(rotation=60)
-        # plt.ylim(0, max(y) + 100)
-        plt.ylabel("Gross Enrollment Ratio for boys and girls in St. Lucia")
-        plt.xlabel("Academic Year")
-        plt.legend()
-        plt.grid()
-    plt.tight_layout()
-    graph = get_image()
-    return graph
-
-
-def get_plot_boys_secondary(**kwargs):
-    plt.switch_backend('AGG')
-    data = kwargs.get('data')
-    for _ in data.shape:
-        ger = (data['enrollment'] / data['age_12_to_16_years']) * 100
-        academic_year = data.academic_year
-    sns.set(font_scale=1)
-    sns.set_style("white")
-    ax = ger.plot.bar(figsize=(15, 6))
-    sns.despine(left=True, bottom=True)
-    # label and title
-    ax.set_xticklabels(np.arange(len(academic_year)))
-    ax.set_title('Gross Enrollment Ratio (%) for Boys in Secondary School In St. Lucia', size=18)
-    ax.set_xticklabels(academic_year)
-    for tick in ax.get_xticklabels():
-        tick.set_rotation(-30)
-    ax.set(xlabel='Academic Year', ylabel='Gross enrollment rate (%)')
-
-    # annotations
-    for p in ax.patches:
-        ax.annotate(format(p.get_height(), '.2f'),
-                    (p.get_x() + p.get_width() / 2., p.get_height()),
-                    ha='center', va='center',
-                    xytext=(0, 9),
-                    textcoords='offset points')
-    # adjust legend
-
-    plt.tight_layout()
-    graph = get_image()
-    return graph
-
-
-def get_plot_girls_secondary(**kwargs):
-    plt.switch_backend('AGG')
-    data = kwargs.get('data')
-    for _ in data.shape:
-        ger = (data['enrollment'] / data['age_12_to_16_years']) * 100
-        academic_year = data.academic_year
-    sns.set(font_scale=1)
-    sns.set_style("white")
-    ax = ger.plot.bar(figsize=(15, 6), color='green')
-    sns.despine(left=True, bottom=True)
-    # label and title
-    ax.set_xticklabels(np.arange(len(academic_year)))
-    ax.set_title('Gross Enrollment Ratio (%) for Girls in secondary School In St. Lucia', size=18)
-    ax.set_xticklabels(academic_year)
-    for tick in ax.get_xticklabels():
-        tick.set_rotation(-30)
-    ax.set(xlabel='Academic Year', ylabel='Gross enrollment rate (%)')
-
-    # annotations
-    for p in ax.patches:
-        ax.annotate(format(p.get_height(), '.2f'),
-                    (p.get_x() + p.get_width() / 2., p.get_height()),
-                    ha='center', va='center',
-                    xytext=(0, 9),
-                    textcoords='offset points')
-    # adjust legend
-
-    plt.tight_layout()
-    graph = get_image()
-    return graph
-
-
-def get_plot_secondary(**kwargs):
-    plt.switch_backend('AGG')
-    data = kwargs.get('data')
-    data_boys = kwargs.get('data_boys')
-    data_girls = kwargs.get('data_girls')
-
-    for _ in data.shape:
-        ger_boys = (data_boys['enrollment'] / data_boys['age_12_to_16_years']) * 100
-        ger_girls = (data_girls['enrollment'] / data_girls['age_12_to_16_years']) * 100
-        academic_year = data_girls.academic_year
-        title = 'Trend of GER for Primary Schools in St. Lucia'
-        plt.figure(figsize=(10, 8))
-        plt.title(title)
-        plt.plot(academic_year, ger_boys, 'b-', label='boys')
-        plt.plot(academic_year, ger_girls, 'g-', label='girls')
-        plt.xticks(rotation=60)
-        # plt.ylim(0, max(y) + 100)
-        plt.ylabel("Gross Enrollment Ratio for boys and girls in Secondary School")
-        plt.xlabel("Academic Year")
-        plt.legend()
-        plt.grid()
 
     plt.tight_layout()
     graph = get_image()
@@ -1421,64 +1242,3 @@ def covariance(**kwargs):
     graph = get_image()
     return graph
     """
-
-
-# ==========================================================================
-# Outlier detection at national level
-# ==========================================================================
-
-def get_outlier_national_plot(**kwargs):
-    plt.switch_backend('AGG')
-
-    school_enrollment = kwargs.get('x')
-    school_name = kwargs.get('y')
-
-    datamean = kwargs.get('data_mean')
-    input_school_type = kwargs.get('input_school_type')
-    academic_year = kwargs.get('academic_year')
-
-    fig, ax1 = plt.subplots(figsize=(11, 6))
-
-    ax1.set_title('Enrollment for Selected Year')
-    ax1.set_xlabel('School_Name')
-
-    ax1.bar(school_name, school_enrollment, color='#7CFC00', edgecolor='#000000')
-    for tick in ax1.xaxis.get_major_ticks():
-        tick.label.set_fontsize(14)
-        tick.label.set_rotation('vertical')
-    plt.plot(school_name, datamean, linewidth=5, ls='solid', color='#4B0082')
-
-    plt.xlabel("School Name")
-    plt.ylabel("Enrollment")
-    plt.title("Enrollment for " + input_school_type + " schools for year " + academic_year)
-
-
-def get_outlier_district_plot(**kwargs):
-    plt.switch_backend('AGG')
-
-    school_enrollment = kwargs.get('x')
-    school_name = kwargs.get('y')
-
-    datamean = kwargs.get('data_mean')
-    input_school_type = kwargs.get('input_school_type')
-    academic_year = kwargs.get('academic_year')
-    district_input = kwargs.get('input_district')
-
-    fig, ax1 = plt.subplots(figsize=(10, 6))
-
-    ax1.set_title('Enrollment for District')
-    ax1.set_xlabel('School_Name')
-    ax1.set_ylabel('School_Scores')
-
-    ax1.bar(school_name, school_enrollment, color='#7CFC00', edgecolor='#000000')
-
-    for tick in ax1.xaxis.get_major_ticks():
-        tick.label.set_fontsize(14)
-        tick.label.set_rotation('vertical')
-    plt.plot(school_name, datamean, linewidth=5, ls='solid', color='#4B0082')
-
-    plt.xlabel("School Name")
-    plt.ylabel("Enrollment")
-
-    plt.title(
-        "Enrollment for " + input_school_type + " schools for district " + district_input + " and " + academic_year + " academic year ")

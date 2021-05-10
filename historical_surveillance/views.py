@@ -811,14 +811,14 @@ def outlier_district(request):
     school_categories = Enrollment.objects.distinct(
     ).values_list('category_of_school', flat=True)
 
-    if (len(districts_names) > 0 and len(school_categories) > 0):
-        if ((request.method) == 'POST'):
+    if len(districts_names) > 0 and len(school_categories) > 0:
+        if request.method == 'POST':
 
             district_selected = request.POST.get('district_name', None)
             selected_year = request.POST.get('year', None)
             selected_school_type = request.POST.get('school_type', None)
 
-            if (not district_selected or not selected_year or not selected_school_type):
+            if not district_selected or not selected_year or not selected_school_type:
                 error_message = "Please select all variables"
             else:
                 # enrollment_df = pd.DataFrame(AggregateEnrollment.objects.values().filter(district_of_school=district_selected, academic_year = selected_year))
@@ -1097,9 +1097,9 @@ def boxplot_district(request):
     year_list = Enrollment.objects.distinct().values_list('year', flat=True)
     school_categories = Enrollment.objects.distinct().values_list('category_of_school', flat=True)
 
-    if (len(districts_names) > 0 and len(school_categories) > 0):
+    if len(districts_names) > 0 and len(school_categories) > 0:
 
-        if (request.method == 'POST'):
+        if request.method == 'POST':
 
             district_selected = request.POST.get('district_name', None)
             selected_year = request.POST.get('year', None)
@@ -1156,13 +1156,13 @@ def boxplot_national(request):
     year_list = Enrollment.objects.distinct().values_list('year', flat=True)
     school_categories = Enrollment.objects.distinct().values_list('category_of_school', flat=True)
 
-    if (len(year_list) > 0 and len(school_categories) > 0):
-        if (request.method == 'POST'):
+    if len(year_list) > 0 and len(school_categories) > 0:
+        if request.method == 'POST':
 
             selected_school_type = request.POST.get('school_type', None)
             selected_year = request.POST.get('year', None)
 
-            if (not selected_year or not selected_school_type):
+            if not selected_year or not selected_school_type:
                 error_message = "Please select an academic year"
             else:
 
@@ -1170,7 +1170,7 @@ def boxplot_national(request):
                     AggregateEnrollment.objects.all().filter(category_of_school=selected_school_type,
                                                              academic_year=selected_year).values())
 
-                if (enrollment_df.empty):
+                if enrollment_df.empty:
                     error_message = "No record was found for the academic year"
 
                 else:

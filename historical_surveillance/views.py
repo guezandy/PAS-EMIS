@@ -1013,7 +1013,9 @@ def upload_scores(request):
     context = {}
     cee_field_names = CEE._meta.get_fields()
     cee_field_names = [str(f).split('.')[-1] for f in cee_field_names]
-    cee_field_names = list(set(cee_field_names) - UNIVERSAL_FIELDS)
+    cee_field_names = set(cee_field_names) - UNIVERSAL_FIELDS
+    cee_field_names = list(cee_field_names - set(["primsch", "secsch", "district"]))
+    cee_field_names += ["primsch_id", "secsch_id", "district_id"]
     cee_field_names.sort()
 
     csec_field_names = CSEC._meta.get_fields()
@@ -1059,7 +1061,7 @@ def upload_scores(request):
         CEE.objects.filter(test_yr=int(time_period)).delete()
     elif request.POST['submit'].startswith("delete_csec"):
         time_period = request.POST['submit'][11:]
-        CSEC.objects.filter(year=int(time_period)).delete()
+        CSEC.objects.filter(year=time_period).delete()
     else:
         if not csv_file.name.endswith('.csv'):
             context['error_message'] = 'Could not upload file. File must be CSV type.'

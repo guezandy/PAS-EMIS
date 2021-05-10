@@ -8,12 +8,14 @@ from .models import *
 from .utils import *
 
 
+# view to display the Common entrance examination data
 def cee_results(request):
     data = CEE.objects.all()
     context = {"results": data}
     return render(request, 'cee_results.html', context)
 
 
+# view to add and update the common entrance examination data
 def update_cee(request, id=None):
     # Render edit form
     if id:
@@ -35,7 +37,7 @@ def update_cee(request, id=None):
     # context = _add_side_navigation_context(request.user, context)
     return render(request, "historical_form.html", context)
 
-
+# view to display the CSEC data
 def csec_results(request):
     data = CSEC.objects.all()
     context = {"results": data}
@@ -70,12 +72,12 @@ def examination_summary(request):
     cee_data = pd.DataFrame(CEE.objects.values().all())
     csec_data = pd.DataFrame(CSEC.objects.values().all())
     corv = csec_data[['subject', 'proficiency', 'profile1', 'profile2', 'profile3', 'profile4', 'overall_grade']]
-    #graph = covariance(corv=corv)
+    # graph = covariance(corv=corv)
     context = {'d': cee_data.to_html(),
-               'summary_age' : cee_data[['age_at_test']].describe().to_html(),
-               'summary_engcomp': cee_data[['engcomp']].astype(int).describe().to_html(),
-               'summary_mathcomp': cee_data[['mathcomp']].astype(int).describe().to_html(),
-               'summary_gpcomp': cee_data[['gpcomp']].astype(int).describe().to_html(),
+               'summary_age': cee_data[['age_at_test']].describe().to_html(),
+               'summary_engcomp': cee_data[['engcomp']].astype(float).describe().to_html(),
+               'summary_mathcomp': cee_data[['mathcomp']].astype(float).describe().to_html(),
+               'summary_gpcomp': cee_data[['gpcomp']].astype(float).describe().to_html(),
                'summary_totcomp': cee_data[['totcomp']].astype(float).describe().to_html(),
                'summary_sex': cee_data[['sex']].describe().to_html(),
                'score_corr': cee_data[['engcomp', 'mathcomp', 'gpcomp', 'totcomp']].astype(float).corr().to_html(),
@@ -86,8 +88,7 @@ def examination_summary(request):
                'summary_profile2_secondary': csec_data[['profile2']].describe().to_html(),
                'summary_profile3_secondary': csec_data[['profile3']].describe().to_html(),
                'summary_profile4_secondary': csec_data[['profile4']].describe().to_html(),
-               #'graph' : graph,
-
+               # 'graph' : graph,
 
                }
 
@@ -1029,6 +1030,7 @@ def district_performance(request):
 
 
 UNIVERSAL_FIELDS = {'id', 'created_at', 'created_by', 'updated_at', 'updated_by'}
+
 
 def upload_scores(request):
     context = {}

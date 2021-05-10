@@ -71,6 +71,13 @@ class AggregateEnrollmentFilter(django_filters.FilterSet):
 
 class CeeTable(tables.Table):
     id = ActionsColumn(editViewName ='surveillance:update-cee')
+    test_yr = tables.Column("Test Year")
+    primsch = tables.Column("Primary School")
+    secsch = tables.Column("Secondary School Choice")
+    engcomp = tables.Column("English Comp. Score")
+    mathcomp = tables.Column("Math Comp. Score")
+    gpcomp = tables.Column("General Paper Comp. Score")
+    totcomp = tables.Column("Total Comp. Score")
     class Meta:
         model = CEE
         fields = ('test_yr','primsch','secsch','age_at_test','sex','engcomp','mathcomp','gpcomp','totcomp')

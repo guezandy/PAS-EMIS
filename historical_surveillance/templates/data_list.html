@@ -1,11 +1,8 @@
 {% extends "base.html" %} {% load crispy_forms_filters %} {% load crispy_forms_tags %}{% load render_table from django_tables2 %} 
 {% load export_url from django_tables2 %} 
 {% block page_content %}
-<!-- This form handles the creation of schools in each district.
-The error handling needs to be reviewed for now, it takes the error messaged passed as a dictionary
-from the school view and displays to the user preventing duplicate data entry.
-The form is redirected to the home page of the app when a data is inserted to prevent double insert
-of the same data which is also handled by the error message displayed.
+<!-- 
+This template handles rendering tables and filters
 -->
 <main>
   <div class="row mb-2">
@@ -21,7 +18,7 @@ of the same data which is also handled by the error message displayed.
         {% for format in export_formats %}
         <a href="{% export_url format %}">
             <button type="button" class="btn btn-secondary mb-2 mr-3">
-                <i class="fa fa-download" aria-hidden="true"></i> Export All Data ({{format}})
+                <i class="fa fa-download" aria-hidden="true"></i> Export Data ({{format}})
             </button>
         </a>
         {% endfor %}
@@ -127,9 +124,6 @@ $(document).ready(function(){
     });
 
     toggleFiltersByParams();
-
-
-    
    
 });
 </script>

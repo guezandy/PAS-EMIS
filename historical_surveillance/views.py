@@ -1,4 +1,4 @@
-from historical_surveillance.tables import AggregateEnrollmentTable, AggregateEnrollmentFilter
+from historical_surveillance.tables import *
 import json
 from django.http.response import HttpResponseRedirect
 from django.urls.base import reverse
@@ -13,6 +13,69 @@ from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 from django_tables2.export import ExportMixin
 
+
+# This is for showing a list of all districts
+class FilteredDistrictListView(ExportMixin, SingleTableMixin, FilterView):
+    table_class = DistrictTable
+    model = District
+    template_name = "data_list.html"
+    filterset_class = DistrictFilter
+    table_pagination = {
+        "per_page": 10
+    }
+    extra_context={"listTitle": "Districts", 
+    "createButtonName": "Create District", 
+    "createViewName": "surveillance:create-district",
+    "export_formats":["csv"]}
+
+# This is for creating and editing a district
+def edit_district(request, code=None):
+    # Render edit form
+    if code:
+        instance = get_object_or_404(District, pk=code)
+    # Render create form
+    else:
+        instance = District(created_by=request.user.username,
+                            updated_by=request.user.username)
+    form = DistrictForms(request.POST or None, instance=instance)
+    # Process submit
+    if request.method == "POST":
+        if form.is_valid():
+            model_instance = form.save(commit=False)
+            model_instance.updated_by = request.user.username
+            model_instance.save()
+            return HttpResponseRedirect(reverse("surveillance:districts"))
+    context = {
+        "header": "Edit District" if code else "Create District", "form": form}
+    # context = _add_side_navigation_context(request.user, context)
+    return render(request, "historical_form.html", context)
+
+# This is for showing a list of all schools
+class FilteredSchoolListView(ExportMixin, SingleTableMixin, FilterView):
+    table_class = SchoolTable
+    model = School
+    template_name = "data_list.html"
+    filterset_class = SchoolFilter
+    table_pagination = {
+        "per_page": 10
+    }
+    extra_context={"listTitle": "School", 
+    "createButtonName": "Create School", 
+    "createViewName": "surveillance:create-school",
+    "export_formats":["csv"]}
+
+class FilteredEnrollmentListView(ExportMixin, SingleTableMixin, FilterView):
+    table_class = EnrollmentTable
+    model = Enrollment
+    template_name = "data_list.html"
+    filterset_class = EnrollmentFilter
+    table_pagination = {
+        "per_page": 10
+    }
+    extra_context={"listTitle": "National Enrollment by Grade and Sex", 
+    "createButtonName": "Add Record", 
+    "createViewName": "surveillance:create-enrollment",
+    "export_formats":["csv"]}
 
 class FilteredAggregateEnrollmentListView(ExportMixin, SingleTableMixin, FilterView):
     table_class = AggregateEnrollmentTable
@@ -97,35 +160,7 @@ def index(request):
     return render(request, 'surv_home.html', {})
 
 
-# This is for showing a list of all districts
 
-def district(request):
-    data = District.objects.all()
-    context = {"district_created": data}
-    return render(request, "districts.html", context)
-
-
-# This is for creating and editing a district
-def edit_district(request, code=None):
-    # Render edit form
-    if code:
-        instance = get_object_or_404(District, pk=code)
-    # Render create form
-    else:
-        instance = District(created_by=request.user.username,
-                            updated_by=request.user.username)
-    form = DistrictForms(request.POST or None, instance=instance)
-    # Process submit
-    if request.method == "POST":
-        if form.is_valid():
-            model_instance = form.save(commit=False)
-            model_instance.updated_by = request.user.username
-            model_instance.save()
-            return HttpResponseRedirect(reverse("surveillance:districts"))
-    context = {
-        "header": "Edit District" if code else "Create District", "form": form}
-    # context = _add_side_navigation_context(request.user, context)
-    return render(request, "historical_form.html", context)
 
 
 # This is for showing a list of all schools

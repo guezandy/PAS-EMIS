@@ -1,5 +1,5 @@
 # tables.py
-from historical_surveillance.models import AggregateEnrollment
+from historical_surveillance.models import AggregateEnrollment, District, Enrollment, School
 from django.utils.html import format_html
 from django.urls import reverse
 import django_tables2 as tables
@@ -14,6 +14,46 @@ class ActionsColumn(tables.Column):
 
     def render(self, value):
         return format_html('<a href="'+reverse(self.editViewName, args=(value,))+ '"><button type="button" class="btn btn-sm btn-primary"><i class="fas fa-pencil-alt"></i> Edit</button></a>', value)
+
+class DistrictTable(tables.Table):
+    id = ActionsColumn(editViewName ='surveillance:update-district')
+    class Meta:
+        model = District
+        fields = ('district_code', 'district_name', 'id')
+        attrs = {"class": "table table-striped table-bordered"}
+
+class DistrictFilter(django_filters.FilterSet):
+    class Meta:
+        model = District
+        fields = ['district_code', 'district_name']
+
+class SchoolTable(tables.Table):
+    id = ActionsColumn(editViewName ='surveillance:update-school')
+    class Meta:
+        model = School
+        fields = ('school_code', 'district_name', 'school_name','category_of_school', 'id')
+        attrs = {"class": "table table-striped table-bordered"}
+
+class SchoolFilter(django_filters.FilterSet):
+    class Meta:
+        model = School
+        fields = ['school_code','district_name', 'school_name','category_of_school']
+
+class EnrollmentTable(tables.Table):
+    id = ActionsColumn(editViewName ='surveillance:update-enrollment')
+    class Meta:
+        model = Enrollment
+        fields = ('district','school','grade','enrollment','sex', 'minimum_age','maximum_age','id')
+        attrs = {"class": "table table-striped table-bordered"}
+
+class EnrollmentFilter(django_filters.FilterSet):
+    enrollment= django_filters.RangeFilter()
+    maximum_age= django_filters.RangeFilter()
+    minimum_age= django_filters.RangeFilter()
+    class Meta:
+        model = Enrollment
+        fields = {'district': ['exact'] ,'school': ['exact'], 'grade':['exact'],'sex':['exact']}
+
 
 class AggregateEnrollmentTable(tables.Table):
     id = ActionsColumn(editViewName ='surveillance:update-aggregate-enrollment')

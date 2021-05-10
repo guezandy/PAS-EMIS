@@ -1,5 +1,5 @@
 # tables.py
-from historical_surveillance.models import AggregateEnrollment, District, Enrollment, School
+from historical_surveillance.models import AggregateEnrollment, CEE, CSEC, District, Enrollment, School
 from django.utils.html import format_html
 from django.urls import reverse
 import django_tables2 as tables
@@ -68,3 +68,34 @@ class AggregateEnrollmentFilter(django_filters.FilterSet):
     class Meta:
         model = AggregateEnrollment
         fields = {'academic_year' : ['contains'], 'district_of_school': ['exact'] ,'name_of_school': ['exact'],'category_of_school': ['exact'] }
+
+class CeeTable(tables.Table):
+    id = ActionsColumn(editViewName ='surveillance:update-cee')
+    class Meta:
+        model = CEE
+        fields = ('test_yr','primsch','secsch','age_at_test','sex','engcomp','mathcomp','gpcomp','totcomp')
+        attrs = {"class": "table table-striped table-bordered"}
+
+class CeeFilter(django_filters.FilterSet):
+    test_yr = django_filters.RangeFilter()
+    age_at_test = django_filters.RangeFilter()
+    engcomp = django_filters.RangeFilter()
+    mathcomp = django_filters.RangeFilter()
+    gpcomp = django_filters.RangeFilter()
+    totcomp = django_filters.RangeFilter()
+    class Meta:
+        model = CEE
+        fields = {'primsch':['exact'],'secsch':['exact']}
+
+class CsecTable(tables.Table):
+    id = ActionsColumn(editViewName ='surveillance:update-csec')
+    class Meta:
+        model = CSEC
+        fields = ('year','school','sex','subject','proficiency','profile1','profile2','profile3','profile4','overall_grade')
+        attrs = {"class": "table table-striped table-bordered"}
+
+class CsecFilter(django_filters.FilterSet):
+    year = django_filters.RangeFilter()
+    class Meta:
+        model = CSEC
+        fields = {'school':['exact'],'sex':['exact'],'subject':['exact'], 'profile1':['exact'],'profile2':['exact'],'profile3':['exact'],'profile4':['exact'], 'overall_grade':['exact']}

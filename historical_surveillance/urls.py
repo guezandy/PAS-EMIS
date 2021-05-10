@@ -127,7 +127,7 @@ urlpatterns = [
     # Grade 6 national examination
     path(
         "cee_results",
-        views.cee_results,
+        views.CeeListView.as_view(),
         name="cee-results"),
     path(
         "update_cee/<int:id>",
@@ -142,7 +142,7 @@ urlpatterns = [
     #Form 5 National Examination
     path(
         "csec_results",
-        views.csec_results,
+        views.CsecListView.as_view(),
         name="csec-results"),
 
     path(

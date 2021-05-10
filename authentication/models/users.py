@@ -114,11 +114,9 @@ class DistrictEducationOfficer(User):
         verbose_name = "District Education Officer"
 
 
-class SchoolSuperviser(User):
-    school = models.ForeignKey(School, on_delete=models.CASCADE, null=True)
-
+class SchoolSupervisionOfficer(User):
     class Meta(CustomPermissionModel.Meta):
-        verbose_name = "School Superviser"
+        verbose_name = "School Supervision Officer"
 
 
 class StatisticianAdmin(User):
@@ -131,9 +129,7 @@ class EvaluationAdmin(User):
         verbose_name = "Evaluation Admin"
 
 
-class EarlyChildhoodEducator(User):
-    school = models.ForeignKey(School, on_delete=models.CASCADE, null=True)
-
+class EarlyChildhoodEducationOfficer(User):
     class Meta(CustomPermissionModel.Meta):
         verbose_name = "Early Childhood"
 
@@ -143,9 +139,9 @@ class SupportServicesAdmin(User):
         verbose_name = "Support Services Admin"
 
 
-class ExternalAccessor(User):
+class ExternalAssessor(User):
     class Meta(CustomPermissionModel.Meta):
-        verbose_name = "External Accessor"
+        verbose_name = "External Assessor"
 
 
 def get_user_type(user):
@@ -154,12 +150,12 @@ def get_user_type(user):
         "school_admin": "schooladministrator",
         "principal": "schoolprincipal",
         "district_officer": "districteducationofficer",
-        "school_superviser": "schoolsuperviser",
+        "school_supervision_officer": "schoolsupervisionofficer",
         "stat_admin": "statisticianadmin",
         "evaluation_admin": "evaluationadmin",
-        "early_childhood_educator": "earlychildhoodeducator",
+        "early_childhood_education_officer": "earlychildhoodeducationofficer",
         "support_services_admin": "supportservicesadmin",
-        "external_accessor": "externalaccessor",
+        "external_assessor": "externalassessor",
     }
     for type in form_map:
         try:
@@ -195,7 +191,7 @@ def add_user_permissions(sender, instance, created, **kwargs):
                 name="District Education Officer"
             )
             group.user_set.add(instance)
-        elif isinstance(instance, SchoolSuperviser):
+        elif isinstance(instance, SchoolSupervisionOfficer):
             group, created = Group.objects.get_or_create(name="School Supervision")
             group.user_set.add(instance)
         elif isinstance(instance, StatisticianAdmin):
@@ -206,13 +202,13 @@ def add_user_permissions(sender, instance, created, **kwargs):
                 name="Evaluation and Assessment"
             )
             group.user_set.add(instance)
-        elif isinstance(instance, EarlyChildhoodEducator):
+        elif isinstance(instance, EarlyChildhoodEducationOfficer):
             group, created = Group.objects.get_or_create(name="Early Childhood")
             group.user_set.add(instance)
         elif isinstance(instance, SupportServicesAdmin):
             group, created = Group.objects.get_or_create(name="Support Services")
             group.user_set.add(instance)
-        elif isinstance(instance, ExternalAccessor):
+        elif isinstance(instance, ExternalAssessor):
             group, created = Group.objects.get_or_create(name="External Assessor")
             group.user_set.add(instance)
 

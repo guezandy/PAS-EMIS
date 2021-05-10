@@ -5,21 +5,21 @@ from .models.users import (
     Teacher,
     SchoolPrincipal,
     DistrictEducationOfficer,
-    SchoolSuperviser,
+    SchoolSupervisionOfficer,
     StatisticianAdmin,
     EvaluationAdmin,
-    EarlyChildhoodEducator,
+    EarlyChildhoodEducationOfficer,
     SupportServicesAdmin,
-    ExternalAccessor,
+    ExternalAssessor,
 )
 
 admin.site.register(SchoolAdministrator)
 admin.site.register(Teacher)
 admin.site.register(SchoolPrincipal)
 admin.site.register(DistrictEducationOfficer)
-admin.site.register(SchoolSuperviser)
+admin.site.register(SchoolSupervisionOfficer)
 admin.site.register(StatisticianAdmin)
 admin.site.register(EvaluationAdmin)
-admin.site.register(EarlyChildhoodEducator)
+admin.site.register(EarlyChildhoodEducationOfficer)
 admin.site.register(SupportServicesAdmin)
-admin.site.register(ExternalAccessor)
+admin.site.register(ExternalAssessor)

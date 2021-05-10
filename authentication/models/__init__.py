@@ -17,10 +17,10 @@ from .users import (
     Teacher,
     SchoolPrincipal,
     DistrictEducationOfficer,
-    SchoolSuperviser,
+    SchoolSupervisionOfficer,
     StatisticianAdmin,
     EvaluationAdmin,
-    EarlyChildhoodEducator,
+    EarlyChildhoodEducationOfficer,
     SupportServicesAdmin,
-    ExternalAccessor,
+    ExternalAssessor,
 )

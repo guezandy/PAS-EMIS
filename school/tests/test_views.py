@@ -49,14 +49,11 @@ class TestSchoolViews(ViewTestCase):
             f"/school/district/{self.district_officer_account.district.district_code}",
         )
 
-    def test_school_superviser_account_access(self):
-        self.login_account("school_superviser_account")
+    def test_school_supervision_officer_account_access(self):
+        self.login_account("school_supervision_officer_account")
         response = self.client.get(reverse("school:school_index"))
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
-        self.assertRedirects(
-            response,
-            f"/school/school_details/{self.school_superviser_account.school.school_code}",
-        )
+        self.assertRedirects(response, "/school/districts")
 
     def test_evaluation_admin_account_access(self):
         self.login_account("evaluation_admin_account")
@@ -74,8 +71,8 @@ class TestSchoolViews(ViewTestCase):
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertRedirects(response, "/auth/login?next=/school/")
 
-    def test_external_accecssor_account_access(self):
-        self.login_account("external_accecssor_account")
+    def test_external_assessor_account_access(self):
+        self.login_account("external_assessor_account")
         response = self.client.get(reverse("school:school_index"))
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
         self.assertRedirects(response, "/auth/login?next=/school/")

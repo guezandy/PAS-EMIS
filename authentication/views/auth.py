@@ -40,12 +40,12 @@ def index(request):
         "school_admin": {"header": "", "content": ""},
         "principal": {"header": "", "content": ""},
         "district_officer": {"header": "", "content": ""},
-        "school_superviser": {"header": "", "content": ""},
+        "school_supervision_officer": {"header": "", "content": ""},
         "stat_admin": {"header": "", "content": ""},
         "evaluation_admin": {"header": "", "content": ""},
-        "early_childhood_educator": {"header": "", "content": ""},
+        "early_childhood_education_officer": {"header": "", "content": ""},
         "support_services_admin": {"header": "", "content": ""},
-        "external_accessor": {"header": "", "content": ""},
+        "external_assessor": {"header": "", "content": ""},
     }
     if request.user and request.user.is_authenticated:
         user_type, parent_user = get_user_type(request.user)

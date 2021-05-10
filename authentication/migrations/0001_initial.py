@@ -186,12 +186,12 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='ExternalAccessor',
+            name='ExternalAssessor',
             fields=[
                 ('user_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='auth.user')),
             ],
             options={
-                'verbose_name': 'External Accessor',
+                'verbose_name': 'External Assessor',
                 'abstract': False,
                 'default_permissions': (),
             },
@@ -267,13 +267,13 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='SchoolSuperviser',
+            name='SchoolSupervisionOfficer',
             fields=[
                 ('user_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='auth.user')),
                 ('school', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='historical_surveillance.school')),
             ],
             options={
-                'verbose_name': 'School Superviser',
+                'verbose_name': 'School supervision officer',
                 'abstract': False,
                 'default_permissions': (),
             },
@@ -319,7 +319,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='EarlyChildhoodEducator',
+            name='EarlyChildhoodEducationOfficer',
             fields=[
                 ('user_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='auth.user')),
                 ('school', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='historical_surveillance.school')),

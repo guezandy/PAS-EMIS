@@ -303,6 +303,7 @@ def service_form(request, code=None):
 @user_passes_test(lambda u: _can_view_service_definitions(u))
 def view_services(request):
     context = {
+        "can_edit_service_defs": _can_edit_service_definitions(request.user),
         "services": [
             {
                 "id": service.id,
@@ -362,6 +363,7 @@ def all_districts(request):
 
     context = {
         "can_view_service_defs": _can_view_service_definitions(request.user),
+        "can_edit_service_defs": _can_edit_service_definitions(request.user),
         "breakdown_topic": "District",
         "districts": [
             _get_basic_stats_dict(
@@ -402,6 +404,7 @@ def district_schools(request, district_code):
 
     context = {
         "can_view_service_defs": _can_view_service_definitions(request.user),
+        "can_edit_service_defs": _can_edit_service_definitions(request.user),
         "breakdown_topic": "School",
         "district_name": district.district_name,
         "schools": [
@@ -435,6 +438,7 @@ def school_students(request, school_code):
 
     context = {
         "can_view_service_defs": _can_view_service_definitions(request.user),
+        "can_edit_service_defs": _can_edit_service_definitions(request.user),
         "breakdown_topic": "Student",
         "school_name": school.school_name,
         "students": [
@@ -480,6 +484,7 @@ def student_view(request, code):
         school_name = ""
 
     context = {
+        "can_edit_student_support": _can_edit_student_services(request.user),
         "student_id": student.id,
         "student_last_name": student.last_name,
         "student_first_name": student.first_name,
@@ -487,6 +492,7 @@ def student_view(request, code):
         "school_name": school_name,
         "service_assocs": [
             {
+                "id": service_assoc.id,
                 "service_id": service_assoc.service.id,
                 "service_name": service_assoc.service.name,
                 "service_start": service_assoc.start_date,
@@ -501,7 +507,7 @@ def student_view(request, code):
 
 
 @user_passes_test(lambda u: _can_edit_student_services(u))
-def student_service_form(request, student_code, service_code=None):
+def student_service_form(request, student_code, assoc_id=None):
     if not student_code:
         return redirect("/welfare")
 
@@ -511,25 +517,20 @@ def student_service_form(request, student_code, service_code=None):
     student = student_query.first()
     
     service = None
-    if service_code:
-        service_query = SupportService.objects.filter(id=service_code)
-        if not service_query.exists():
-            return redirect("/welfare")
-        service = service_query.first()
     
     instance = None
-    if service:
+    if assoc_id:
         assoc_query = StudentSupportAssoc.objects.filter(
-            service=service,
+            id=assoc_id,
             student=student
         )
         if assoc_query.exists():
             instance = assoc_query.first()
-    
+
+    service = instance.service if instance else None
     if not instance:
         instance = StudentSupportAssoc(
             student=student,
-            service=service,
             created_by=request.user.username,
             updated_by=request.user.username
         )

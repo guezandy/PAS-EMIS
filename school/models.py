@@ -34,6 +34,19 @@ class Student(models.Model):
     )
     school = models.ForeignKey(School, on_delete=models.CASCADE, null=True)
     graduation_year = models.PositiveIntegerField(default=current_year())
+    device_access = models.BooleanField(default=False)
+    is_device_personal = models.BooleanField(default=False)
+    steady_internet = models.BooleanField(default=False)
+    type_of_device = models.CharField(
+        max_length=30,
+        choices=(
+            ("phone", "Phone"),
+            ("tablet", "Tablet"),
+            ("laptop/computer", "Laptop / Computer"),
+        ),
+        null=True,
+        blank=True,
+    )
 
     father_name = models.CharField(max_length=100, blank=True, null=True)
     father_work_telephone = models.CharField(max_length=100, blank=True, null=True)

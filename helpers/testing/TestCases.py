@@ -92,7 +92,7 @@ class ViewTestCase(TestCase):
         "password": "password",
     }
 
-    EXTERNAL_ACCESSOR_CREDENTIALS = {
+    EXTERNAL_ASSESSOR_CREDENTIALS = {
         "username": "external_assessor@emis.com",
         "password": "password",
     }
@@ -107,7 +107,7 @@ class ViewTestCase(TestCase):
         "statistician_admin_account": STATISTICIAN_CREDENTIALS,
         "evaluation_admin_account": EVALUATION_ADMIN_CREDENTIALS,
         "early_childhood_education_account": EARLYCHILDHOOD_CREDENTIALS,
-        "external_assessor_account": EXTERNAL_ACCESSOR_CREDENTIALS,
+        "external_assessor_account": EXTERNAL_ASSESSOR_CREDENTIALS,
     }
 
     @classmethod
@@ -212,7 +212,7 @@ class ViewTestCase(TestCase):
         return self.build_user_property(
             "external_assessor_account",
             ExternalAssessor,
-            self.EXTERNAL_ACCESSOR_CREDENTIALS,
+            self.EXTERNAL_ASSESSOR_CREDENTIALS,
         )
 
     @property

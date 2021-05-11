@@ -9,67 +9,10 @@ The form is redirected to the home page of the app when a data is inserted to pr
 of the same data which is also handled by the error message displayed.
 -->
 <main>
-    <div class="row">
-        <div class="col-xl-12 col-md-12">
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h3>Regression-Plots between GDP Per Capita and GER</h3>
-                          <div class="table-responsive card bg-body mb-4">
-                            <table class="table table-bordered" id="dataTable" max-width="100%">
-                                <thead>
-                                    <tr>
-                                        <th>Academic Year</th>
-                                        <th>Total Enrollment</th>
-                                        <th>Sex</th>
-                                        <th>Population of Age 5 -11</th>
-                                        <th>Population of Age 12 -16</th>
-                                         <th>Category of Schools</th>
-                                        <th>GDP (Million xcd)</th>
-
-
-                                    </tr>
-                                </thead>
-                                <tfoot>
-                                    <tr>
-                                        <th>Academic Year</th>
-                                        <th>Total Enrollment</th>
-                                        <th>Sex</th>
-                                        <th>Population of Age 5 -11</th>
-                                        <th>Population of Age 12 -16</th>
-                                         <th>Category of Schools</th>
-                                        <th>GDP (Million xcd)</th>
-
-                                    </tr>
-                                </tfoot>
-                                <tbody>
-                                    {% for row in d %}
-
-                                    <tr>
-                                        <td>{{ row.academic_year}}</td>
-                                        <td>{{ row.enrollment }}</td>
-                                         <td>{{ row.sex }}</td>
-                                        <td>{{ row.age_5_to_11_years }}</td>
-                                        <td>{{ row.age_12_to_16_years }}</td>
-                                        <td>{{ row.category_of_school }}</td>
-                                        <td>{{ row.gdp_millions }}</td>
-
-
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-
-                </div>
-
-            </div>
-        </div>
-
-    </div>
-
+    <h3>Identifying Factors that Influences / Affects School Enrollment</h3>
 <div class ='row'>
 
-        <div class="col-xl-12 col-md-12">
+        <div class="col-xl-6 col-md-6">
             <div class="card mb-4">
                 <div class="card-body">
                     {% if request.POST %}
@@ -80,13 +23,102 @@ of the same data which is also handled by the error message displayed.
                 </div>
             </div>
         </div>
-
-
-
-
+<div class="col-xl-6 col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <p><em><b>Kernel Density Plot:</b> This helps to Visualize and smooth out data noise.
+                        It takes a more general look at the distribution of the national enrollment data,
+                        as its right axis represents how often the variable occurs or its probability.</em></p>
+                    {% if request.POST %}
+                {% if graph_stats %}
+                <img src="data:image/png;base64, {{ graph_stats | safe}}" alt="analysis Image" />
+                {%endif%}
+                {% endif%}
+                </div>
+            </div>
+        </div>
     </div>
 
 
+<div class ='row'>
+
+        <div class="col-xl-6 col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3>Linear Regression GDP Versus Enrollments</h3>
+                    {% if request.POST %}
+                {% if graph_gdp_reg %}
+                <img src="data:image/png;base64, {{ graph_gdp_reg | safe}}" alt="analysis Image" />
+                {%endif%}
+                {% endif%}
+                </div>
+            </div>
+        </div>
+<div class="col-xl-6 col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                <h3> Pearson Correlation </h3>
+                    {% if request.POST %}
+                        <p><em><b>Relationship between GDP and Enrollment</b>: This displays the Pearsons
+                            correlation coefficient and the p-value. Note that the p-value is never actually 0
+                            but always likely less than 0.0005 rounded up and reported as 0.</em>
+                        </p>
+                        <b>Interpretation of r (correlation coefficient) value: </b>
+                        <ol>
+                            <li>Exactly –1. A perfect downhill (negative) linear relationship</li>
+                            <li>–0.70. A strong downhill (negative) linear relationship</li>
+                            <li>–0.50. A moderate downhill (negative) relationship</li>
+                            <li>–0.30. A weak downhill (negative) linear relationship</li>
+                            <li>0. No linear relationship</li>
+                            <li>+0.30. A weak uphill (positive) linear relationship</li>
+                            <li>+0.50. A moderate uphill (positive) relationship</li>
+                            <li>+0.70. A strong uphill (positive) linear relationship</li>
+                            <li>Exactly +1. A perfect uphill (positive) linear relationship</li>
+                        </ol>
+                        <p><b>Interpretation of P - value: </b> The P-value here is the probability that the null
+                            hypothesis is true. In this case, it represents the probability that the
+                            correlation between gdp and enrollments in the sample occurred by chance.
+                            <i>p-value of 0.05 = 5%, 0.01 = 1% </i><b>If the p-value is smaller than the significance
+                                level, in this case 0.05 we reject the null hypothesis and accept the alternative
+                                hypothesis (i.e The correlation between gdp and enrollment is not by random chance).
+                                if the P-value is larger than 0.05, the correlation is not statistically
+                                significant</b></p>
+
+                {% if graph_pearsons %}
+                <img src="data:image/png;base64, {{ graph_pearsons | safe}}" alt="analysis Image" />
+                {%endif%}
+                {% endif%}
+                </div>
+            </div>
+        </div>
+    </div>
+<div class ='row'>
+
+        <div class="col-xl-6 col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                <h3> Spearman Correlation - GDP and Enrollment </h3>
+                    {% if request.POST %}
+                {% if graph_spearman %}
+                <img src="data:image/png;base64, {{ graph_spearman | safe}}" alt="analysis Image" />
+                {%endif%}
+                {% endif%}
+                </div>
+            </div>
+        </div>
+<div class="col-xl-6 col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3> Multicollinearity - GDP and Enrollment </h3>
+                    {% if request.POST %}
+                {% if graph_multicollinear %}
+                <img src="data:image/png;base64, {{ graph_multicollinear | safe}}" alt="analysis Image" />
+                {%endif%}
+                {% endif%}
+                </div>
+            </div>
+        </div>
+    </div>
 
 </main>
 

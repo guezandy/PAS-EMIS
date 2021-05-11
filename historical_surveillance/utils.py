@@ -15,6 +15,7 @@ from .models import *
 from .forms import *
 import numpy as np
 import pandas as pd
+from scipy.stats import pearsonr
 
 
 # function to get the Image and plot
@@ -483,10 +484,7 @@ def csec_performance_plot(data, district_1, district_2):
 
     df = pd.DataFrame(data.values())
     plt.switch_backend('AGG')
-    years = []
-    for y in df['year'].drop_duplicates():
-        if re.match('^[0-9]*$', y):
-            years.append(int(y))
+    years = [int(y) for y in df['year'].drop_duplicates()]
     years.sort()
     min_year = min(years)
 
@@ -509,8 +507,6 @@ def csec_performance_plot(data, district_1, district_2):
             district = get_district(school_code, schools, district_dict)
         if not district:
             left_out.add(row['school_id'])
-            continue
-        if not row['year'].isdigit(): 
             continue
         year = int(row['year']) - min_year
         n_tests[year][district - 1] += 1
@@ -606,7 +602,7 @@ def get_outlier_national_plot(**kwargs):
     ax1.set_title('Enrollment for Selected Year')
     ax1.set_xlabel('School_Name')
 
-    ax1.bar(school_name,  school_enrollment, width = 0.1, color='b')
+    ax1.bar(school_name, school_enrollment, width=0.1, color='b')
     for tick in ax1.xaxis.get_major_ticks():
         tick.label.set_fontsize(10)
         tick.label.set_rotation('vertical')
@@ -627,10 +623,95 @@ def get_outlier_national_plot(**kwargs):
 
 def get_plot_regression(**kwargs):
     plt.switch_backend('AGG')
+    plt.figure(figsize=(10, 8))
+
     data = kwargs.get('data')
     sns.set_theme(color_codes=True)
-    sns.regplot(x=data.enrollment, y=data.gdp_millions, data=data, x_estimator=np.mean);
+    sns.regplot(x=data.enrollment, y=data.gdp_millions, data=data, x_estimator=np.mean, label='GDP');
+    sns.regplot(x=data.enrollment, y=data.educational_expenditure, data=data, x_estimator=np.mean,
+                label='Educational Expenditure');
+    sns.regplot(x=data.enrollment, y=data.government_expenditure, data=data, x_estimator=np.mean,
+                label='Government Expenditure');
+    plt.xlabel("Enrollment")
+    plt.ylabel("Expenditure")
+    plt.title("Linear Regression - Enrollment / GDP / Education / government expenditure")
+    plt.legend()
+    plt.tight_layout()
+    graph = get_image()
+    return graph
 
+
+def get_plot_gdp_regress(**kwargs):
+    plt.switch_backend('AGG')
+    plt.figure(figsize=(10, 8))
+    data = kwargs.get('data')
+    sns.set_theme(color_codes=True)
+    sns.jointplot(x=data.enrollment, y=data.gdp_millions, data=data, x_estimator=np.mean,
+                  label='GDP', kind="reg");
+    plt.xlabel("Enrollment")
+    plt.ylabel("Expenditure")
+    plt.tight_layout()
+    graph = get_image()
+    return graph
+
+
+def get_enrollment_joint_pearsons(**kwargs):
+    plt.switch_backend('AGG')
+    plt.figure(figsize=(10, 8))
+    data = kwargs.get('data')
+    sns.set_theme(color_codes=True)
+    import scipy.stats as stats
+    graph = sns.jointplot(data=data, x=data.enrollment, y=data.gdp_millions)
+    r, p = stats.pearsonr(x=data.enrollment, y=data.gdp_millions)
+    phantom, = graph.ax_joint.plot([], [], linestyle="", alpha=0)
+    # here graph is not a ax but a joint grid, so we access the axis through ax_joint method
+    graph.ax_joint.legend([phantom], ['r={:f}, p={:f}'.format(r, p)])
+    plt.tight_layout()
+    graph = get_image()
+    return graph
+
+
+def get_enrollment_joint_spearman(**kwargs):
+    plt.switch_backend('AGG')
+    plt.figure(figsize=(10, 8))
+    data = kwargs.get('data')
+    sns.set_theme(color_codes=True)
+    graph = sns.jointplot(data=data, x=data.enrollment, y=data.gdp_millions)
+    r, p = stats.spearmanr(data.enrollment, data.gdp_millions)
+    phantom, = graph.ax_joint.plot([], [], linestyle="", alpha=0)
+    # here graph is not a ax but a joint grid, so we access the axis through ax_joint method
+
+    graph.ax_joint.legend([phantom], ['r={:f}, p={:f}'.format(r, p)])
+    plt.tight_layout()
+    graph = get_image()
+    return graph
+
+
+def get_enrollment_multicollinearity(**kwargs):
+    plt.figure(figsize=(10, 8))
+    plt.switch_backend('AGG')
+    data = kwargs.get('data')
+    data = data[["educational_expenditure", "gdp_millions", "government_expenditure", "primary_school_expenditure",
+                 "secondary_school_expenditure", "enrollment", "age_5_to_11_years", "age_12_to_16_years"]]
+    sns.set(style='white')
+    corr = data.corr()
+    mask = np.zeros_like(corr, dtype=np.bool)
+    mask[np.triu_indices_from(mask)] = True
+    f, ax = plt.subplots(figsize=(12, 10))
+    cmap = sns.diverging_palette(220, 10, as_cmap=True)
+    sns.heatmap(corr, mask=mask, cmap=cmap, vmax=.9, center=0, square=True, linewidths=.5, annot=True,
+                cbar_kws={'shrink': .5});
+    plt.tight_layout()
+    graph = get_image()
+    return graph
+
+
+def get_kernel_density(**kwargs):
+    plt.figure(figsize=(10, 8))
+    plt.switch_backend('AGG')
+    data = kwargs.get('data')
+    sns.kdeplot(data=data.enrollment)
+    sns.despine()
     plt.tight_layout()
     graph = get_image()
     return graph
@@ -1239,56 +1320,42 @@ def national_ratio_hist(**kwargs):
     return graph
 
 
-"""
-def covariance(**kwargs):
-    plt.switch_backend('AGG')
-    df = kwargs.get('corv')
-    fig, ax = plt.subplots(figsize=(20, 8))
-    plt.subplot(1, 3, 2)
-    plt.scatter(df['subject'], df['overall_grade'])
-    plt.title('Grade per subject')
-    plt.xlabel('Subject')
-    plt.ylabel('Overall Grade')
-    plt.tight_layout()
-    graph = get_image()
-    return graph
-    """
-
-
 def get_prev_yr(year_string):
     year = int(year_string.split("/")[0])
     prev_year = year - 1
     return str(prev_year) + "/" + str(year)
 
+
 def get_previous_performance(data):
     previous = []
     for index, row in data.iterrows():
-        previous_year = data.loc[(data['school_id'] == row['school_id']) & 
+        previous_year = data.loc[(data['school_id'] == row['school_id']) &
                                  (data['academic_year'] == get_prev_yr(row['academic_year']))]
         if not previous_year.empty:
             previous.append(previous_year['performance'].values[0])
-        else: 
+        else:
             previous.append(np.nan)
 
     previous = pd.Series(previous)
     data['previous'] = previous
     return data
 
+
 def get_enrollment(data):
-    enrollment = [] 
+    enrollment = []
     capacity = []
     found = 0
     not_found = 0
     for index, row in data.iterrows():
-        school = AggregateEnrollment.objects.filter(name_of_school_id=row['school_id'], academic_year=row['academic_year'])
+        school = AggregateEnrollment.objects.filter(name_of_school_id=row['school_id'],
+                                                    academic_year=row['academic_year'])
         if school:
             enr = getattr(school[0], 'total_enrollment')
             enrollment.append(enr)
-            capacity.append(enr/getattr(school[0], 'capacity_of_school'))
-        else: 
+            capacity.append(enr / getattr(school[0], 'capacity_of_school'))
+        else:
             enrollment.append(np.nan)
             capacity.append(np.nan)
-
 
     enrollment = pd.Series(enrollment)
     data['enrollment'] = enrollment
@@ -1296,27 +1363,29 @@ def get_enrollment(data):
     data['capacity'] = capacity
     return data
 
+
 def divide_by_enrollment(data):
-    data['teachers'] = data['enrollment']/data['teachers']
-    data['girls'] = data['girls']/data['enrollment']
-    data['total_bursaries'] = data['total_bursaries']/data['enrollment']
-    data['feeding_program'] = data['feeding_program']/data['enrollment']
-    data['repeaters'] = data['repeaters']/data['enrollment']
-    data['trained_teachers'] = data['trained_teachers']/data['teachers']
-    data['primary_enrollment'] = data['primary_enrollment']/data['enrollment']
+    data['teachers'] = data['enrollment'] / data['teachers']
+    data['girls'] = data['girls'] / data['enrollment']
+    data['total_bursaries'] = data['total_bursaries'] / data['enrollment']
+    data['feeding_program'] = data['feeding_program'] / data['enrollment']
+    data['repeaters'] = data['repeaters'] / data['enrollment']
+    data['trained_teachers'] = data['trained_teachers'] / data['teachers']
+    data['primary_enrollment'] = data['primary_enrollment'] / data['enrollment']
     return data
+
 
 def correlations(data, excluded_fields):
     plt.switch_backend('AGG')
     data = pd.DataFrame(data.values())
-    data['performance'] = data['above_average_scores']/data['tests_sat']
-    data= data.drop(columns=excluded_fields)
+    data['performance'] = data['above_average_scores'] / data['tests_sat']
+    data = data.drop(columns=excluded_fields)
 
     data = get_previous_performance(data)
     data = get_enrollment(data)
 
-    data= data.drop(columns=['academic_year', 'school_id', 'above_average_scores', 'tests_sat'])
-    data = data.apply(pd.to_numeric) 
+    data = data.drop(columns=['academic_year', 'school_id', 'above_average_scores', 'tests_sat'])
+    data = data.apply(pd.to_numeric)
     data = divide_by_enrollment(data)
 
     correlation = []
@@ -1338,22 +1407,23 @@ def correlations(data, excluded_fields):
     correlation['p (Sp)'] = spearman['pvalue']
 
     mask = np.zeros((len(correlation), 4))
-    mask[:,3] = True
-    mask[:,1] = True
+    mask[:, 3] = True
+    mask[:, 1] = True
     ax = sns.heatmap(correlation, annot=True, mask=mask)
     ax.set_title("Correlations between School Factors and Exam Performance")
 
-    for (j,i), label in np.ndenumerate(correlation.values):
+    for (j, i), label in np.ndenumerate(correlation.values):
         label = "{:.2e}".format(label)
-        if i == 1 or i==3:
-            ax.text(i+0.5, j+0.5, label, 
-                    fontdict=dict(ha='center',  va='center', color='black'))
+        if i == 1 or i == 3:
+            ax.text(i + 0.5, j + 0.5, label,
+                    fontdict=dict(ha='center', va='center', color='black'))
     plt.tight_layout()
     graph = get_image()
     return graph
 
+
 def dropcol_importances(rf, X_train, y_train):
-    r = random.randint(1,999)
+    r = random.randint(1, 999)
     rf_ = clone(rf)
     rf_.random_state = r
     rf_.fit(X_train, y_train)
@@ -1368,31 +1438,32 @@ def dropcol_importances(rf, X_train, y_train):
         imp.append(baseline - o)
     imp = np.array(imp)
     I = pd.DataFrame(
-            data={'Feature':X_train.columns,
-                  'Importance':imp})
+        data={'Feature': X_train.columns,
+              'Importance': imp})
     I = I.set_index('Feature')
     I = I.sort_values('Importance', ascending=True)
     return I
 
+
 def rf_model(data, excluded_fields, random):
     plt.switch_backend('AGG')
     data = pd.DataFrame(data.values())
-    data['performance'] = data['above_average_scores']/data['tests_sat']
-    data= data.drop(columns=excluded_fields)
+    data['performance'] = data['above_average_scores'] / data['tests_sat']
+    data = data.drop(columns=excluded_fields)
 
     data = get_previous_performance(data)
     data = get_enrollment(data)
-    data= data.drop(columns=['academic_year', 'school_id', 'above_average_scores', 'tests_sat'])
+    data = data.drop(columns=['academic_year', 'school_id', 'above_average_scores', 'tests_sat'])
 
-    data = data.apply(pd.to_numeric) 
+    data = data.apply(pd.to_numeric)
     data = divide_by_enrollment(data)
 
     imp_mean = SimpleImputer(missing_values=np.nan, strategy='median')
     imp_mean.fit(data)
     SimpleImputer()
     imputed_data = pd.DataFrame(imp_mean.transform(data))
-    imputed_data.columns=data.columns
-    imputed_data.index=data.index
+    imputed_data.columns = data.columns
+    imputed_data.index = data.index
 
     data = imputed_data
 

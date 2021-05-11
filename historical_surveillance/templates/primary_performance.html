@@ -1,0 +1,81 @@
+﻿{% extends "base.html" %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+{% block page_content %}
+<main>
+    <div class="row">
+        <div class="col-xl-4 col-md-4">
+            <div class="card bg-secondary text-white mb-4">
+                <div class="card-header">
+                    <h5>Correlation between School Factors and Performance</h5>
+                </div>
+                <div class="card-body d-flex align-items-center justify-content-between">
+                    Performance from previous year is included.
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        <table align="left" style="border: hidden;">
+                            <tr>
+                                <td style="border: hidden;">
+                                    <button type="submit" name="submit" class="btn btn-primary" onClick="this.style.display = 'none'; var button = document.getElementById('correlation'); button.style.display = 'block'" value="Generate Correlation Table">
+                                        Generate Correlation Table
+                                    </button>
+                                </td>
+                                <td style="border: hidden;">
+                                    <button disabled class="btn btn-primary" id="correlation" style="display: none">Generating table...</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card bg-secondary text-white mb-4">
+                <div class="card-header">
+                    <h5>Non-linear Model</h5>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        <table align="left" style="border: hidden;">
+                            <tr>
+                                <td style="border: hidden;">
+                                    <button type="submit" name="submit" class="btn btn-primary" onClick="this.style.display = 'none'; var button = document.getElementById('model'); button.style.display = 'block'" value="Build Model">
+                                        Build Model
+                                    </button>
+                                </td>
+                                <td style="border: hidden;">
+                                    <button disabled class="btn btn-primary" div id="model" style="display: none">Building model...</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+    </div>
+
+    <div class="col-xl-8 col-md-8">
+        <div class="card bg-white text-black mb-4">
+            <div class="card-header">
+                <h1>{% if error_message %} {{ error_message }} </h1>
+                {% else %}
+                <h2>Factors Affecting School Performance</h2>
+                {% endif %}
+                {% if chart_title %}
+                <h3>{{chart_title }}</h3>
+                {% endif %}
+            </div>
+            <div class="card-body d-flex align-items-center justify-content-between">
+                {% if request.POST and graph %}
+                <img src="data:image/png;base64, {{ graph | safe}}" class="rounded mx-auto d-block" alt="analysis Image" />
+                {% else %}
+                Please select an option from the left to generate results.
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    </div>
+
+</main>
+{% endblock page_content %}

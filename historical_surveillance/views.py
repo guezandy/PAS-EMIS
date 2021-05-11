@@ -1006,6 +1006,24 @@ def district_performance(request):
         else:
             return render(request, 'district_performance.html', context)
 
+def primary_performance(request):
+    context = {}
+    if request.method == 'POST':
+        # Compare all districts
+        if request.POST['submit'] == 'Generate Correlation Table':
+            chart_title = "Factors Affecting School Performance"
+            context['chart_title'] = chart_title
+            data = PrimaryPerformance.objects.all()
+            graph = correlations(data, UNIVERSAL_FIELDS)
+            context['graph'] = graph
+            return render(request, 'primary_performance.html', context)
+        if request.POST['submit'] == 'Build Model':
+            chart_title = "Factors Affecting School Performance"
+            context['chart_title'] = chart_title
+            data = PrimaryPerformance.objects.all()
+            graph = rf_model(data, UNIVERSAL_FIELDS)
+            context['graph'] = graph
+    return render(request, 'primary_performance.html', context)
 
 UNIVERSAL_FIELDS = {'id', 'created_at', 'created_by', 'updated_at', 'updated_by'}
 

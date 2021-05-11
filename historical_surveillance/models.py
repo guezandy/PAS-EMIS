@@ -225,8 +225,8 @@ class PrimaryPerformance(models.Model):
     created_by = models.CharField(max_length=255, blank=True)
     school = models.ForeignKey(School, on_delete=models.CASCADE, null=True)
     academic_year = models.CharField(max_length=30, null=True)
-    tests_sat = models.CharField(max_length=20, null=True)
-    above_average_scores = models.CharField(max_length=20, null=True)
+    tests_sat = models.IntegerField(null=True)
+    above_average_scores = models.IntegerField(null=True)
     updated_at = models.DateField(auto_now_add=True, null=True)
     updated_by = models.CharField(max_length=255, null=True)
 

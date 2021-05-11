@@ -1,12 +1,20 @@
 import base64
 from io import BytesIO
+import random
 
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 import re
+
 from sklearn.linear_model import LinearRegression
+from sklearn.impute import SimpleImputer
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.base import clone
+
 from .models import School
+from .models import AggregateEnrollment
 from .models import District
 from .models import CSEC
 
@@ -15,6 +23,8 @@ from .forms import CEEForm
 
 import numpy as np
 import pandas as pd
+
+import scipy.stats as stats
 
 
 def get_image() -> object:
@@ -1653,6 +1663,158 @@ def national_ratio_hist(**kwargs):
 
     ax6.plot(bins_total_number_of_teachers, y_total_no_of_teachers, '--')
     ax6.set_title('Total Number of Teachers')
+
+    plt.tight_layout()
+    graph = get_image()
+    return graph
+
+def get_prev_yr(year_string):
+    year = int(year_string.split("/")[0])
+    prev_year = year - 1
+    return str(prev_year) + "/" + str(year)
+
+def get_previous_performance(data):
+    previous = []
+    for index, row in data.iterrows():
+        previous_year = data.loc[(data['school_id'] == row['school_id']) & 
+                                 (data['academic_year'] == get_prev_yr(row['academic_year']))]
+        if not previous_year.empty:
+            previous.append(previous_year['performance'].values[0])
+        else: 
+            previous.append(np.nan)
+
+    previous = pd.Series(previous)
+    data['previous'] = previous
+    return data
+
+def get_enrollment(data):
+    enrollment = [] 
+    capacity = []
+    found = 0
+    not_found = 0
+    for index, row in data.iterrows():
+        school = AggregateEnrollment.objects.filter(name_of_school_id=row['school_id'], academic_year=row['academic_year'])
+        if school:
+            enr = getattr(school[0], 'total_enrollment')
+            enrollment.append(enr)
+            capacity.append(enr/getattr(school[0], 'capacity_of_school'))
+        else: 
+            enrollment.append(np.nan)
+            capacity.append(np.nan)
+
+
+    enrollment = pd.Series(enrollment)
+    data['enrollment'] = enrollment
+    capacity = pd.Series(capacity)
+    data['capacity'] = capacity
+    return data
+
+def correlations(data, excluded_fields):
+    plt.switch_backend('AGG')
+    data = pd.DataFrame(data.values())
+    data['performance'] = data['above_average_scores']/data['tests_sat']
+    data= data.drop(columns=excluded_fields)
+
+    data = get_previous_performance(data)
+    data = get_enrollment(data)
+
+    data= data.drop(columns=['academic_year', 'school_id', 'above_average_scores', 'tests_sat'])
+
+    correlation = []
+    spearman = []
+    for f in data.columns:
+        if f == 'performance':
+            continue
+        df = data[data[f].notna()]
+        x = df[f]
+        y = df['performance']
+        correlation.append(stats.pearsonr(x, y))
+        spearman.append(stats.spearmanr(x, y))
+    correlation = pd.DataFrame(correlation)
+    spearman = pd.DataFrame(spearman)
+    correlation.columns = ['r (Pe)', 'p (Pe)']
+    correlation.index = data.columns.drop('performance')
+    spearman.index = data.columns.drop('performance')
+    correlation['r (Sp)'] = spearman['correlation']
+    correlation['p (Sp)'] = spearman['pvalue']
+    
+    mask = np.zeros((len(correlation), 4))
+    mask[:,3] = True
+    mask[:,1] = True
+    ax = sns.heatmap(correlation, annot=True, mask=mask)
+    ax.set_title("Correlations between School Factors and Exam Performance")
+
+    for (j,i), label in np.ndenumerate(correlation.values):
+        label = "{:.2e}".format(label)
+        if i == 1 or i==3:
+            ax.text(i+0.5, j+0.5, label, 
+                    fontdict=dict(ha='center',  va='center', color='black'))
+    plt.tight_layout()
+    graph = get_image()
+    return graph
+
+def dropcol_importances(rf, X_train, y_train):
+    r = random.randint(1,999)
+    rf_ = clone(rf)
+    rf_.random_state = r
+    rf_.fit(X_train, y_train)
+    baseline = rf_.oob_score_
+    imp = []
+    for col in X_train.columns:
+        X = X_train.drop(col, axis=1)
+        rf_ = clone(rf)
+        rf_.random_state = r
+        rf_.fit(X, y_train)
+        o = rf_.oob_score_
+        print(col + " baseline " + str(baseline) + "  oob " + str(o))
+        imp.append(baseline - o)
+    imp = np.array(imp)
+    I = pd.DataFrame(
+            data={'Feature':X_train.columns,
+                  'Importance':imp})
+    I = I.set_index('Feature')
+    I = I.sort_values('Importance', ascending=True)
+    return I
+
+def rf_model(data, excluded_fields):
+    plt.switch_backend('AGG')
+    data = pd.DataFrame(data.values())
+    data['performance'] = data['above_average_scores']/data['tests_sat']
+    data= data.drop(columns=excluded_fields)
+
+    data = get_previous_performance(data)
+    data = get_enrollment(data)
+    data= data.drop(columns=['academic_year', 'school_id', 'above_average_scores', 'tests_sat'])
+
+    imp_mean = SimpleImputer(missing_values=np.nan, strategy='median')
+    imp_mean.fit(data)
+    SimpleImputer()
+    imputed_data = pd.DataFrame(imp_mean.transform(data))
+    imputed_data.columns=data.columns
+    imputed_data.index=data.index
+
+    data = imputed_data
+
+    performance = data['performance']
+    data = data.drop(columns=['performance'])
+    data['random'] = pd.Series([random.random() for x in range(len(data))])
+
+    X_train, X_test, y_train, y_test = train_test_split(data, performance, train_size=0.8)
+
+    clf = RandomForestRegressor(max_features=None, oob_score=True)
+    clf.fit(X_train, y_train)
+    print(clf.score(X_test, y_test))
+
+    data = data.drop(columns=['previous'])
+
+    importance = dropcol_importances(clf, data, performance)
+
+    # plot feature importance
+    ax = pd.Series(importance['Importance']).plot(kind='barh')
+    y_labels = importance.index
+    ax.set_yticklabels(y_labels)
+    plt.xlabel("Change in OOB Error")
+    plt.title("Random Forest Regression Drop-Column Feature Importance")
 
     plt.tight_layout()
     graph = get_image()

@@ -1,12 +1,17 @@
+from historical_surveillance.tables import *
 import json
 from django.http.response import HttpResponseRedirect
 from django.urls.base import reverse
+from django_tables2 import RequestConfig
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.datetime_safe import date
 from .forms import *
 from .models import *
 from .utils import *
 
+from django_filters.views import FilterView
+from django_tables2.views import SingleTableMixin
+from django_tables2.export import ExportMixin
 
 # This is the view for the home page of this app
 def index(request):
@@ -14,11 +19,18 @@ def index(request):
 
 
 # This is for showing a list of all districts
-def district(request):
-    data = District.objects.all()
-    context = {"district_created": data}
-    return render(request, "districts.html", context)
-
+class FilteredDistrictListView(ExportMixin, SingleTableMixin, FilterView):
+    table_class = DistrictTable
+    model = District
+    template_name = "data_list.html"
+    filterset_class = DistrictFilter
+    table_pagination = {
+        "per_page": 10
+    }
+    extra_context={"listTitle": "Districts", 
+    "createButtonName": "Create District", 
+    "createViewName": "surveillance:create-district",
+    "export_formats":["csv"]}
 
 # This is for creating and editing a district
 def edit_district(request, code=None):
@@ -42,13 +54,19 @@ def edit_district(request, code=None):
     # context = _add_side_navigation_context(request.user, context)
     return render(request, "historical_form.html", context)
 
-
 # This is for showing a list of all schools
-def school(request):
-    data = School.objects.all()
-    context = {"schools": data}
-    return render(request, "schools.html", context)
-
+class FilteredSchoolListView(ExportMixin, SingleTableMixin, FilterView):
+    table_class = SchoolTable
+    model = School
+    template_name = "data_list.html"
+    filterset_class = SchoolFilter
+    table_pagination = {
+        "per_page": 10
+    }
+    extra_context={"listTitle": "School", 
+    "createButtonName": "Create School", 
+    "createViewName": "surveillance:create-school",
+    "export_formats":["csv"]}
 
 # This is for creating and editing a school
 def edit_school(request, code=None):
@@ -71,13 +89,18 @@ def edit_school(request, code=None):
     context = {"header": "Edit School" if code else "Create School", "form": form}
     return render(request, 'historical_form.html', context)
 
-
-# Enrollment by grade and sex
-def enrollment(request):
-    data = Enrollment.objects.all()
-    context = {"enrollments": data}
-    return render(request, "enrollment.html", context)
-
+class FilteredEnrollmentListView(ExportMixin, SingleTableMixin, FilterView):
+    table_class = EnrollmentTable
+    model = Enrollment
+    template_name = "data_list.html"
+    filterset_class = EnrollmentFilter
+    table_pagination = {
+        "per_page": 10
+    }
+    extra_context={"listTitle": "National Enrollment by Grade and Sex", 
+    "createButtonName": "Add Record", 
+    "createViewName": "surveillance:create-enrollment",
+    "export_formats":["csv"]}
 
 # update enrollment by grade and sex
 def update_enrollment(request, code=None):
@@ -100,13 +123,18 @@ def update_enrollment(request, code=None):
         "header": "Edit Enrollment" if code else "Add Enrollment Record", "form": form}
     return render(request, 'historical_form.html', context)
 
-
-# This function controls the total enrollment and school capacity form
-def aggregate_enrollment(request):
-    data = AggregateEnrollment.objects.all()
-    context = {"enrollments": data}
-    return render(request, "aggregate_enrollment.html", context)
-
+class FilteredAggregateEnrollmentListView(ExportMixin, SingleTableMixin, FilterView):
+    table_class = AggregateEnrollmentTable
+    model = AggregateEnrollment
+    template_name = "data_list.html"
+    filterset_class = AggregateEnrollmentFilter
+    table_pagination = {
+        "per_page": 10
+    }
+    extra_context={"listTitle": "National Enrollment and School Capacity", 
+    "createButtonName": "Add Record", 
+    "createViewName": "surveillance:create-aggregate-enrollment",
+    "export_formats":["csv"]}
 
 # used to update the enrollment versus class capacity entries
 def update_aggregate_enrollment(request, code=None):
@@ -125,11 +153,84 @@ def update_aggregate_enrollment(request, code=None):
             model_instance.save()
             return HttpResponseRedirect(reverse("surveillance:aggregate-enrollments"))
     context = {
-        "header": "Edit Aggregate Enrollment" if code else "Add Aggregate Enrollment Record", "form": form}
+        "header": "Edit National Enrollment and School Capacity" if code else "Add National Enrollment and School Capacity", "form": form}
     return render(request, 'historical_form.html', context)
 
 
-# filter the enrollment / Capacity table by district
+class CeeListView(ExportMixin, SingleTableMixin, FilterView):
+    table_class = CeeTable
+    model = CEE
+    template_name = "data_list.html"
+    filterset_class = CeeFilter
+    table_pagination = {
+        "per_page": 10
+    }
+    extra_context={"listTitle": "Grade 6 National Examination", 
+    "createButtonName": "Add Record", 
+    "createViewName": "surveillance:create-cee",
+    "export_formats":["csv"]}
+
+
+def update_cee(request, id=None):
+    # Render edit form
+    if id:
+        instance = get_object_or_404(CEE, pk=id)
+    # Render create form
+    else:
+        instance = CEE(created_by=request.user.username,
+                       updated_by=request.user.username)
+    form = ceeForms(request.POST or None, instance=instance)
+    # Process submit
+    if request.method == "POST":
+        if form.is_valid():
+            model_instance = form.save(commit=False)
+            model_instance.updated_by = request.user.username
+            model_instance.save()
+            return HttpResponseRedirect(reverse("surveillance:cee-results"))
+    context = {
+        "header": "Edit Grade 6 National Examination" if id else "Create Grade 6 National Examination Record", "form": form}
+    # context = _add_side_navigation_context(request.user, context)
+    return render(request, "historical_form.html", context)
+
+
+class CsecListView(ExportMixin, SingleTableMixin, FilterView):
+    table_class = CsecTable
+    model = CSEC
+    template_name = "data_list.html"
+    filterset_class = CsecFilter
+    table_pagination = {
+        "per_page": 10
+    }
+    extra_context={"listTitle": "Form 5 Exit Examination", 
+    "createButtonName": "Add Record", 
+    "createViewName": "surveillance:create-csec",
+    "export_formats":["csv"]}
+
+# This is for creating and editing a csec record
+def update_csec(request, id=None):
+    # Render edit form
+    if id:
+        instance = get_object_or_404(CSEC, pk=id)
+    # Render create form
+    else:
+        instance = CSEC(created_by=request.user.username,
+                        updated_by=request.user.username)
+    form = csecForms(request.POST or None, instance=instance)
+    # Process submit
+    if request.method == "POST":
+        if form.is_valid():
+            model_instance = form.save(commit=False)
+            model_instance.updated_by = request.user.username
+            model_instance.save()
+            return HttpResponseRedirect(reverse("surveillance:csec-results"))
+    context = {
+        "header": "Edit Form 5 Exit Examination Record" if id else "Create Form 5 Exit Examination Record", "form": form}
+    # context = _add_side_navigation_context(request.user, context)
+    return render(request, "historical_form.html", context)
+
+
+# change this to get a form to select the district and pass it as a parameter to present filter the table and present
+# the data for each district
 def enrolled_district(request):
     error_message = None
 
@@ -1225,67 +1326,6 @@ def boxplot_national(request):
     }
 
     return render(request, 'boxplots_national_page.html', stu)
-
-
-# view to display the Common entrance examination data
-def cee_results(request):
-    data = CEE.objects.all()
-    context = {"results": data}
-    return render(request, 'cee_results.html', context)
-
-
-# view to add and update the common entrance examination data
-def update_cee(request, id=None):
-    # Render edit form
-    if id:
-        instance = get_object_or_404(CEE, pk=id)
-    # Render create form
-    else:
-        instance = CEE(created_by=request.user.username,
-                       updated_by=request.user.username)
-    form = ceeForms(request.POST or None, instance=instance)
-    # Process submit
-    if request.method == "POST":
-        if form.is_valid():
-            model_instance = form.save(commit=False)
-            model_instance.updated_by = request.user.username
-            model_instance.save()
-            return HttpResponseRedirect(reverse("surveillance:cee-results"))
-    context = {
-        "header": "Edit CEE Record" if id else "Create CEE Record", "form": form}
-    # context = _add_side_navigation_context(request.user, context)
-    return render(request, "historical_form.html", context)
-
-
-# view to display the CSEC data
-def csec_results(request):
-    data = CSEC.objects.all()
-    context = {"results": data}
-    return render(request, 'csec_results.html', context)
-
-
-# This is for creating and editing a csec record
-def update_csec(request, id=None):
-    # Render edit form
-    if id:
-        instance = get_object_or_404(CSEC, pk=id)
-    # Render create form
-    else:
-        instance = CSEC(created_by=request.user.username,
-                        updated_by=request.user.username)
-    form = csecForms(request.POST or None, instance=instance)
-    # Process submit
-    if request.method == "POST":
-        if form.is_valid():
-            model_instance = form.save(commit=False)
-            model_instance.updated_by = request.user.username
-            model_instance.save()
-            return HttpResponseRedirect(reverse("surveillance:csec-results"))
-    context = {
-        "header": "Edit CSEC Record" if id else "Create CSEC Record", "form": form}
-    # context = _add_side_navigation_context(request.user, context)
-    return render(request, "historical_form.html", context)
-
 
 # This is the examination Analysis
 def examination_summary(request):

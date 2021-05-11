@@ -58,6 +58,8 @@ INSTALLED_APPS = [
     "crispy_forms",
     "school",
     "welfare",
+    "django_tables2",
+    "django_filters"
 ]
 
 MIDDLEWARE = [
@@ -177,3 +179,6 @@ Logger settings
 app_debug = env("LOG_APP_DEBUG")
 log_dir_path = env("LOG_DIRECTORY")
 LOGGING = EmisLogger(app_debug, log_dir_path).get_config()
+
+
+DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap4.html"

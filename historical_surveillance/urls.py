@@ -8,7 +8,7 @@ urlpatterns = [
 
     # District urls
     # for the viewing districts
-    path("districts", views.district, name="districts"),
+    path("districts", views.FilteredDistrictListView.as_view(), name="districts"),
     # for creating districts
     path("districts/create", views.edit_district, name="create-district"),
     # to update the created district
@@ -17,7 +17,7 @@ urlpatterns = [
 
     # School urls
     # for viewing schools
-    path("schools", views.school, name="schools"),
+    path("schools", views.FilteredSchoolListView.as_view(), name="schools"),
     # for creating schools
     path("schools/create", views.edit_school, name="create-school"),
     # to update the created schools
@@ -27,7 +27,7 @@ urlpatterns = [
 
     # Enrollment urls
     # for the enrollments page
-    path("enrollments", views.enrollment, name="enrollments"),
+    path("enrollments", views.FilteredEnrollmentListView.as_view(), name="enrollments"),
     # to update an existing enrollment record
     path(
         "enrollments/<int:code>",
@@ -43,7 +43,7 @@ urlpatterns = [
 
     # Enrollment/Capacity page
     # for the enrollment/capacity page
-    path("aggregate-enrollments", views.aggregate_enrollment, name="aggregate-enrollments"),
+    path("aggregate-enrollments", views.FilteredAggregateEnrollmentListView.as_view(), name="aggregate-enrollments"),
     # to update the enrollment / capacity
     path(
         "aggregate-enrollments/<int:code>",
@@ -135,7 +135,7 @@ urlpatterns = [
     # Grade 6 national examination
     path(
         "cee_results",
-        views.cee_results,
+        views.CeeListView.as_view(),
         name="cee-results"),
     path(
         "update_cee/<int:id>",
@@ -150,7 +150,7 @@ urlpatterns = [
     #Form 5 National Examination
     path(
         "csec_results",
-        views.csec_results,
+        views.CsecListView.as_view(),
         name="csec-results"),
 
     path(

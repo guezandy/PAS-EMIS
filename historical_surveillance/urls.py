@@ -124,6 +124,10 @@ urlpatterns = [
         views.district_performance,
         name="district_performance"),
     path(
+        "primary_performance",
+        views.primary_performance,
+        name="primary_performance"),
+    path(
         "upload_scores",
         views.upload_scores,
         name ="upload_scores"),

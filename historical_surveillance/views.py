@@ -962,6 +962,9 @@ def district_performance(request):
                 chart_title = "CSEC Comparison, All Districts"
                 context['chart_title'] = chart_title
                 data = CSEC.objects.all()
+                if not data:
+                    context['error_message'] = "No data available."
+                    return render(request, 'district_performance.html', context)
                 [graph, heatmap, left_out] = csec_performance_plot(data, None, None)
                 context['graph'] = graph
                 context['heatmap'] = heatmap
@@ -996,6 +999,9 @@ def district_performance(request):
                     chart_title = "CSEC Comparison, Districts " + district_3 + " and " + district_4
                     context['chart_title'] = chart_title
                     data = CSEC.objects.all()
+                    if not data:
+                        context['error_message'] = "No data available."
+                        return render(request, 'district_performance.html', context)
                     [graph, heatmap, left_out] = csec_performance_plot(data, int(district_3), int(district_4))
                     context['graph'] = graph
                     context['heatmap'] = heatmap
@@ -1006,12 +1012,34 @@ def district_performance(request):
 
 UNIVERSAL_FIELDS = {'id', 'created_at', 'created_by', 'updated_at', 'updated_by'}
 
+def primary_performance(request):
+    context = {}
+    if request.method == 'POST':
+        # Compare all districts
+        if request.POST['submit'] == 'Generate Correlation Table':
+            chart_title = "Correlation"
+            context['chart_title'] = chart_title
+            data = PrimaryPerformance.objects.all()
+            graph = correlations(data, UNIVERSAL_FIELDS)
+            context['graph'] = graph
+            return render(request, 'primary_performance.html', context)
+        if request.POST['submit'] == 'Build Model':
+            chart_title = "Random Forest Regression"
+            context['chart_title'] = chart_title
+            data = PrimaryPerformance.objects.all()
+            [graph, acc] = rf_model(data, UNIVERSAL_FIELDS, False)
+            context['graph'] = graph
+            context['accuracy'] = acc
+    return render(request, 'primary_performance.html', context)
+
 
 def upload_scores(request):
     context = {}
     cee_field_names = CEE._meta.get_fields()
     cee_field_names = [str(f).split('.')[-1] for f in cee_field_names]
-    cee_field_names = list(set(cee_field_names) - UNIVERSAL_FIELDS)
+    cee_field_names = set(cee_field_names) - UNIVERSAL_FIELDS
+    cee_field_names = list(cee_field_names - set(["primsch", "secsch", "district"]))
+    cee_field_names += ["primsch_id", "secsch_id", "district_id"]
     cee_field_names.sort()
 
     csec_field_names = CSEC._meta.get_fields()
@@ -1057,7 +1085,7 @@ def upload_scores(request):
         CEE.objects.filter(test_yr=int(time_period)).delete()
     elif request.POST['submit'].startswith("delete_csec"):
         time_period = request.POST['submit'][11:]
-        CSEC.objects.filter(year=int(time_period)).delete()
+        CSEC.objects.filter(year=time_period).delete()
     else:
         if not csv_file.name.endswith('.csv'):
             context['error_message'] = 'Could not upload file. File must be CSV type.'

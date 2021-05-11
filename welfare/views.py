@@ -325,7 +325,9 @@ def create_service(request):
     form = SupportServiceForm(request.POST or None, instance=instance)
     if request.method == "POST":
         if form.is_valid():
-            form.save()
+            model_instance = form.save(commit=False)
+            model_instance.updated_by = request.user.username
+            model_instance.save()
             return redirect("/welfare/view_services")
     context = {
         "header": "Define Service",
@@ -342,7 +344,9 @@ def edit_service(request, service: SupportService):
     form = SupportServiceForm(request.POST or None, instance=service)
     if request.method == "POST":
         if form.is_valid():
-            form.save()
+            model_instance = form.save(commit=False)
+            model_instance.updated_by = request.user.username
+            model_instance.save()
             return redirect("/welfare/view_services")
     context = {
         "header": "Edit Service Definition",
@@ -534,7 +538,9 @@ def student_service_form(request, student_code, assoc_id=None):
     form = StudentSupportAssocForm(request.POST or None, instance=instance)
     if request.method == "POST":
         if form.is_valid():
-            form.save()
+            model_instance = form.save(commit=False)
+            model_instance.updated_by = request.user.username
+            model_instance.save()
             return redirect(f"/welfare/student/{student.id}")
     if service:
         header = f"Edit {service.name} for: {student.last_name}, {student.first_name}"

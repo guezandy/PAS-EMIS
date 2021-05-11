@@ -12,12 +12,12 @@ from authentication.forms.sysadmin import (
     SchoolAdministratorForm,
     PrincipalForm,
     DistrictEducationOfficerForm,
-    SchoolSuperviserForm,
+    SchoolSupervisionOfficerForm,
     StatisticianAdminForm,
     EvaluationAdminForm,
     SupportServicesAdminForm,
-    EarlyChildhoodEducatorForm,
-    ExternalAccessorForm,
+    EarlyChildhoodEducationOfficerForm,
+    ExternalAssessorForm,
 )
 from django.core.mail import send_mail
 from django.core.signing import TimestampSigner
@@ -32,12 +32,12 @@ from authentication.models.users import (
     Teacher,
     SchoolPrincipal,
     DistrictEducationOfficer,
-    SchoolSuperviser,
+    SchoolSupervisionOfficer,
     StatisticianAdmin,
     EvaluationAdmin,
-    EarlyChildhoodEducator,
+    EarlyChildhoodEducationOfficer,
     SupportServicesAdmin,
-    ExternalAccessor,
+    ExternalAssessor,
     get_user_type,
 )
 from django.contrib.auth.models import User
@@ -49,12 +49,12 @@ form_map = {
     "school_admin": SchoolAdministratorForm,
     "principal": PrincipalForm,
     "district_officer": DistrictEducationOfficerForm,
-    "school_superviser": SchoolSuperviserForm,
+    "school_supervision_officer": SchoolSupervisionOfficerForm,
     "stat_admin": StatisticianAdminForm,
     "evaluation_admin": EvaluationAdminForm,
-    "early_childhood_educator": EarlyChildhoodEducatorForm,
+    "early_childhood_education_officer": EarlyChildhoodEducationOfficerForm,
     "support_services_admin": SupportServicesAdminForm,
-    "external_accessor": ExternalAccessorForm,
+    "external_assessor": ExternalAssessorForm,
 }
 user_type_model_map = {
     "custom": User,
@@ -62,12 +62,12 @@ user_type_model_map = {
     "school_admin": SchoolAdministrator,
     "principal": SchoolPrincipal,
     "district_officer": DistrictEducationOfficer,
-    "school_superviser": SchoolSuperviser,
+    "school_supervision_officer": SchoolSupervisionOfficer,
     "stat_admin": StatisticianAdmin,
     "evaluation_admin": EvaluationAdmin,
-    "early_childhood_educator": EarlyChildhoodEducator,
+    "early_childhood_education_officer": EarlyChildhoodEducationOfficer,
     "support_services_admin": SupportServicesAdmin,
-    "external_accessor": ExternalAccessor,
+    "external_assessor": ExternalAssessor,
 }
 header_map = {
     "custom": "User",
@@ -75,12 +75,12 @@ header_map = {
     "school_admin": "School Admin",
     "principal": "Principal",
     "district_officer": "District Officer",
-    "school_superviser": "School Superviser",
+    "school_supervision_officer": "School Supervision Officer",
     "stat_admin": "Statistical Admin",
     "evaluation_admin": "Evaluation Admin",
-    "early_childhood_educator": "Early childhood educator",
+    "early_childhood_education_officer": "Early Childhood Education Officer",
     "support_services_admin": "Support Services Admin",
-    "external_accessor": "External Accessor",
+    "external_assessor": "External Assessor",
 }
 
 

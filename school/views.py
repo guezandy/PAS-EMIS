@@ -10,12 +10,12 @@ from authentication.models.users import (
     Teacher,
     SchoolPrincipal,
     DistrictEducationOfficer,
-    SchoolSuperviser,
+    SchoolSupervisionOfficer,
     StatisticianAdmin,
     EvaluationAdmin,
-    EarlyChildhoodEducator,
+    EarlyChildhoodEducationOfficer,
     SupportServicesAdmin,
-    ExternalAccessor,
+    ExternalAssessor,
     get_user_type,
 )
 from authentication.forms.users import TeacherForm
@@ -54,11 +54,11 @@ def index(request):
         return redirect(f"/school/district/{parent_user.district.district_code}")
 
     # Can only see the school they manage
-    if user_type in ["school_admin", "principal", "school_superviser"]:
+    if user_type in ["school_admin", "principal"]:
         return redirect(f"/school/school_details/{parent_user.school.school_code}")
 
     # Can only see their teacher profiles
-    if user_type in ["early_childhood_educator", "teacher"]:
+    if user_type in ["teacher"]:
         return redirect(f"/school/teacher/{parent_user.id}")
 
     # All other roles can access all parts of the school application
@@ -75,9 +75,7 @@ def _can_access_all_districts_view(user):
             "district_officer",
             "school_admin",
             "principal",
-            "school_superviser",
             "teacher",
-            "early_childhood_educator",
         ]
     )
 
@@ -123,9 +121,7 @@ def _can_access_single_district_view(user):
         not in [
             "school_admin",
             "principal",
-            "school_superviser",
             "teacher",
-            "early_childhood_educator",
         ]
     )
 
@@ -176,7 +172,7 @@ def _can_access_single_school_view(user):
     has_perm = user.has_perm(EmisPermission.SCHOOL_APP_ACCESS.get_view_code())
     user_type, parent_user = get_user_type(user)
     return user.is_superuser or (
-        has_perm and user_type not in ["teacher", "early_childhood_educator"]
+        has_perm and user_type not in ["teacher", "early_childhood_education_officer"]
     )
 
 
@@ -504,12 +500,12 @@ def _add_side_navigation_context(user, context):
         districts_to_render = districts_to_render.filter(
             district_code=parent_user.district.district_code
         )
-    if user_type in ["school_admin", "principal", "school_superviser"]:
+    if user_type in ["school_admin", "principal"]:
         schools_to_render = schools_to_render.filter(id=parent_user.school.id)
         districts_to_render = districts_to_render.filter(
             id=parent_user.school.district_name.id
         )
-    if user_type in ["teacher", "early_childhood_educator"]:
+    if user_type in ["teacher"]:
         schools_to_render = schools_to_render.filter(id=parent_user.school.id)
         districts_to_render = districts_to_render.filter(
             id=parent_user.school.district_name.id
@@ -520,22 +516,17 @@ def _add_side_navigation_context(user, context):
         "district_officer",
         "school_admin",
         "principal",
-        "school_superviser",
         "teacher",
-        "early_childhood_educator",
     ]
 
     show_district_summary = user_type not in [
         "school_admin",
         "principal",
-        "school_superviser",
         "teacher",
-        "early_childhood_educator",
     ]
 
     show_school_summary = user_type not in [
         "teacher",
-        "early_childhood_educator",
     ]
 
     context["side_nav"] = {

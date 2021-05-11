@@ -7,12 +7,12 @@ from authentication.models.users import (
     Teacher,
     SchoolPrincipal,
     DistrictEducationOfficer,
-    SchoolSuperviser,
+    SchoolSupervisionOfficer,
     StatisticianAdmin,
     EvaluationAdmin,
-    EarlyChildhoodEducator,
+    EarlyChildhoodEducationOfficer,
     SupportServicesAdmin,
-    ExternalAccessor,
+    ExternalAssessor,
 )
 
 
@@ -72,9 +72,9 @@ class DistrictEducationOfficerForm(ModelForm):
         exclude = user_fields_to_exclude
 
 
-class SchoolSuperviserForm(ModelForm):
+class SchoolSupervisionOfficerForm(ModelForm):
     class Meta:
-        model = SchoolSuperviser
+        model = SchoolSupervisionOfficer
         exclude = user_fields_to_exclude
 
 
@@ -90,9 +90,9 @@ class EvaluationAdminForm(ModelForm):
         exclude = user_fields_to_exclude
 
 
-class EarlyChildhoodEducatorForm(ModelForm):
+class EarlyChildhoodEducationOfficerForm(ModelForm):
     class Meta:
-        model = EarlyChildhoodEducator
+        model = EarlyChildhoodEducationOfficer
         exclude = user_fields_to_exclude
 
 
@@ -102,8 +102,8 @@ class SupportServicesAdminForm(ModelForm):
         exclude = user_fields_to_exclude
 
 
-class ExternalAccessorForm(ModelForm):
+class ExternalAssessorForm(ModelForm):
     class Meta:
-        model = ExternalAccessor
+        model = ExternalAssessor
         exclude = user_fields_to_exclude
 

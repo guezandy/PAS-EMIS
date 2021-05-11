@@ -6,12 +6,12 @@ from authentication.models.users import (
     Teacher,
     SchoolPrincipal,
     DistrictEducationOfficer,
-    SchoolSuperviser,
+    SchoolSupervisionOfficer,
     StatisticianAdmin,
     EvaluationAdmin,
-    EarlyChildhoodEducator,
+    EarlyChildhoodEducationOfficer,
     SupportServicesAdmin,
-    ExternalAccessor,
+    ExternalAssessor,
 )
 from helpers.testing.mocks import generate_school
 
@@ -67,8 +67,8 @@ class ViewTestCase(TestCase):
         "password": "password",
     }
 
-    SCHOOL_SUPERVISER_CREDENTIALS = {
-        "username": "schoolsuperviser@emis.com",
+    SCHOOL_SUPERVISION_OFFICER_CREDENTIALS = {
+        "username": "SchoolSupervisionOfficer@emis.com",
         "password": "password",
     }
 
@@ -92,8 +92,8 @@ class ViewTestCase(TestCase):
         "password": "password",
     }
 
-    EXTERNAL_ACCESSOR_CREDENTIALS = {
-        "username": "external_accessor@emis.com",
+    EXTERNAL_ASSESSOR_CREDENTIALS = {
+        "username": "external_assessor@emis.com",
         "password": "password",
     }
 
@@ -103,11 +103,11 @@ class ViewTestCase(TestCase):
         "teacher_account": TEACHER_CREDENTIALS,
         "principal_account": PRINCIPAL_CREDENTIALS,
         "district_officer_account": DISTRICT_OFFICER_CREDENTIALS,
-        "school_superviser_account": SCHOOL_SUPERVISER_CREDENTIALS,
+        "school_supervision_officer_account": SCHOOL_SUPERVISION_OFFICER_CREDENTIALS,
         "statistician_admin_account": STATISTICIAN_CREDENTIALS,
         "evaluation_admin_account": EVALUATION_ADMIN_CREDENTIALS,
         "early_childhood_education_account": EARLYCHILDHOOD_CREDENTIALS,
-        "external_accecssor_account": EXTERNAL_ACCESSOR_CREDENTIALS,
+        "external_assessor_account": EXTERNAL_ASSESSOR_CREDENTIALS,
     }
 
     @classmethod
@@ -136,7 +136,7 @@ class ViewTestCase(TestCase):
                 "school_admin_account",
                 "teacher_account",
                 "principal_account",
-                "school_superviser_account",
+                "school_supervision_officer_account",
                 "early_childhood_education_account",
             ]:
                 new_user.school = self.school
@@ -176,11 +176,11 @@ class ViewTestCase(TestCase):
         )
 
     @property
-    def school_superviser_account(self):
+    def school_supervision_officer_account(self):
         return self.build_user_property(
-            "school_superviser_account",
-            SchoolSuperviser,
-            self.SCHOOL_SUPERVISER_CREDENTIALS,
+            "school_supervision_officer_account",
+            SchoolSupervisionOfficer,
+            self.SCHOOL_SUPERVISION_OFFICER_CREDENTIALS,
         )
 
     @property
@@ -203,16 +203,16 @@ class ViewTestCase(TestCase):
     def early_childhood_education_account(self):
         return self.build_user_property(
             "early_childhood_education_account",
-            EarlyChildhoodEducator,
+            EarlyChildhoodEducationOfficer,
             self.EARLYCHILDHOOD_CREDENTIALS,
         )
 
     @property
-    def external_accecssor_account(self):
+    def external_assessor_account(self):
         return self.build_user_property(
-            "external_accecssor_account",
-            ExternalAccessor,
-            self.EXTERNAL_ACCESSOR_CREDENTIALS,
+            "external_assessor_account",
+            ExternalAssessor,
+            self.EXTERNAL_ASSESSOR_CREDENTIALS,
         )
 
     @property

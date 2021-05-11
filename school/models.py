@@ -111,7 +111,7 @@ class CourseOutcome(models.Model):
     # Notes
     notes = models.CharField(max_length=550, null=True, blank=True)
 
-    class Meta:
+    class Meta(CustomPermissionModel.Meta):
         unique_together = ("course", "student")
 
     def __str__(self):
@@ -443,7 +443,7 @@ class TeacherAppraisal(models.Model):
     district_officer_comments = models.CharField(max_length=1024, default="")
     district_officer_recommendations = models.CharField(max_length=1024, default="")
 
-    class Meta:
+    class Meta(CustomPermissionModel.Meta):
         unique_together = ("teacher", "year")
 
     def __str__(self):

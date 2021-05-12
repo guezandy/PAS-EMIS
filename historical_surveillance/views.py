@@ -1140,7 +1140,7 @@ def primary_performance(request):
         if request.POST['submit'] == 'Generate Correlation Table':
             chart_title = "Correlation"
             context['chart_title'] = chart_title
-            data = PrimaryPerformance.objects.all()
+            data = PrimaryPerformance.objects.values().all()
             graph = correlations(data, UNIVERSAL_FIELDS)
             context['graph'] = graph
             return render(request, 'primary_performance.html', context)

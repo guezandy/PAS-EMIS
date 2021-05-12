@@ -1,36 +1,15 @@
 {% extends "authentication/base.html" %}
+ {% load static %}
 {% block body %}
 <div class="jumbotron">
-        <div class="container">
-          <h1 class="display-3">Policy Assistant System (PAS)</h1>
-          <p>This software is intended to strengthen data gathering and use at the various levels of the education system, which will ultimately inform policy and planning decisions. This software was developed in collaboration with the <a href="https://en.wikipedia.org/wiki/Saint_Lucia"> St. Lucia</a> Education Ministry.
-          </p>
-          <p>
-          <a class="btn btn-primary btn-lg" href="#" role="button">Log In »</a></p>
+    <h3 class="display-4" style="text-align: center"><em>Education Policy Assistant System</em></h3>
+    <div class ='row'>
+        <div class ='col-4'></div>
+        <div class ='col-4'>
+    <img src="{% static 'assets/img/map.png' %}" alt="education districts"/>
         </div>
-</div>
-<div class="container">
-        <!-- Example row of columns -->
-        <div class="row">
-          <div class="col-md-4">
-            <h2>Data Analysis Suite</h2>
-            <p>PAS has the ability to analyze historical exam scores, provide outlier analysis for schools and school districts, and track school capacity and enrollment.</p>
-          </div>
-          <div class="col-md-4">
-            <h2>School Management</h2>
-            <p>School staff can enroll students, track attendance, and record grades. School supervisors have the ability to appraise teachers and principals.</p>
-            
-          </div>
-          <div class="col-md-4">
-            <h2>Welfare Service Tracking</h2>
-            <p>PAS allows school administrators to define welfare services and track which students are using these services.</p>
-        </div>
-        </div>
+        <div class ='col-4'></div>
 
-        <hr>
+    </div>
 </div>
-<footer class="container">
-    <a href="https://github.com/guezandy/PAS-EMIS">GitHub</a>
-</footer>
-
 {% endblock body %}

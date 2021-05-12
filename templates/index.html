@@ -1,10 +1,18 @@
-{% extends "base.html" %}
+++{% extends "base.html" %}
 {% block page_content %}
+     {% load static %}
 <div class="jumbotron">
     <h1 class="display-4">Policy Assistant - Education Information Management and Surveillance System</h1>
     <p class="lead">{{header}}</p>
     <hr class="my-4">
-    <p>{{content}}
-    </p>
+    <div class ='row'>
+        <div class ='col-4'></div>
+        <div class ='col-4'>
+    <img src="{% static 'assets/img/map.png' %}" alt="education districts"/>
+        </div>
+        <div class ='col-4'></div>
+
+    </div>
 </div>
+
 {% endblock page_content %}

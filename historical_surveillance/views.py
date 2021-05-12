@@ -13,6 +13,7 @@ from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 from django_tables2.export import ExportMixin
 
+
 # This is the view for the home page of this app
 def index(request):
     return render(request, 'surv_home.html', {})
@@ -27,10 +28,11 @@ class FilteredDistrictListView(ExportMixin, SingleTableMixin, FilterView):
     table_pagination = {
         "per_page": 10
     }
-    extra_context={"listTitle": "Districts", 
-    "createButtonName": "Create District", 
-    "createViewName": "surveillance:create-district",
-    "export_formats":["csv"]}
+    extra_context = {"listTitle": "Districts",
+                     "createButtonName": "Create District",
+                     "createViewName": "surveillance:create-district",
+                     "export_formats": ["csv"]}
+
 
 # This is for creating and editing a district
 def edit_district(request, code=None):
@@ -54,6 +56,7 @@ def edit_district(request, code=None):
     # context = _add_side_navigation_context(request.user, context)
     return render(request, "historical_form.html", context)
 
+
 # This is for showing a list of all schools
 class FilteredSchoolListView(ExportMixin, SingleTableMixin, FilterView):
     table_class = SchoolTable
@@ -63,10 +66,11 @@ class FilteredSchoolListView(ExportMixin, SingleTableMixin, FilterView):
     table_pagination = {
         "per_page": 10
     }
-    extra_context={"listTitle": "School", 
-    "createButtonName": "Create School", 
-    "createViewName": "surveillance:create-school",
-    "export_formats":["csv"]}
+    extra_context = {"listTitle": "School",
+                     "createButtonName": "Create School",
+                     "createViewName": "surveillance:create-school",
+                     "export_formats": ["csv"]}
+
 
 # This is for creating and editing a school
 def edit_school(request, code=None):
@@ -89,6 +93,7 @@ def edit_school(request, code=None):
     context = {"header": "Edit School" if code else "Create School", "form": form}
     return render(request, 'historical_form.html', context)
 
+
 class FilteredEnrollmentListView(ExportMixin, SingleTableMixin, FilterView):
     table_class = EnrollmentTable
     model = Enrollment
@@ -97,10 +102,11 @@ class FilteredEnrollmentListView(ExportMixin, SingleTableMixin, FilterView):
     table_pagination = {
         "per_page": 10
     }
-    extra_context={"listTitle": "National Enrollment by Grade and Sex", 
-    "createButtonName": "Add Record", 
-    "createViewName": "surveillance:create-enrollment",
-    "export_formats":["csv"]}
+    extra_context = {"listTitle": "National Enrollment by Grade and Sex",
+                     "createButtonName": "Add Record",
+                     "createViewName": "surveillance:create-enrollment",
+                     "export_formats": ["csv"]}
+
 
 # update enrollment by grade and sex
 def update_enrollment(request, code=None):
@@ -123,6 +129,7 @@ def update_enrollment(request, code=None):
         "header": "Edit Enrollment" if code else "Add Enrollment Record", "form": form}
     return render(request, 'historical_form.html', context)
 
+
 class FilteredAggregateEnrollmentListView(ExportMixin, SingleTableMixin, FilterView):
     table_class = AggregateEnrollmentTable
     model = AggregateEnrollment
@@ -131,10 +138,11 @@ class FilteredAggregateEnrollmentListView(ExportMixin, SingleTableMixin, FilterV
     table_pagination = {
         "per_page": 10
     }
-    extra_context={"listTitle": "National Enrollment and School Capacity", 
-    "createButtonName": "Add Record", 
-    "createViewName": "surveillance:create-aggregate-enrollment",
-    "export_formats":["csv"]}
+    extra_context = {"listTitle": "National Enrollment and School Capacity",
+                     "createButtonName": "Add Record",
+                     "createViewName": "surveillance:create-aggregate-enrollment",
+                     "export_formats": ["csv"]}
+
 
 # used to update the enrollment versus class capacity entries
 def update_aggregate_enrollment(request, code=None):
@@ -153,7 +161,8 @@ def update_aggregate_enrollment(request, code=None):
             model_instance.save()
             return HttpResponseRedirect(reverse("surveillance:aggregate-enrollments"))
     context = {
-        "header": "Edit National Enrollment and School Capacity" if code else "Add National Enrollment and School Capacity", "form": form}
+        "header": "Edit National Enrollment and School Capacity" if code else "Add National Enrollment and School Capacity",
+        "form": form}
     return render(request, 'historical_form.html', context)
 
 
@@ -165,10 +174,10 @@ class CeeListView(ExportMixin, SingleTableMixin, FilterView):
     table_pagination = {
         "per_page": 10
     }
-    extra_context={"listTitle": "Grade 6 National Examination", 
-    "createButtonName": "Add Record", 
-    "createViewName": "surveillance:create-cee",
-    "export_formats":["csv"]}
+    extra_context = {"listTitle": "Grade 6 National Examination",
+                     "createButtonName": "Add Record",
+                     "createViewName": "surveillance:create-cee",
+                     "export_formats": ["csv"]}
 
 
 def update_cee(request, id=None):
@@ -188,7 +197,8 @@ def update_cee(request, id=None):
             model_instance.save()
             return HttpResponseRedirect(reverse("surveillance:cee-results"))
     context = {
-        "header": "Edit Grade 6 National Examination" if id else "Create Grade 6 National Examination Record", "form": form}
+        "header": "Edit Grade 6 National Examination" if id else "Create Grade 6 National Examination Record",
+        "form": form}
     # context = _add_side_navigation_context(request.user, context)
     return render(request, "historical_form.html", context)
 
@@ -201,10 +211,11 @@ class CsecListView(ExportMixin, SingleTableMixin, FilterView):
     table_pagination = {
         "per_page": 10
     }
-    extra_context={"listTitle": "Form 5 Exit Examination", 
-    "createButtonName": "Add Record", 
-    "createViewName": "surveillance:create-csec",
-    "export_formats":["csv"]}
+    extra_context = {"listTitle": "Form 5 Exit Examination",
+                     "createButtonName": "Add Record",
+                     "createViewName": "surveillance:create-csec",
+                     "export_formats": ["csv"]}
+
 
 # This is for creating and editing a csec record
 def update_csec(request, id=None):
@@ -224,7 +235,8 @@ def update_csec(request, id=None):
             model_instance.save()
             return HttpResponseRedirect(reverse("surveillance:csec-results"))
     context = {
-        "header": "Edit Form 5 Exit Examination Record" if id else "Create Form 5 Exit Examination Record", "form": form}
+        "header": "Edit Form 5 Exit Examination Record" if id else "Create Form 5 Exit Examination Record",
+        "form": form}
     # context = _add_side_navigation_context(request.user, context)
     return render(request, "historical_form.html", context)
 
@@ -840,7 +852,7 @@ def enrollment_summary(request):
         return render(request, 'ger_secondary.html', data_all_secondary)
     if 'ger_gdp' in request.POST:
         expenditure = pd.DataFrame(NationalExpenditure.objects.
-                                   values('academic_year', 'gdp_millions').all())
+                                   values().all())
         df_regression = pd.merge(
             left=df, right=expenditure, on='academic_year')
         json_records = df_regression.reset_index().to_json(orient='records')
@@ -877,19 +889,26 @@ def enrollment_summary(request):
         data_girls_secondary = json.loads(json_records)
         # function to get the graph
 
-        graph_all = get_plot_regression(data=df_regression,
-                                        data_boys_primary=data_boys_1,
-                                        data_girls_primary=data_girls_1,
-                                        data_boys_secondary=data_boys_1_secondary,
-                                        data_girls_secondary=data_girls_1_secondary
-                                        )
+        graph_all = get_plot_regression(data=df_regression)
+        graph_stats = get_kernel_density(data=df_regression)
+        graph_gdp_reg = get_plot_gdp_regress(data=df_regression)
+        graph_pearsons = get_enrollment_joint_pearsons(data=df_regression)
+        graph_spearman = get_enrollment_joint_spearman(data=df_regression)
+        graph_multicollinear = get_enrollment_multicollinearity(data=df_regression)
+
         context = {'d_boys': data_boys_primary,
                    'd': data_regression,
                    'd_girls_primary': data_girls_primary,
                    'd_girls_secondary': data_girls_secondary,
                    'd_boys_primary': data_boys_secondary,
                    'd_boys_secondary': data_girls_secondary,
-                   'graph_all': graph_all
+                   'graph_all': graph_all,
+                   'graph_stats': graph_stats,
+                   'graph_pearsons': graph_pearsons,
+                   'graph_spearman': graph_spearman,
+                   'graph_gdp_reg': graph_gdp_reg,
+                   'graph_multicollinear': graph_multicollinear
+
                    }
 
         return render(request, 'ger_regression.html', context)
@@ -1113,6 +1132,7 @@ def district_performance(request):
 
 UNIVERSAL_FIELDS = {'id', 'created_at', 'created_by', 'updated_at', 'updated_by'}
 
+
 def primary_performance(request):
     context = {}
     if request.method == 'POST':
@@ -1120,7 +1140,7 @@ def primary_performance(request):
         if request.POST['submit'] == 'Generate Correlation Table':
             chart_title = "Correlation"
             context['chart_title'] = chart_title
-            data = PrimaryPerformance.objects.all()
+            data = PrimaryPerformance.objects.values().all()
             graph = correlations(data, UNIVERSAL_FIELDS)
             context['graph'] = graph
             return render(request, 'primary_performance.html', context)
@@ -1326,6 +1346,7 @@ def boxplot_national(request):
     }
 
     return render(request, 'boxplots_national_page.html', stu)
+
 
 # This is the examination Analysis
 def examination_summary(request):

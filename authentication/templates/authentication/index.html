@@ -1,27 +1,36 @@
 {% extends "authentication/base.html" %}
 {% block body %}
 <div class="jumbotron">
-    <h1 class="display-4">Policy Assistant - Education Information Management and Surveillance System</h1>
-    <p class="lead">This software is intended to strengthen data gathering and use at the various levels of the
-        education
-        system, which will ultimately inform policy and planning decisions. The software will be used to assist
-        teachers, principals and other administrative staff systematically examine and enhance the overall
-        performance of the education sector, policy/ program planning and implementation as well as monitoring
-        and evaluation of educational outcomes.</p>
-    <hr class="my-4">
-    <p>Functionality of the software should include, but not be limited to the following:
-    <ul>
-        <li>Measurement of enrollment, class size, and final results</li>
-        <li>Determine factors that influence individual student, school, and national performance</li>
-        <li>Report and analyze achievement gaps between districts/ schools and the trend over time</li>
-        <li>Auto- prediction/flagging of students who are at high risk of failing or dropping out</li>
-        <li>Categorize people who struggle or are likely to struggle for early support or intervention</li>
-        <li>Outlier detection, which identifies schools/ districts which seems to performing above or below the
-            national mean/ meeting educational outcomes successfully or unsuccessfully, and the contributing
-            factors.</li>
-        <li>Detection learning disability and behavioral disorder based on student data as well as identification of
-            students to refer for evaluation, early intervention, and special needs services.</li>
-    </ul>
-    </p>
+        <div class="container">
+          <h1 class="display-3">Policy Assistant System</h1>
+          <p>This software is intended to strengthen data gathering and use at the various levels of the education system, which will ultimately inform policy and planning decisions. This software was developed in collaboration with the <a href="https://en.wikipedia.org/wiki/Saint_Lucia"> St. Lucia</a> Education Ministry.
+          </p>
+          <p>
+          <a class="btn btn-primary btn-lg" href="#" role="button">Log In »</a></p>
+        </div>
 </div>
+<div class="container">
+        <!-- Example row of columns -->
+        <div class="row">
+          <div class="col-md-4">
+            <h2>Data Analysis Suite</h2>
+            <p>PAS has the ability to analyze historical exam scores, provide outlier analysis for schools and school districts, and track school capacity and enrollment.</p>
+          </div>
+          <div class="col-md-4">
+            <h2>School Management</h2>
+            <p>School staff can enroll students, track attendance, and record grades. School supervisors have the ability to appraise teachers and principals.</p>
+            
+          </div>
+          <div class="col-md-4">
+            <h2>Welfare Service Tracking</h2>
+            <p>PAS allows school administrators to define welfare services and track which students are using these services.</p>
+        </div>
+        </div>
+
+        <hr>
+</div>
+<footer class="container">
+    <a href="https://github.com/guezandy/PAS-EMIS">GitHub</a>
+</footer>
+
 {% endblock body %}

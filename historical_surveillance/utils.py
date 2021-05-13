@@ -489,6 +489,8 @@ def csec_performance_plot(data, district_1, district_2):
             years.append(int(y))
     years.sort()
     min_year = min(years)
+    max_year = max(years)
+    years = range(min_year, max_year+1)
 
     schools = School.objects.all()
     # schools = School.objects.filter(category_of_school='public secondary')
@@ -517,9 +519,12 @@ def csec_performance_plot(data, district_1, district_2):
         score = row['overall_grade']
         if score == 'I' or score == 'II' or score == 'III':
             scores[year][district - 1] += 1
-
-    passing_scores = 100 * scores / n_tests
+    
+    np.seterr(divide='ignore', invalid='ignore')
+    passing_scores = np.divide(100 * scores, n_tests)
     passing_scores = pd.DataFrame(passing_scores)
+
+    passing_scores = passing_scores.fillna(method='ffill')
 
     labels = ['District ' + str(d + 1) for d in range(N_DISTRICTS)]
     if not (district_1 and district_2):
